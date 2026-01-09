@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       unit_id: body.unit_id || null,
       type: body.type || 'routine',
       scheduled_date: body.scheduled_date,
-      inspector: body.inspector || 'Jake Ross',
+      inspector: body.inspector || process.env.DEFAULT_INSPECTOR || 'Admin',
       status: 'scheduled',
       notes: body.notes || null
     })

@@ -17,6 +17,7 @@ export async function GET(
       tenant:pm_tenants(id, name, email, phone)
     `)
     .eq('id', id)
+    .is('deleted_at', null) // Exclude soft-deleted records
     .single()
 
   if (error) {
@@ -103,14 +104,30 @@ export async function DELETE(
 ) {
   const { id } = await params
 
-  const { error } = await supabase
+  // Soft delete - preserve for audit trail
+  const { data, error } = await supabase
     .from('pm_work_orders')
-    .delete()
+    .update({ deleted_at: new Date().toISOString() })
     .eq('id', id)
+    .is('deleted_at', null) // Only delete if not already deleted
+    .select('id')
+    .single()
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
+
+  if (!data) {
+    return NextResponse.json({ error: 'Work order not found or already deleted' }, { status: 404 })
+  }
+
+  // Log the deletion
+  await supabase.from('pm_work_order_activity').insert({
+    work_order_id: id,
+    action: 'deleted',
+    details: 'Work order soft deleted',
+    created_by: 'Admin'
+  })
 
   return NextResponse.json({ success: true })
 }
