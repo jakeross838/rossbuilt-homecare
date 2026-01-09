@@ -399,8 +399,8 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                   </tr>
                   <tr className="border-b">
                     <td className="p-4 font-medium">Frequency</td>
-                    <td className="p-4 text-center text-sm">Every 14 days</td>
-                    <td className="p-4 text-center text-sm">Every 14 days</td>
+                    <td className="p-4 text-center text-sm">Monthly</td>
+                    <td className="p-4 text-center text-sm">Bi-weekly</td>
                     <td className="p-4 text-center text-sm font-medium text-amber-700">Weekly</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
@@ -591,7 +591,7 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
               </div>
               <div>
                 <h4 className="font-medium mb-2">Hourly Work</h4>
-                <p className="text-sm text-muted-foreground mb-4">Tasks we handle directly (waiting for vendors, special projects, etc.) are billed at $45/hour. Most inspection tasks are included in your plan.</p>
+                <p className="text-sm text-muted-foreground mb-4">Tasks we handle directly (waiting for vendors, special projects, etc.) are billed at $60/hour. Most inspection tasks are included in your plan.</p>
 
                 <h4 className="font-medium mb-2">Materials & Supplies</h4>
                 <p className="text-sm text-muted-foreground">Supplies purchased on your behalf (filters, batteries, cleaning supplies, etc.) are billed at cost with receipt provided. No markup on materials.</p>
