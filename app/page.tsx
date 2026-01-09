@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -20,12 +20,14 @@ import {
   MapPin, ChevronLeft, ChevronRight, Play, CheckCircle, Trash2,
   FileText, Clock, AlertCircle, X, Edit2, GripVertical, Users, Settings,
   Package, Truck, Camera, Image, DollarSign, TrendingUp, BarChart3, UserPlus,
-  LayoutDashboard, Bell, ArrowRight, FileBarChart, Eye, Copy
+  LayoutDashboard, Bell, ArrowRight, FileBarChart, Eye, Copy, Download
 } from "lucide-react"
 import { PhotoCapture } from "@/components/photo-capture"
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
 import { BillingTab } from "@/components/billing-tab"
 import { InspectionWalkthrough, InspectionReport, ChecklistItemResult, ChecklistCompletion } from "@/components/inspection-walkthrough"
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 
 // Types
 interface Client {
@@ -193,6 +195,8 @@ export default function AdminDashboard() {
   const [showReportDialog, setShowReportDialog] = useState(false)
   const [selectedCompletion, setSelectedCompletion] = useState<ChecklistCompletion | null>(null)
   const [editingReport, setEditingReport] = useState(false)
+  const [exportingPdf, setExportingPdf] = useState(false)
+  const reportRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetchProperties()
@@ -786,6 +790,50 @@ export default function AdminDashboard() {
     if (sqft < 2000) return { label: "Small", color: "bg-slate-100 text-slate-700" }
     if (sqft <= 3500) return { label: "Medium", color: "bg-blue-100 text-blue-700" }
     return { label: "Large", color: "bg-amber-100 text-amber-700" }
+  }
+
+  // Export report to PDF
+  async function exportReportToPdf() {
+    if (!reportRef.current || !selectedCompletion) return
+
+    setExportingPdf(true)
+    try {
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      })
+
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      })
+
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight)
+      const imgX = (pdfWidth - imgWidth * ratio) / 2
+      const imgY = 10
+
+      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio)
+
+      const propertyName = selectedCompletion.property?.name || 'Property'
+      const date = selectedCompletion.completed_at
+        ? new Date(selectedCompletion.completed_at).toISOString().split('T')[0]
+        : selectedCompletion.scheduled_date
+      const fileName = `${propertyName.replace(/\s+/g, '-')}_Inspection_${date}.pdf`
+
+      pdf.save(fileName)
+    } catch (error) {
+      console.error('Error exporting PDF:', error)
+      alert('Failed to export PDF. Please try again.')
+    }
+    setExportingPdf(false)
   }
 
   // Template management
@@ -2756,15 +2804,21 @@ export default function AdminDashboard() {
             </DialogTitle>
           </DialogHeader>
           {selectedCompletion && (
-            <InspectionReport
-              completion={selectedCompletion}
-              results={(selectedCompletion.results as ChecklistItemResult[]) || []}
-              overallNotes={selectedCompletion.notes || ''}
-            />
+            <div ref={reportRef} className="bg-white p-4">
+              <InspectionReport
+                completion={selectedCompletion}
+                results={(selectedCompletion.results as ChecklistItemResult[]) || []}
+                overallNotes={selectedCompletion.notes || ''}
+              />
+            </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button variant="outline" onClick={() => setShowReportDialog(false)}>
               Close
+            </Button>
+            <Button variant="outline" onClick={exportReportToPdf} disabled={exportingPdf}>
+              <Download className="h-4 w-4 mr-2" />
+              {exportingPdf ? 'Exporting...' : 'Export PDF'}
             </Button>
             <Button onClick={() => {
               setShowReportDialog(false)
