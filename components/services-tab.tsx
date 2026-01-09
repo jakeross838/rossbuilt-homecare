@@ -455,15 +455,9 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                   </tr>
                   <tr className="border-b">
                     <td className="p-4 font-medium">Vendor Coordination</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Recommendations</td>
-                    <td className="p-4 text-center text-sm">We schedule</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Recommendations only</td>
+                    <td className="p-4 text-center text-sm">We schedule & oversee</td>
                     <td className="p-4 text-center text-sm font-medium">Full management</td>
-                  </tr>
-                  <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Minor Maintenance</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Report only</td>
-                    <td className="p-4 text-center text-sm">Basic</td>
-                    <td className="p-4 text-center text-sm">&lt;$75 included</td>
                   </tr>
 
                   {/* Storm Services */}
@@ -522,13 +516,91 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
             </div>
           </Card>
 
-          {/* Note at bottom */}
-          <div className="mt-8 pt-6 border-t">
-            <p className="text-xs text-muted-foreground text-center">
-              All plans include maintenance coordination with consolidated billing. Materials for minor tasks billed at cost.
-              Hurricane preparation services are subject to expedited rates.
+          {/* Additional Services Section */}
+          <Card className="mt-8 p-6">
+            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <Wrench className="h-5 w-5" />
+              Additional Services We Coordinate
+            </h3>
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-medium text-blue-900 mb-2">Pool & Spa</h4>
+                <p className="text-sm text-blue-700">Weekly chemical balancing, equipment checks, cleaning coordination with your pool service</p>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-medium text-green-900 mb-2">Lawn & Landscaping</h4>
+                <p className="text-sm text-green-700">Coordinate mowing, trimming, irrigation checks, and seasonal planting with your landscaper</p>
+              </div>
+              <div className="p-4 bg-amber-50 rounded-lg">
+                <h4 className="font-medium text-amber-900 mb-2">Pest Control</h4>
+                <p className="text-sm text-amber-700">Schedule treatments, monitor for issues, coordinate with pest control providers</p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              We work with your existing vendors or can recommend trusted local professionals. All coordinated services are billed through us for simplified accounting.
             </p>
-          </div>
+          </Card>
+
+          {/* FAQ Section */}
+          <Card className="mt-6 p-6">
+            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Frequently Asked Questions
+            </h3>
+            <div className="space-y-4">
+              <div className="border-b pb-4">
+                <h4 className="font-medium mb-1">What's included in an inspection?</h4>
+                <p className="text-sm text-muted-foreground">We check all entry points, HVAC operation, water intrusion signs, pest activity, and general property condition. You receive a photo report after each visit documenting what we found.</p>
+              </div>
+              <div className="border-b pb-4">
+                <h4 className="font-medium mb-1">What if you find something wrong?</h4>
+                <p className="text-sm text-muted-foreground">We alert you same-day with photos and recommendations. With Complete Care or Premier, we handle getting quotes and scheduling repairs—you just approve the work.</p>
+              </div>
+              <div className="border-b pb-4">
+                <h4 className="font-medium mb-1">Do you handle my pool and lawn?</h4>
+                <p className="text-sm text-muted-foreground">We coordinate with your existing pool and lawn vendors, or can recommend local professionals. We verify work is completed, monitor for issues, and handle scheduling on your behalf.</p>
+              </div>
+              <div className="border-b pb-4">
+                <h4 className="font-medium mb-1">What are arrival/departure services?</h4>
+                <p className="text-sm text-muted-foreground">Before you arrive, we prepare your home—adjust climate, run water, check supplies, ensure everything is ready. After you leave, we secure the property, adjust settings for vacancy, and document condition.</p>
+              </div>
+              <div className="border-b pb-4">
+                <h4 className="font-medium mb-1">Can I change plans later?</h4>
+                <p className="text-sm text-muted-foreground">Yes, you can upgrade or downgrade at any time. Changes take effect on your next billing cycle.</p>
+              </div>
+              <div>
+                <h4 className="font-medium mb-1">What about hurricane season?</h4>
+                <p className="text-sm text-muted-foreground">We monitor storms and coordinate preparation (shutters, securing outdoor items, documentation). Premier members receive discounted prep services. Post-storm, we assess damage and document everything for insurance.</p>
+              </div>
+            </div>
+          </Card>
+
+          {/* Billing Explanation */}
+          <Card className="mt-6 p-6 bg-slate-50">
+            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              How Billing Works
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-medium mb-2">Monthly Plan Fee</h4>
+                <p className="text-sm text-muted-foreground mb-4">Your base monthly fee covers all scheduled inspections and included services. Billed on the 1st of each month.</p>
+
+                <h4 className="font-medium mb-2">Coordinated Repairs & Services</h4>
+                <p className="text-sm text-muted-foreground">When we schedule vendors on your behalf, you pay the vendor's cost plus a 15% coordination fee. This covers scheduling, oversight, quality verification, and consolidated billing. No surprises—you approve all work before it begins.</p>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Hourly Work</h4>
+                <p className="text-sm text-muted-foreground mb-4">Tasks we handle directly (waiting for vendors, special projects, etc.) are billed at $45/hour. Most inspection tasks are included in your plan.</p>
+
+                <h4 className="font-medium mb-2">Materials & Supplies</h4>
+                <p className="text-sm text-muted-foreground">Supplies purchased on your behalf (filters, batteries, cleaning supplies, etc.) are billed at cost with receipt provided. No markup on materials.</p>
+              </div>
+            </div>
+            <div className="mt-4 p-3 bg-white rounded-lg border">
+              <p className="text-sm"><span className="font-medium">Example:</span> Your AC needs service. We contact the HVAC company, schedule the visit, meet them at your property, verify the work is done correctly, and send you one invoice. Vendor cost: $150 + Our coordination fee: $22.50 = Total: $172.50</p>
+            </div>
+          </Card>
         </TabsContent>
 
         {/* Service Catalog Tab - Grouped by Billing Type */}
