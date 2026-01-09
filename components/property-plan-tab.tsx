@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import {
-  Package, Star, Check, Eye, X,
-  Shield, Users, CloudRain, Camera, Wrench
+  Package, Star, Check, Eye,
+  Shield, Wrench, Home, Calendar, Camera, Thermometer, Droplets, ArrowUp
 } from "lucide-react"
 
 interface ServicePlan {
@@ -69,6 +69,138 @@ const PLAN_INFO: Record<number, {
   }
 }
 
+// Tier-specific features organized by category
+const TIER_FEATURES: Record<number, { category: string; icon: React.ElementType; items: string[] }[]> = {
+  1: [
+    {
+      category: "Inspections",
+      icon: Eye,
+      items: [
+        "Monthly property inspection (15-20 min)",
+        "Interior & exterior walkthrough",
+        "Photo documentation report"
+      ]
+    },
+    {
+      category: "What We Check",
+      icon: Home,
+      items: [
+        "HVAC system operation",
+        "Water leak detection",
+        "Pest activity inspection",
+        "Security check (doors, windows)",
+        "General property condition"
+      ]
+    },
+    {
+      category: "Communication",
+      icon: Camera,
+      items: [
+        "Photo report after each visit",
+        "Issue alerts via email",
+        "Maintenance coordination available"
+      ]
+    }
+  ],
+  2: [
+    {
+      category: "Inspections",
+      icon: Eye,
+      items: [
+        "Bi-weekly property inspection (45 min)",
+        "Detailed interior & exterior walkthrough",
+        "Comprehensive photo documentation",
+        "Under-sink inspection all bathrooms/kitchen"
+      ]
+    },
+    {
+      category: "Preventive Maintenance",
+      icon: Wrench,
+      items: [
+        "Run all water fixtures to prevent pipe issues",
+        "Flush all toilets",
+        "HVAC filter replacement",
+        "Smoke/CO detector battery replacement",
+        "Seasonal storm preparation"
+      ]
+    },
+    {
+      category: "Systems Monitoring",
+      icon: Thermometer,
+      items: [
+        "HVAC performance testing",
+        "Water heater inspection",
+        "Basic appliance testing",
+        "Electrical panel visual check"
+      ]
+    },
+    {
+      category: "Communication",
+      icon: Camera,
+      items: [
+        "Detailed photo report after each visit",
+        "Priority issue alerts",
+        "Maintenance coordination included"
+      ]
+    }
+  ],
+  3: [
+    {
+      category: "Inspections",
+      icon: Eye,
+      items: [
+        "Bi-weekly comprehensive inspection (60+ min)",
+        "Full property walkthrough with documentation",
+        "Quarterly attic/crawlspace inspection",
+        "Custom property-specific checklist"
+      ]
+    },
+    {
+      category: "Preventive Maintenance",
+      icon: Wrench,
+      items: [
+        "Run all water fixtures & flush toilets",
+        "HVAC filter replacement",
+        "Smoke/CO detector battery replacement",
+        "Seasonal storm preparation",
+        "Hurricane readiness (shutters, supplies)"
+      ]
+    },
+    {
+      category: "Systems Testing",
+      icon: Thermometer,
+      items: [
+        "Test all major appliances",
+        "Outlet testing throughout property",
+        "HVAC comprehensive testing",
+        "Water heater inspection",
+        "Pool/spa equipment check (if applicable)"
+      ]
+    },
+    {
+      category: "Owner Visits",
+      icon: Calendar,
+      items: [
+        "Pre-arrival property preparation",
+        "Climate control adjustment",
+        "Supplies stocking coordination",
+        "Post-departure property securing",
+        "Utility management"
+      ]
+    },
+    {
+      category: "Premium Service",
+      icon: Star,
+      items: [
+        "Priority emergency response",
+        "Dedicated property manager",
+        "Vendor coordination fee waived",
+        "Quarterly property condition report"
+      ]
+    }
+  ]
+}
+
 export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: PropertyPlanTabProps) {
   const [plans, setPlans] = useState<ServicePlan[]>([])
   const [loading, setLoading] = useState(true)
@@ -113,29 +245,20 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
     return <div className="text-center py-8 text-muted-foreground">Loading...</div>
   }
 
-  // No plan assigned yet - show comparison
+  // No plan assigned yet
   if (!currentPlan) {
     return (
-      <div className="space-y-8">
+      <div className="space-y-6">
         <Card className="p-8 text-center border-dashed border-2">
           <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
           <h3 className="text-lg font-semibold mb-2">No Service Plan</h3>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             Choose a service plan to start managing this property.
           </p>
+          <Button onClick={() => setShowChangePlanDialog(true)}>
+            Select a Plan
+          </Button>
         </Card>
-
-        {/* Plan Comparison */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Compare Plans</h3>
-          <ComparisonTable plans={plans} onSelectPlan={(id) => {
-            setSelectedPlanId(id)
-            setShowChangePlanDialog(true)
-          }} />
-        </div>
-
-        {/* How It Works */}
-        <HowItWorksSection tierLevel={null} />
 
         <PlanDialog
           open={showChangePlanDialog}
@@ -150,17 +273,17 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
     )
   }
 
-  // Has a plan - show current plan details
+  // Has a plan - show current plan features
   const info = PLAN_INFO[currentPlan.tier_level]
   const Icon = info.icon
-  const features = currentPlan.features as string[]
+  const tierFeatures = TIER_FEATURES[currentPlan.tier_level] || []
 
   return (
-    <div className="space-y-8">
-      {/* Current Plan */}
+    <div className="space-y-6">
+      {/* Current Plan Header */}
       <Card className={`overflow-hidden ${info.borderColor} border-2`}>
         <div className={`p-6 ${info.bgColor}`}>
-          <div className="flex items-start justify-between mb-4">
+          <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Icon className={`h-6 w-6 ${info.color}`} />
@@ -168,43 +291,69 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
                 <Badge variant="secondary" className="bg-white">Active</Badge>
               </div>
               <p className={`${info.color}`}>{info.tagline}</p>
+              {currentPlan.monthly_base_price && (
+                <p className="text-2xl font-bold mt-2">${currentPlan.monthly_base_price}<span className="text-sm font-normal text-muted-foreground">/month</span></p>
+              )}
             </div>
             <Button variant="outline" size="sm" onClick={() => setShowChangePlanDialog(true)}>
               Change Plan
             </Button>
           </div>
-
-        </div>
-
-        {/* What's Included */}
-        <div className="p-6">
-          <h4 className="font-medium mb-4">What's Included</h4>
-          <div className="grid md:grid-cols-2 gap-3">
-            {features.map((feature, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <Check className={`h-4 w-4 mt-0.5 ${info.color}`} />
-                <span className="text-sm">{feature}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </Card>
 
-      {/* How We Work - Expanded */}
-      <HowItWorksSection tierLevel={currentPlan.tier_level} />
-
-      {/* Plan Comparison */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Plan Comparison</h3>
-        <ComparisonTable
-          plans={plans}
-          currentPlanId={currentPlan.id}
-          onSelectPlan={(id) => {
-            setSelectedPlanId(id)
-            setShowChangePlanDialog(true)
-          }}
-        />
+      {/* Plan Features by Category */}
+      <div className="grid md:grid-cols-2 gap-4">
+        {tierFeatures.map((category, idx) => {
+          const CategoryIcon = category.icon
+          return (
+            <Card key={idx} className="p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <div className={`p-2 rounded-lg ${info.bgColor}`}>
+                  <CategoryIcon className={`h-5 w-5 ${info.color}`} />
+                </div>
+                <h4 className="font-semibold">{category.category}</h4>
+              </div>
+              <ul className="space-y-2">
+                {category.items.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <Check className={`h-4 w-4 mt-0.5 ${info.color} flex-shrink-0`} />
+                    <span className="text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )
+        })}
       </div>
+
+      {/* Upgrade Prompt for non-Luxury tiers */}
+      {currentPlan.tier_level < 3 && (
+        <Card className="p-5 bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-amber-100">
+                <ArrowUp className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-amber-900">Upgrade Your Protection</h4>
+                <p className="text-sm text-amber-700">
+                  {currentPlan.tier_level === 1
+                    ? "Get bi-weekly visits and preventive maintenance with Premium Care"
+                    : "Get pre-arrival prep and complete estate management with Luxury Care"}
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              className="border-amber-300 text-amber-700 hover:bg-amber-100"
+              onClick={() => setShowChangePlanDialog(true)}
+            >
+              View Options
+            </Button>
+          </div>
+        </Card>
+      )}
 
       <PlanDialog
         open={showChangePlanDialog}
@@ -216,282 +365,6 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
         currentPlan={currentPlan}
       />
     </div>
-  )
-}
-
-// How It Works Section Component
-function HowItWorksSection({ tierLevel }: { tierLevel: number | null }) {
-  return (
-    <Card className="p-6">
-      <h4 className="text-lg font-semibold mb-2">How Our Service Works</h4>
-      <p className="text-sm text-muted-foreground mb-6">
-        We serve as your eyes on the ground, identifying issues and coordinating any work needed.
-      </p>
-
-      {/* The Process Flow */}
-      <div className="mb-8">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 p-4 rounded-lg bg-blue-50 border border-blue-100">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">1</div>
-              <h5 className="font-medium">We Inspect</h5>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              We walk through your property, checking rooms, systems, and documenting with photos.
-            </p>
-          </div>
-          <div className="flex-1 p-4 rounded-lg bg-purple-50 border border-purple-100">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-sm font-bold">2</div>
-              <h5 className="font-medium">We Report</h5>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              You receive a detailed report with photos highlighting anything that needs attention.
-            </p>
-          </div>
-          <div className="flex-1 p-4 rounded-lg bg-green-50 border border-green-100">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">3</div>
-              <h5 className="font-medium">You Decide</h5>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Review our recommendations and approve the services you want us to coordinate.
-            </p>
-          </div>
-          <div className="flex-1 p-4 rounded-lg bg-amber-50 border border-amber-100">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-bold">4</div>
-              <h5 className="font-medium">We Handle It</h5>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              We schedule the vendor, oversee the work, and send you one simple bill.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Tier Descriptions */}
-      <div className="space-y-4">
-        <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Eye className="h-5 w-5 text-slate-600" />
-            <h5 className="font-semibold">Essential Care — $349/mo</h5>
-          </div>
-          <p className="text-sm text-muted-foreground mb-2">
-            Monthly 15-20 minute visual inspections. We check for obvious issues like water damage,
-            pest activity, HVAC operation, and security. Photo report after each visit.
-          </p>
-          <p className="text-xs text-slate-500">Best for: Part-time residents, rental properties with regular guests</p>
-        </div>
-
-        <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="h-5 w-5 text-blue-600" />
-            <h5 className="font-semibold">Premium Care — $649/mo</h5>
-          </div>
-          <p className="text-sm text-muted-foreground mb-2">
-            Bi-weekly 45 minute detailed inspections. Everything in Essential plus: run all water fixtures,
-            flush toilets, HVAC filter replacement, smoke/CO detector batteries, seasonal prep, and under-sink inspections.
-          </p>
-          <p className="text-xs text-blue-600">Best for: Vacation homes, snowbirds, properties sitting vacant</p>
-        </div>
-
-        <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Star className="h-5 w-5 text-amber-600" />
-            <h5 className="font-semibold">Luxury Care — $1,199/mo</h5>
-          </div>
-          <p className="text-sm text-muted-foreground mb-2">
-            Bi-weekly 60+ minute comprehensive inspections. Everything in Premium plus: test all appliances,
-            outlet testing, quarterly attic/crawlspace inspection, pre-arrival preparation, post-departure securing,
-            and custom property checklist.
-          </p>
-          <p className="text-xs text-amber-600">Best for: Luxury estates, high-value properties, owners who want complete care</p>
-        </div>
-      </div>
-    </Card>
-  )
-}
-
-// Comparison Table Component
-function ComparisonTable({
-  plans,
-  currentPlanId,
-  onSelectPlan
-}: {
-  plans: ServicePlan[]
-  currentPlanId?: string
-  onSelectPlan: (id: string) => void
-}) {
-  const sortedPlans = [...plans].sort((a, b) => a.tier_level - b.tier_level)
-
-  return (
-    <Card className="overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b">
-              <th className="text-left p-4 font-medium text-muted-foreground"></th>
-              {sortedPlans.map((plan) => {
-                const info = PLAN_INFO[plan.tier_level]
-                const Icon = info.icon
-                return (
-                  <th key={plan.id} className={`p-4 text-center ${info.bgColor}`}>
-                    <div className="flex flex-col items-center gap-1">
-                      <Icon className={`h-5 w-5 ${info.color}`} />
-                      <span className="font-semibold">{plan.name}</span>
-                      <span className="text-xs text-muted-foreground italic">"{info.tagline}"</span>
-                      {plan.monthly_base_price && (
-                        <span className="text-xl font-bold mt-1">
-                          ${plan.monthly_base_price}<span className="text-sm font-normal">/mo</span>
-                        </span>
-                      )}
-                      {currentPlanId === plan.id && (
-                        <Badge variant="secondary" className="text-xs mt-1">Current</Badge>
-                      )}
-                    </div>
-                  </th>
-                )
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {/* Visit Schedule */}
-            <tr className="bg-slate-100">
-              <td colSpan={4} className="p-3 font-semibold text-slate-700 text-sm">Visit Schedule</td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-4 font-medium">Inspection Frequency</td>
-              <td className="p-4 text-center font-medium">Monthly</td>
-              <td className="p-4 text-center font-medium">Bi-weekly</td>
-              <td className="p-4 text-center font-medium">Bi-weekly</td>
-            </tr>
-            <tr className="border-b bg-muted/30">
-              <td className="p-4 font-medium">Visit Duration</td>
-              <td className="p-4 text-center">15-20 min</td>
-              <td className="p-4 text-center">45 min</td>
-              <td className="p-4 text-center">60+ min</td>
-            </tr>
-
-            {/* What We Inspect */}
-            <tr className="bg-blue-50">
-              <td colSpan={4} className="p-3 font-semibold text-blue-800 text-sm">What We Inspect</td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-4 font-medium">Interior & Exterior Walkthrough</td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-            <tr className="border-b bg-muted/30">
-              <td className="p-4 font-medium">Photo Report</td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-4 font-medium">Detailed Under-Sink Inspection</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-            <tr className="border-b bg-muted/30">
-              <td className="p-4 font-medium">Appliance Testing</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center text-sm">Basic</td>
-              <td className="p-4 text-center text-sm">Comprehensive</td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-4 font-medium">Attic/Crawlspace Inspection</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center text-sm">Quarterly</td>
-            </tr>
-
-            {/* Preventive Maintenance */}
-            <tr className="bg-green-50">
-              <td colSpan={4} className="p-3 font-semibold text-green-800 text-sm">Preventive Maintenance Included</td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-4 font-medium">Run Water Fixtures</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-            <tr className="border-b bg-muted/30">
-              <td className="p-4 font-medium">HVAC Filter Replacement</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-4 font-medium">Smoke/CO Detector Batteries</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-            <tr className="border-b bg-muted/30">
-              <td className="p-4 font-medium">Seasonal Prep (Hurricane, etc.)</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-
-            {/* Premium Services */}
-            <tr className="bg-amber-50">
-              <td colSpan={4} className="p-3 font-semibold text-amber-800 text-sm">Premium Services</td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-4 font-medium">Pre-Arrival Preparation</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-            <tr className="border-b bg-muted/30">
-              <td className="p-4 font-medium">Post-Departure Securing</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-            <tr className="border-b">
-              <td className="p-4 font-medium">Custom Property Checklist</td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-              <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-            </tr>
-
-            {/* Best For */}
-            <tr className="bg-slate-50">
-              <td className="p-4 font-medium text-slate-600">Best For</td>
-              <td className="p-4 text-center text-sm text-muted-foreground">Part-time residents, rentals</td>
-              <td className="p-4 text-center text-sm text-muted-foreground">Vacation homes, snowbirds</td>
-              <td className="p-4 text-center text-sm text-muted-foreground">Luxury estates</td>
-            </tr>
-
-            {/* Action Row */}
-            <tr className="border-t-2">
-              <td className="p-4"></td>
-              {sortedPlans.map((plan) => {
-                const isCurrent = currentPlanId === plan.id
-                return (
-                  <td key={plan.id} className="p-4 text-center">
-                    <Button
-                      variant={plan.tier_level === 3 ? "default" : "outline"}
-                      size="sm"
-                      disabled={isCurrent}
-                      onClick={() => onSelectPlan(plan.id)}
-                      className={isCurrent ? "opacity-50" : ""}
-                    >
-                      {isCurrent ? "Current Plan" : `Select`}
-                    </Button>
-                  </td>
-                )
-              })}
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </Card>
   )
 }
 
@@ -518,7 +391,7 @@ function PlanDialog({ open, onOpenChange, plans, selectedPlanId, onSelectPlan, o
         <div className="space-y-3">
           {plans.sort((a, b) => a.tier_level - b.tier_level).map((plan) => {
             const info = PLAN_INFO[plan.tier_level]
-            const Icon = info.icon
+            const PlanIcon = info.icon
             const isSelected = selectedPlanId === plan.id
             const isCurrent = plan.id === currentPlan?.id
 
@@ -532,7 +405,7 @@ function PlanDialog({ open, onOpenChange, plans, selectedPlanId, onSelectPlan, o
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Icon className={`h-5 w-5 ${info.color}`} />
+                    <PlanIcon className={`h-5 w-5 ${info.color}`} />
                     <span className="font-medium">{plan.name}</span>
                     {isCurrent && <Badge variant="outline">Current</Badge>}
                   </div>
