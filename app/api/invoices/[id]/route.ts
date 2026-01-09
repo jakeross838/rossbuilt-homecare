@@ -44,6 +44,8 @@ export async function PATCH(
   if (body.subtotal !== undefined) updates.subtotal = body.subtotal
   if (body.tax !== undefined) updates.tax = body.tax
   if (body.total !== undefined) updates.total = body.total
+  if (body.payment_method !== undefined) updates.payment_method = body.payment_method
+  if (body.payment_reference !== undefined) updates.payment_reference = body.payment_reference
 
   // If marking as paid, set the paid_date
   if (body.status === 'paid' && !body.paid_date) {
