@@ -19,7 +19,8 @@ import {
   Wrench, Building2, ClipboardCheck, AlertTriangle, Plus, Calendar,
   MapPin, ChevronLeft, ChevronRight, Play, CheckCircle, Trash2,
   FileText, Clock, AlertCircle, X, Edit2, GripVertical, Users, Settings,
-  Package, Truck, Camera, Image, DollarSign, TrendingUp, BarChart3, UserPlus
+  Package, Truck, Camera, Image, DollarSign, TrendingUp, BarChart3, UserPlus,
+  LayoutDashboard, Bell, ArrowRight
 } from "lucide-react"
 import { PhotoCapture } from "@/components/photo-capture"
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
@@ -122,7 +123,20 @@ export default function AdminDashboard() {
 
   // Client management
   const [clients, setClients] = useState<Client[]>([])
-  const [sidebarView, setSidebarView] = useState<"properties" | "clients" | "vendors" | "settings" | "analytics" | "billing">("properties")
+  const [sidebarView, setSidebarView] = useState<"dashboard" | "properties" | "clients" | "vendors" | "settings" | "analytics" | "billing">("dashboard")
+
+  // Dashboard state
+  const [dashboardData, setDashboardData] = useState<{
+    todayInspections: { id: string; property_name: string; template_name: string; status: string; scheduled_date: string }[]
+    overdueWorkOrders: { id: string; title: string; property_name: string; priority: string; created_at: string; days_old: number }[]
+    pendingRequests: { id: string; title: string; property_name: string; created_at: string }[]
+    stats: { totalProperties: number; totalClients: number; activeWorkOrders: number; completedThisMonth: number }
+  }>({
+    todayInspections: [],
+    overdueWorkOrders: [],
+    pendingRequests: [],
+    stats: { totalProperties: 0, totalClients: 0, activeWorkOrders: 0, completedThisMonth: 0 }
+  })
   const [showClientDialog, setShowClientDialog] = useState(false)
   const [editingClient, setEditingClient] = useState<Client | null>(null)
   const [clientForm, setClientForm] = useState({ name: "", email: "", phone: "", password: "" })
@@ -176,6 +190,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchProperties()
     fetchClients()
+    fetchDashboardData()
   }, [])
 
   useEffect(() => {
@@ -224,6 +239,102 @@ export default function AdminDashboard() {
       setClients(Array.isArray(data) ? data : [])
     } catch (e) {
       console.error(e)
+    }
+  }
+
+  async function fetchDashboardData() {
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]
+
+      // Fetch all data in parallel
+      const [propsRes, clientsRes, workOrdersRes, completionsRes, requestsRes] = await Promise.all([
+        fetch("/api/properties"),
+        fetch("/api/clients"),
+        fetch("/api/work-orders"),
+        fetch(`/api/checklist-completions?from=${today}&to=${today}`),
+        fetch("/api/special-requests")
+      ])
+
+      const allProps = await propsRes.json()
+      const allClients = await clientsRes.json()
+      const allWorkOrders = await workOrdersRes.json()
+      const todayCompletions = await completionsRes.json()
+      const allRequests = await requestsRes.json()
+
+      // Get property name lookup
+      const propLookup: Record<string, string> = {}
+      if (Array.isArray(allProps)) {
+        allProps.forEach((p: { id: string; name: string }) => { propLookup[p.id] = p.name })
+      }
+
+      // Today's inspections
+      const todayInspections = Array.isArray(todayCompletions)
+        ? todayCompletions.map((c: { id: string; property_id: string; status: string; scheduled_date: string; template?: { name: string } }) => ({
+            id: c.id,
+            property_name: propLookup[c.property_id] || 'Unknown',
+            template_name: c.template?.name || 'Inspection',
+            status: c.status,
+            scheduled_date: c.scheduled_date
+          }))
+        : []
+
+      // Overdue work orders (not completed, older than 7 days)
+      const sevenDaysAgo = new Date()
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+      const overdueWorkOrders = Array.isArray(allWorkOrders)
+        ? allWorkOrders
+            .filter((wo: { status: string; created_at: string }) =>
+              wo.status !== 'completed' && wo.status !== 'cancelled' && new Date(wo.created_at) < sevenDaysAgo
+            )
+            .map((wo: { id: string; title: string; property_id: string; priority: string; created_at: string }) => ({
+              id: wo.id,
+              title: wo.title,
+              property_name: propLookup[wo.property_id] || 'Unknown',
+              priority: wo.priority,
+              created_at: wo.created_at,
+              days_old: Math.floor((Date.now() - new Date(wo.created_at).getTime()) / (1000 * 60 * 60 * 24))
+            }))
+            .sort((a: { days_old: number }, b: { days_old: number }) => b.days_old - a.days_old)
+            .slice(0, 10)
+        : []
+
+      // Pending special requests
+      const pendingRequests = Array.isArray(allRequests)
+        ? allRequests
+            .filter((r: { status: string }) => r.status === 'pending')
+            .map((r: { id: string; title: string; property_id: string; created_at: string }) => ({
+              id: r.id,
+              title: r.title,
+              property_name: propLookup[r.property_id] || 'Unknown',
+              created_at: r.created_at
+            }))
+            .slice(0, 10)
+        : []
+
+      // Stats
+      const activeWorkOrders = Array.isArray(allWorkOrders)
+        ? allWorkOrders.filter((wo: { status: string }) => wo.status !== 'completed' && wo.status !== 'cancelled').length
+        : 0
+
+      // Get completed inspections this month
+      const monthCompletionsRes = await fetch(`/api/checklist-completions?from=${monthStart}&status=completed`)
+      const monthCompletions = await monthCompletionsRes.json()
+      const completedThisMonth = Array.isArray(monthCompletions) ? monthCompletions.length : 0
+
+      setDashboardData({
+        todayInspections,
+        overdueWorkOrders,
+        pendingRequests,
+        stats: {
+          totalProperties: Array.isArray(allProps) ? allProps.length : 0,
+          totalClients: Array.isArray(allClients) ? allClients.length : 0,
+          activeWorkOrders,
+          completedThisMonth
+        }
+      })
+    } catch (e) {
+      console.error("Failed to fetch dashboard data", e)
     }
   }
 
@@ -751,6 +862,26 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Dashboard Button */}
+        <div className="p-3 border-b border-border">
+          <button
+            onClick={() => setSidebarView("dashboard")}
+            className={`w-full text-sm py-2.5 px-3 rounded-lg transition-colors flex items-center gap-2 ${
+              sidebarView === "dashboard"
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-muted"
+            }`}
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            <span className="font-medium">Dashboard</span>
+            {(dashboardData.overdueWorkOrders.length > 0 || dashboardData.pendingRequests.length > 0) && sidebarView !== "dashboard" && (
+              <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                {dashboardData.overdueWorkOrders.length + dashboardData.pendingRequests.length}
+              </span>
+            )}
+          </button>
+        </div>
+
         {/* View Toggle */}
         <div className="p-3 border-b border-border">
           <div className="flex gap-1 bg-muted rounded-lg p-1">
@@ -972,7 +1103,205 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        {sidebarView === "settings" ? (
+        {sidebarView === "dashboard" ? (
+          <div className="p-6">
+            {/* Dashboard Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-semibold">Dashboard</h2>
+                <p className="text-muted-foreground">Welcome back! Here&apos;s what&apos;s happening today.</p>
+              </div>
+              <Button onClick={() => fetchDashboardData()} variant="outline" size="sm">
+                Refresh
+              </Button>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-4 gap-4 mb-6">
+              <Card className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-blue-100">
+                    <Building2 className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{dashboardData.stats.totalProperties}</p>
+                    <p className="text-sm text-muted-foreground">Properties</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-green-100">
+                    <Users className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{dashboardData.stats.totalClients}</p>
+                    <p className="text-sm text-muted-foreground">Clients</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-orange-100">
+                    <Wrench className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{dashboardData.stats.activeWorkOrders}</p>
+                    <p className="text-sm text-muted-foreground">Active Work Orders</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-purple-100">
+                    <CheckCircle className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{dashboardData.stats.completedThisMonth}</p>
+                    <p className="text-sm text-muted-foreground">Inspections This Month</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Quick Actions */}
+            <Card className="p-4 mb-6">
+              <h3 className="font-semibold mb-3">Quick Actions</h3>
+              <div className="flex gap-2 flex-wrap">
+                <Button size="sm" onClick={startOnboarding}>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Onboard Client
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setSidebarView("properties"); openNewProperty() }}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Property
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setSidebarView("analytics")}>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  View Analytics
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setSidebarView("billing")}>
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Billing
+                </Button>
+              </div>
+            </Card>
+
+            <div className="grid grid-cols-2 gap-6">
+              {/* Today's Inspections */}
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Today&apos;s Inspections
+                  </h3>
+                  <Badge variant="secondary">{dashboardData.todayInspections.length}</Badge>
+                </div>
+                {dashboardData.todayInspections.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">No inspections scheduled for today</p>
+                ) : (
+                  <div className="space-y-2">
+                    {dashboardData.todayInspections.map((inspection) => (
+                      <div
+                        key={inspection.id}
+                        className="flex items-center justify-between p-3 bg-muted rounded-lg hover:bg-muted/80 cursor-pointer"
+                        onClick={() => {
+                          const prop = properties.find(p => p.name === inspection.property_name)
+                          if (prop) {
+                            setSelectedProperty(prop)
+                            setSidebarView("properties")
+                            setActiveTab("checklists")
+                          }
+                        }}
+                      >
+                        <div>
+                          <p className="font-medium">{inspection.property_name}</p>
+                          <p className="text-sm text-muted-foreground">{inspection.template_name}</p>
+                        </div>
+                        <Badge className={getStatusColor(inspection.status)}>{inspection.status}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Card>
+
+              {/* Pending Requests */}
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Pending Client Requests
+                  </h3>
+                  <Badge variant="secondary">{dashboardData.pendingRequests.length}</Badge>
+                </div>
+                {dashboardData.pendingRequests.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">No pending requests</p>
+                ) : (
+                  <div className="space-y-2">
+                    {dashboardData.pendingRequests.map((request) => (
+                      <div
+                        key={request.id}
+                        className="flex items-center justify-between p-3 bg-muted rounded-lg hover:bg-muted/80 cursor-pointer"
+                        onClick={() => {
+                          const prop = properties.find(p => p.name === request.property_name)
+                          if (prop) {
+                            setSelectedProperty(prop)
+                            setSidebarView("properties")
+                            setActiveTab("special")
+                          }
+                        }}
+                      >
+                        <div>
+                          <p className="font-medium">{request.title}</p>
+                          <p className="text-sm text-muted-foreground">{request.property_name}</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Card>
+            </div>
+
+            {/* Overdue Work Orders */}
+            {dashboardData.overdueWorkOrders.length > 0 && (
+              <Card className="p-4 mt-6 border-red-200 bg-red-50">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold flex items-center gap-2 text-red-700">
+                    <AlertTriangle className="h-4 w-4" />
+                    Overdue Work Orders
+                  </h3>
+                  <Badge variant="destructive">{dashboardData.overdueWorkOrders.length}</Badge>
+                </div>
+                <div className="space-y-2">
+                  {dashboardData.overdueWorkOrders.map((wo) => (
+                    <div
+                      key={wo.id}
+                      className="flex items-center justify-between p-3 bg-white rounded-lg border border-red-100 hover:border-red-200 cursor-pointer"
+                      onClick={() => {
+                        const prop = properties.find(p => p.name === wo.property_name)
+                        if (prop) {
+                          setSelectedProperty(prop)
+                          setSidebarView("properties")
+                          setActiveTab("maintenance")
+                        }
+                      }}
+                    >
+                      <div>
+                        <p className="font-medium">{wo.title}</p>
+                        <p className="text-sm text-muted-foreground">{wo.property_name}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className={getPriorityColor(wo.priority)}>{wo.priority}</Badge>
+                        <span className="text-sm text-red-600 font-medium">{wo.days_old}d old</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+          </div>
+        ) : sidebarView === "settings" ? (
           <div className="p-6">
             <h2 className="text-2xl font-semibold mb-6">Service Plans & Settings</h2>
             <ServicesTab selectedProperty={null} />
