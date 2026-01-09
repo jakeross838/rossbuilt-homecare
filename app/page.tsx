@@ -752,6 +752,13 @@ export default function AdminDashboard() {
     return date < today
   }
 
+  const getSizeCategory = (sqft: number | undefined | null) => {
+    if (!sqft) return null
+    if (sqft < 2000) return { label: "Small", color: "bg-slate-100 text-slate-700" }
+    if (sqft <= 3500) return { label: "Medium", color: "bg-blue-100 text-blue-700" }
+    return { label: "Large", color: "bg-amber-100 text-amber-700" }
+  }
+
   // Template management
   function openNewTemplate() {
     setEditingTemplate(null)
@@ -954,9 +961,20 @@ export default function AdminDashboard() {
                           <Building2 className="h-4 w-4 flex-shrink-0" />
                           <div className="min-w-0">
                             <p className="font-medium truncate">{prop.name}</p>
-                            <p className={`text-xs truncate ${selectedProperty?.id === prop.id ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                              {prop.city}, {prop.state}
-                            </p>
+                            <div className={`text-xs flex items-center gap-1.5 ${selectedProperty?.id === prop.id ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                              <span className="truncate">{prop.city}, {prop.state}</span>
+                              {prop.sqft && (
+                                <>
+                                  <span>•</span>
+                                  <span>{prop.sqft.toLocaleString()} sqft</span>
+                                  {getSizeCategory(prop.sqft) && (
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${selectedProperty?.id === prop.id ? "bg-primary-foreground/20 text-primary-foreground" : getSizeCategory(prop.sqft)?.color}`}>
+                                      {getSizeCategory(prop.sqft)?.label}
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </div>
                         </button>
                         <div className={`flex gap-1 transition-opacity ${
@@ -1333,7 +1351,19 @@ export default function AdminDashboard() {
                 <MapPin className="h-4 w-4" />
                 {selectedProperty.address}, {selectedProperty.city}, {selectedProperty.state} {selectedProperty.zip}
               </p>
-              <Badge variant="outline" className="mt-2">{selectedProperty.type}</Badge>
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <Badge variant="outline">{selectedProperty.type}</Badge>
+                {selectedProperty.sqft && (
+                  <>
+                    <Badge variant="outline">{selectedProperty.sqft.toLocaleString()} sqft</Badge>
+                    {getSizeCategory(selectedProperty.sqft) && (
+                      <Badge className={getSizeCategory(selectedProperty.sqft)?.color}>
+                        {getSizeCategory(selectedProperty.sqft)?.label}
+                      </Badge>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Tabs */}
