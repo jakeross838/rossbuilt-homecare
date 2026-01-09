@@ -2383,8 +2383,7 @@ export default function AdminDashboard() {
                       const tierColors: Record<number, string> = {
                         1: "border-slate-300 bg-slate-50",
                         2: "border-blue-300 bg-blue-50",
-                        3: "border-amber-300 bg-amber-50",
-                        4: "border-purple-300 bg-purple-50"
+                        3: "border-amber-300 bg-amber-50"
                       }
                       return (
                         <button

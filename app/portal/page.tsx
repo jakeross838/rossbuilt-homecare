@@ -285,8 +285,8 @@ export default function ClientPortal() {
 
   // Tier level helpers
   const tierLevel = selectedProperty?.current_plan?.tier_level || 0
-  const isPremierOrAbove = tierLevel >= 3  // Tier 3 (Premier) and Tier 4 (Estate) get owner visit scheduling
-  const isPremiumOrAbove = tierLevel >= 2
+  const isPremierTier = tierLevel === 3  // Tier 3 (Premier) gets owner visit scheduling
+  const isCompleteOrAbove = tierLevel >= 2
 
   // Tier info for display
   const TIER_INFO: Record<number, { tagline: string; serviceModel: string; icon: React.ElementType; color: string; bgColor: string }> = {
@@ -310,13 +310,6 @@ export default function ClientPortal() {
       icon: Star,
       color: "text-amber-600",
       bgColor: "bg-amber-100"
-    },
-    4: {
-      tagline: "Maximum Coverage",
-      serviceModel: "2-3x weekly visits, all services included",
-      icon: Star,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100"
     }
   }
 
@@ -493,7 +486,7 @@ export default function ClientPortal() {
                   <Wrench className="h-4 w-4 mr-2" />
                   Maintenance ({workOrders.filter(w => w.status !== 'completed').length})
                 </TabsTrigger>
-                {isPremierOrAbove && (
+                {isPremierTier && (
                   <TabsTrigger value="visits">
                     <Calendar className="h-4 w-4 mr-2" />
                     My Visits ({ownerVisits.length})
@@ -684,7 +677,7 @@ export default function ClientPortal() {
               </TabsContent>
 
               {/* Visits Tab (Premier and Estate tiers) */}
-              {isPremierOrAbove && (
+              {isPremierTier && (
                 <TabsContent value="visits">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-semibold">Scheduled Visits</h3>
@@ -806,17 +799,6 @@ export default function ClientPortal() {
                 </p>
               </div>
             )}
-            {tierLevel === 4 && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
-                <div className="flex items-center gap-2 text-purple-700 text-sm font-medium">
-                  <Star className="h-4 w-4" />
-                  Maximum Coverage
-                </div>
-                <p className="text-xs text-purple-600 mt-1">
-                  We'll take care of everything. All services included in your plan.
-                </p>
-              </div>
-            )}
 
             <div>
               <label className="text-sm font-medium">What needs attention? *</label>
@@ -869,7 +851,7 @@ export default function ClientPortal() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {isPremiumOrAbove
+              {isCompleteOrAbove
                 ? "We'll take care of coordinating the repair. You'll receive updates as we progress."
                 : "We'll document the issue and send you a report with our recommendations."}
             </p>

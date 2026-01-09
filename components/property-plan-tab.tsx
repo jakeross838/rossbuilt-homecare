@@ -70,15 +70,6 @@ const PLAN_INFO: Record<number, {
     bgColor: "bg-amber-50",
     borderColor: "border-amber-300",
     icon: Star
-  },
-  4: {
-    tagline: "Maximum Coverage",
-    serviceModel: "2-3x weekly visits, all services included",
-    bestFor: "Larger properties needing frequent attention",
-    color: "text-purple-700",
-    bgColor: "bg-purple-50",
-    borderColor: "border-purple-300",
-    icon: Star
   }
 }
 
@@ -206,49 +197,6 @@ const TIER_FEATURES: Record<number, { category: string; icon: React.ElementType;
         "All major appliances tested",
         "Pool/spa equipment check",
         "Full systems inspection"
-      ]
-    }
-  ],
-  // TIER 4: MAXIMUM COVERAGE - Most frequent visits
-  4: [
-    {
-      category: "Everything in Premier, Plus",
-      icon: Star,
-      items: [
-        "2-3x weekly property visits",
-        "More eyes on your property",
-        "Hurricane prep included",
-        "Priority scheduling"
-      ],
-      highlight: true
-    },
-    {
-      category: "All-Inclusive",
-      icon: Calendar,
-      items: [
-        "All arrival/departure services",
-        "Vendor coordination included",
-        "No additional fees",
-        "One simple monthly price"
-      ],
-      highlight: true
-    },
-    {
-      category: "Coverage Benefits",
-      icon: Shield,
-      items: [
-        "Most frequent monitoring",
-        "Issues caught faster",
-        "Coordination fee waived"
-      ]
-    },
-    {
-      category: "Complete Protection",
-      icon: Home,
-      items: [
-        "Storm prep and assessment",
-        "Photo documentation",
-        "Worry-free ownership"
       ]
     }
   ]
@@ -383,8 +331,8 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
         })}
       </div>
 
-      {/* Upgrade Prompt for non-Estate tiers */}
-      {currentPlan.tier_level < 4 && (
+      {/* Upgrade Prompt for lower tiers */}
+      {currentPlan.tier_level < 3 && (
         <Card className="p-5 bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -395,12 +343,10 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
                 <h4 className="font-semibold text-amber-900">
                   {currentPlan.tier_level === 1 && "Want Us to Handle Repairs Too?"}
                   {currentPlan.tier_level === 2 && "Want Weekly Visits & Arrival Services?"}
-                  {currentPlan.tier_level === 3 && "Need More Frequent Visits?"}
                 </h4>
                 <p className="text-sm text-amber-700">
                   {currentPlan.tier_level === 1 && "Upgrade to Complete Care — we coordinate all repairs for you"}
                   {currentPlan.tier_level === 2 && "Upgrade to Premier — weekly inspections, unlimited arrival/departure prep"}
-                  {currentPlan.tier_level === 3 && "Upgrade to Maximum Coverage — 2-3x weekly visits, all services included"}
                 </p>
               </div>
             </div>

@@ -42,6 +42,8 @@ interface ServicePlan {
   tier_level: number
   description: string
   monthly_base_price: number | null
+  price_small: number | null
+  price_medium: number | null
   price_large: number | null
   inspection_frequency: string
   features: string[]
@@ -89,22 +91,25 @@ const BILLING_TYPE_INFO: Record<string, { label: string; description: string; co
 const TIER_COLORS: Record<number, { border: string; bg: string; accent: string }> = {
   1: { border: "border-gray-300", bg: "bg-gradient-to-br from-gray-50 to-gray-100", accent: "text-gray-700" },
   2: { border: "border-blue-300", bg: "bg-gradient-to-br from-blue-50 to-blue-100", accent: "text-blue-700" },
-  3: { border: "border-amber-300", bg: "bg-gradient-to-br from-amber-50 to-amber-100", accent: "text-amber-700" },
-  4: { border: "border-purple-300", bg: "bg-gradient-to-br from-purple-50 to-purple-100", accent: "text-purple-700" }
+  3: { border: "border-amber-300", bg: "bg-gradient-to-br from-amber-50 to-amber-100", accent: "text-amber-700" }
 }
 
 const TIER_BADGES: Record<number, string> = {
   1: "bg-gray-600",
   2: "bg-blue-600",
-  3: "bg-amber-500",
-  4: "bg-purple-600"
+  3: "bg-amber-500"
 }
 
 const TIER_SUBTITLES: Record<number, string> = {
   1: "Check & Report",
   2: "Check & Coordinate",
-  3: "Weekly Protection",
-  4: "Maximum Coverage"
+  3: "Weekly Protection"
+}
+
+const SQFT_RANGES = {
+  small: { label: "Under 2,000 sqft", max: 2000 },
+  medium: { label: "2,000 - 3,500 sqft", min: 2000, max: 3500 },
+  large: { label: "3,500+ sqft", min: 3500 }
 }
 
 export function ServicesTab({ selectedProperty, onPropertyPlanChange }: ServicesTabProps) {
@@ -113,7 +118,7 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
   const [loading, setLoading] = useState(true)
   const [activeSubTab, setActiveSubTab] = useState("plans")
   const [expandedBillingType, setExpandedBillingType] = useState<string | null>("managed_markup")
-  const [propertySize, setPropertySize] = useState<"medium" | "large">("medium")
+  const [propertySize, setPropertySize] = useState<"small" | "medium" | "large">("medium")
 
   // Dialog states
   const [showAssignPlanDialog, setShowAssignPlanDialog] = useState(false)
@@ -321,24 +326,34 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
             <span className="text-sm text-muted-foreground">Property Size:</span>
             <div className="flex rounded-lg border overflow-hidden">
               <button
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  propertySize === "small"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background hover:bg-muted"
+                }`}
+                onClick={() => setPropertySize("small")}
+              >
+                Under 2,000 sqft
+              </button>
+              <button
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
                   propertySize === "medium"
                     ? "bg-primary text-primary-foreground"
                     : "bg-background hover:bg-muted"
                 }`}
                 onClick={() => setPropertySize("medium")}
               >
-                Medium (1,500-3,000 sqft)
+                2,000–3,500 sqft
               </button>
               <button
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
                   propertySize === "large"
                     ? "bg-primary text-primary-foreground"
                     : "bg-background hover:bg-muted"
                 }`}
                 onClick={() => setPropertySize("large")}
               >
-                Large/Luxury (3,000+ sqft)
+                3,500+ sqft
               </button>
             </div>
           </div>
@@ -352,23 +367,19 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                     <th className="text-left p-4 font-medium text-muted-foreground w-1/5"></th>
                     {plans.sort((a, b) => a.tier_level - b.tier_level).map((plan) => {
                       const colors = TIER_COLORS[plan.tier_level]
-                      const price = propertySize === "large" && plan.price_large
-                        ? plan.price_large
-                        : plan.monthly_base_price
+                      const price = propertySize === "small" ? plan.price_small
+                        : propertySize === "large" ? plan.price_large
+                        : plan.price_medium
                       return (
-                        <th key={plan.id} className={`p-4 text-center ${colors.bg}`}>
+                        <th key={plan.id} className={`p-4 text-center ${colors?.bg || ''}`}>
                           <div className="flex flex-col items-center gap-1">
                             {plan.tier_level === 3 && <Star className="h-5 w-5 text-amber-500 fill-amber-500" />}
-                            {plan.tier_level === 4 && <Star className="h-5 w-5 text-purple-500 fill-purple-500" />}
                             <span className="font-bold text-lg">{plan.name}</span>
                             <span className="text-xs font-medium mt-1 text-muted-foreground">
                               {TIER_SUBTITLES[plan.tier_level]}
                             </span>
                             {price && (
                               <span className="text-2xl font-bold mt-1">${price}<span className="text-sm font-normal text-muted-foreground">/mo</span></span>
-                            )}
-                            {plan.tier_level === 4 && !price && (
-                              <span className="text-xl font-bold mt-1">Custom</span>
                             )}
                             {currentPlan?.id === plan.id && (
                               <Badge className="bg-primary mt-1">Current Plan</Badge>
@@ -382,7 +393,7 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                 <tbody>
                   {/* Inspections */}
                   <tr className="bg-primary/10">
-                    <td colSpan={5} className="p-3 font-semibold text-primary text-sm">
+                    <td colSpan={4} className="p-3 font-semibold text-primary text-sm">
                       Inspections
                     </td>
                   </tr>
@@ -391,32 +402,28 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                     <td className="p-4 text-center text-sm">Every 14 days</td>
                     <td className="p-4 text-center text-sm">Every 14 days</td>
                     <td className="p-4 text-center text-sm font-medium text-amber-700">Weekly</td>
-                    <td className="p-4 text-center text-sm font-medium text-purple-700">2-3x Weekly</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
                     <td className="p-4 font-medium">Inspection Type</td>
                     <td className="p-4 text-center text-sm">Quick Check</td>
                     <td className="p-4 text-center text-sm">Standard + Quick</td>
                     <td className="p-4 text-center text-sm">Standard + Quick</td>
-                    <td className="p-4 text-center text-sm">Full Range</td>
                   </tr>
                   <tr className="border-b">
                     <td className="p-4 font-medium">Quarterly Deep Inspection</td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
 
                   {/* Response */}
                   <tr className="bg-slate-100">
-                    <td colSpan={5} className="p-3 font-semibold text-slate-700 text-sm">
+                    <td colSpan={4} className="p-3 font-semibold text-slate-700 text-sm">
                       Response Time
                     </td>
                   </tr>
                   <tr className="border-b">
                     <td className="p-4 font-medium">Issue Alerts</td>
-                    <td className="p-4 text-center text-sm">Same day</td>
                     <td className="p-4 text-center text-sm">Same day</td>
                     <td className="p-4 text-center text-sm">Same day</td>
                     <td className="p-4 text-center text-sm">Same day</td>
@@ -426,12 +433,11 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                     <td className="p-4 text-center text-sm text-muted-foreground">You handle</td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
 
                   {/* Services */}
                   <tr className="bg-blue-50">
-                    <td colSpan={5} className="p-3 font-semibold text-blue-800 text-sm">
+                    <td colSpan={4} className="p-3 font-semibold text-blue-800 text-sm">
                       Services Included
                     </td>
                   </tr>
@@ -440,13 +446,11 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center text-sm">1x/month</td>
                     <td className="p-4 text-center text-sm font-medium text-green-700">Unlimited</td>
-                    <td className="p-4 text-center text-sm font-medium text-green-700">Unlimited</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
                     <td className="p-4 font-medium">Post-Departure Service</td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center text-sm">1x/month</td>
-                    <td className="p-4 text-center text-sm font-medium text-green-700">Unlimited</td>
                     <td className="p-4 text-center text-sm font-medium text-green-700">Unlimited</td>
                   </tr>
                   <tr className="border-b">
@@ -454,19 +458,17 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                     <td className="p-4 text-center text-sm text-muted-foreground">Recommendations</td>
                     <td className="p-4 text-center text-sm">We schedule</td>
                     <td className="p-4 text-center text-sm font-medium">Full management</td>
-                    <td className="p-4 text-center text-sm font-medium text-purple-700">Full + oversight</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
                     <td className="p-4 font-medium">Minor Maintenance</td>
                     <td className="p-4 text-center text-sm text-muted-foreground">Report only</td>
                     <td className="p-4 text-center text-sm">Basic</td>
                     <td className="p-4 text-center text-sm">&lt;$75 included</td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
 
                   {/* Storm Services */}
                   <tr className="bg-amber-50">
-                    <td colSpan={5} className="p-3 font-semibold text-amber-800 text-sm">
+                    <td colSpan={4} className="p-3 font-semibold text-amber-800 text-sm">
                       Storm Services
                     </td>
                   </tr>
@@ -474,35 +476,12 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                     <td className="p-4 font-medium">Storm Monitoring</td>
                     <td className="p-4 text-center text-sm">Alerts only</td>
                     <td className="p-4 text-center text-sm">+ Recommendations</td>
-                    <td className="p-4 text-center text-sm">+ 25% off prep</td>
-                    <td className="p-4 text-center text-sm font-medium text-green-700">Prep included</td>
+                    <td className="p-4 text-center text-sm">+ Discounted prep</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
                     <td className="p-4 font-medium">Post-Storm Assessment</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Add-on ($149)</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Add-on ($149)</td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center text-sm font-medium text-purple-700">Priority</td>
-                  </tr>
-
-                  {/* Additional Benefits */}
-                  <tr className="bg-purple-50">
-                    <td colSpan={5} className="p-3 font-semibold text-purple-800 text-sm">
-                      Additional Benefits
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 font-medium">Coordination Fee</td>
-                    <td className="p-4 text-center text-sm">Standard</td>
-                    <td className="p-4 text-center text-sm">Standard</td>
-                    <td className="p-4 text-center text-sm">Standard</td>
-                    <td className="p-4 text-center text-sm font-medium text-green-700">Waived</td>
-                  </tr>
-                  <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Quarterly Deep Inspection</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Add-on</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Add-on</td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
 
@@ -512,7 +491,6 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                     <td className="p-4 text-center text-xs text-muted-foreground">Insurance compliance & basic monitoring</td>
                     <td className="p-4 text-center text-xs text-muted-foreground">Hands-off owners who want issues handled</td>
                     <td className="p-4 text-center text-xs text-muted-foreground">Frequent visitors wanting peace of mind</td>
-                    <td className="p-4 text-center text-xs text-muted-foreground">Larger properties needing frequent attention</td>
                   </tr>
 
                   {/* Action Row */}

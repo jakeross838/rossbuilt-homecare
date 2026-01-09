@@ -137,11 +137,13 @@ export interface InspectionType {
 export interface ServicePlan {
   id: string
   name: string
-  tier_level: 1 | 2 | 3 | 4
+  tier_level: 1 | 2 | 3
   description: string
   monthly_base_price: number
+  price_small: number | null
+  price_medium: number | null
   price_large: number | null
-  inspection_frequency: 'weekly' | 'biweekly' | 'monthly' | 'multiple_weekly'
+  inspection_frequency: 'weekly' | 'biweekly' | 'monthly'
   features: string[]
   vendor_markup_percent: number
   hourly_rate: number
