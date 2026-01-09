@@ -20,12 +20,12 @@ import {
   MapPin, ChevronLeft, ChevronRight, Play, CheckCircle, Trash2,
   FileText, Clock, AlertCircle, X, Edit2, GripVertical, Users, Settings,
   Package, Truck, Camera, Image, DollarSign, TrendingUp, BarChart3, UserPlus,
-  LayoutDashboard, Bell, ArrowRight
+  LayoutDashboard, Bell, ArrowRight, FileBarChart, Eye, Copy
 } from "lucide-react"
 import { PhotoCapture } from "@/components/photo-capture"
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
 import { BillingTab } from "@/components/billing-tab"
-import { InspectionWalkthrough, ChecklistItemResult, ChecklistCompletion } from "@/components/inspection-walkthrough"
+import { InspectionWalkthrough, InspectionReport, ChecklistItemResult, ChecklistCompletion } from "@/components/inspection-walkthrough"
 
 // Types
 interface Client {
@@ -112,7 +112,20 @@ export default function AdminDashboard() {
 
   // Client management
   const [clients, setClients] = useState<Client[]>([])
-  const [sidebarView, setSidebarView] = useState<"dashboard" | "properties" | "clients" | "vendors" | "settings" | "analytics" | "billing">("dashboard")
+  const [sidebarView, setSidebarView] = useState<"dashboard" | "properties" | "clients" | "vendors" | "settings" | "analytics" | "billing" | "templates">("dashboard")
+
+  // Global templates state
+  const [globalTemplates, setGlobalTemplates] = useState<{
+    id: string
+    code: string
+    name: string
+    description: string
+    purpose: string
+    duration_minutes: number
+    checklist_template: { name: string; category: string; input_type: string; requires_photo?: boolean; options?: string[]; unit?: string; description?: string }[]
+    deliverables: string[]
+    is_active: boolean
+  }[]>([])
 
   // Dashboard state
   const [dashboardData, setDashboardData] = useState<{
@@ -176,10 +189,15 @@ export default function AdminDashboard() {
   const [newItemInputType, setNewItemInputType] = useState("checkbox")
   const [newItemRequiresPhoto, setNewItemRequiresPhoto] = useState(false)
 
+  // Report viewer state
+  const [showReportDialog, setShowReportDialog] = useState(false)
+  const [selectedCompletion, setSelectedCompletion] = useState<ChecklistCompletion | null>(null)
+
   useEffect(() => {
     fetchProperties()
     fetchClients()
     fetchDashboardData()
+    fetchGlobalTemplates()
   }, [])
 
   useEffect(() => {
@@ -235,6 +253,16 @@ export default function AdminDashboard() {
       const res = await fetch("/api/clients")
       const data = await res.json()
       setClients(Array.isArray(data) ? data : [])
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function fetchGlobalTemplates() {
+    try {
+      const res = await fetch("/api/inspection-types")
+      const data = await res.json()
+      setGlobalTemplates(Array.isArray(data) ? data : [])
     } catch (e) {
       console.error(e)
     }
@@ -919,6 +947,15 @@ export default function AdminDashboard() {
               <Truck className="h-3.5 w-3.5" />
               Vendors
             </button>
+            <button
+              onClick={() => setSidebarView("templates")}
+              className={`flex-1 text-xs py-1.5 px-1.5 rounded-md transition-colors flex items-center justify-center gap-1 ${
+                sidebarView === "templates" ? "bg-background shadow-sm" : "hover:bg-background/50"
+              }`}
+            >
+              <Copy className="h-3.5 w-3.5" />
+              Templates
+            </button>
           </div>
         </div>
 
@@ -1073,6 +1110,16 @@ export default function AdminDashboard() {
             <p className="text-sm font-medium mb-1">Vendor Management</p>
             <p className="text-xs text-muted-foreground">
               View vendors in the main panel
+            </p>
+          </div>
+        )}
+
+        {sidebarView === "templates" && (
+          <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+            <Copy className="h-10 w-10 mb-3 text-muted-foreground" />
+            <p className="text-sm font-medium mb-1">Inspection Templates</p>
+            <p className="text-xs text-muted-foreground">
+              Create & manage reusable templates
             </p>
           </div>
         )}
@@ -1338,6 +1385,103 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-semibold mb-6">Billing & Invoices</h2>
             <BillingTab selectedProperty={null} />
           </div>
+        ) : sidebarView === "templates" ? (
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-2xl font-semibold">Inspection Templates</h2>
+                <p className="text-muted-foreground">Reusable templates that can be copied to any property</p>
+              </div>
+              <Button onClick={() => {
+                // TODO: Open new template dialog
+              }}>
+                <Plus className="h-4 w-4 mr-2" />
+                New Template
+              </Button>
+            </div>
+
+            {globalTemplates.length === 0 ? (
+              <Card className="p-8 text-center">
+                <Copy className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                <p className="text-muted-foreground mb-2">No templates yet</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Create inspection templates that can be reused across all properties
+                </p>
+              </Card>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {globalTemplates.map((template) => (
+                  <Card key={template.id} className="p-4 hover:border-primary/50 hover:shadow-md transition-all">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold">{template.name}</h3>
+                        <Badge variant="outline" className="mt-1">{template.code}</Badge>
+                      </div>
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="ghost" title="Edit template">
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    {template.description && (
+                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{template.description}</p>
+                    )}
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {template.duration_minutes} min
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <ClipboardCheck className="h-3 w-3" />
+                        {template.checklist_template?.length || 0} items
+                      </span>
+                    </div>
+                    {template.checklist_template && template.checklist_template.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {template.checklist_template.slice(0, 3).map((item, i) => (
+                          <span key={i} className="text-xs bg-muted px-2 py-0.5 rounded">{item.name}</span>
+                        ))}
+                        {template.checklist_template.length > 3 && (
+                          <span className="text-xs text-muted-foreground">+{template.checklist_template.length - 3} more</span>
+                        )}
+                      </div>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        // Copy template to selected property
+                        if (!selectedProperty) {
+                          alert('Please select a property first to copy this template to.')
+                          return
+                        }
+                        const newChecklist = {
+                          name: template.name,
+                          frequency: 'monthly',
+                          items: template.checklist_template || []
+                        }
+                        fetch('/api/checklists', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            ...newChecklist,
+                            property_id: selectedProperty.id
+                          })
+                        }).then(() => {
+                          fetchPropertyData(selectedProperty.id)
+                          alert(`Template "${template.name}" copied to ${selectedProperty.name}`)
+                        })
+                      }}
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy to Property
+                    </Button>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
         ) : !selectedProperty ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-muted-foreground">Select a property</p>
@@ -1388,6 +1532,10 @@ export default function AdminDashboard() {
                 <TabsTrigger value="plan">
                   <Package className="h-4 w-4 mr-2" />
                   Plan
+                </TabsTrigger>
+                <TabsTrigger value="reports">
+                  <FileBarChart className="h-4 w-4 mr-2" />
+                  Reports ({completions.filter(c => c.status === 'completed').length})
                 </TabsTrigger>
               </TabsList>
 
@@ -1887,6 +2035,91 @@ export default function AdminDashboard() {
                   selectedProperty={selectedProperty}
                   onPropertyPlanChange={() => fetchProperties()}
                 />
+              </TabsContent>
+
+              {/* Reports Tab */}
+              <TabsContent value="reports">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-semibold">Inspection Reports</h3>
+                </div>
+                {completions.filter(c => c.status === 'completed').length === 0 ? (
+                  <Card className="p-8 text-center">
+                    <FileBarChart className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                    <p className="text-muted-foreground mb-2">No completed inspections yet</p>
+                    <p className="text-sm text-muted-foreground">
+                      Reports will appear here after inspections are completed
+                    </p>
+                  </Card>
+                ) : (
+                  <div className="space-y-3">
+                    {completions
+                      .filter(c => c.status === 'completed')
+                      .sort((a, b) => new Date(b.completed_at || b.scheduled_date).getTime() - new Date(a.completed_at || a.scheduled_date).getTime())
+                      .map((completion) => {
+                        const template = checklists.find(cl => cl.id === completion.template_id)
+                        const results = completion.results as ChecklistItemResult[] || []
+                        const issueCount = results.filter(r => r.status === 'issue').length
+                        const photoCount = results.reduce((sum, r) => sum + (r.photos?.length || 0), 0)
+
+                        return (
+                          <Card
+                            key={completion.id}
+                            className="p-4 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer"
+                            onClick={() => {
+                              setSelectedCompletion(completion)
+                              setShowReportDialog(true)
+                            }}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="font-medium">{template?.name || 'Inspection'}</span>
+                                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                    Completed
+                                  </Badge>
+                                  {issueCount > 0 && (
+                                    <Badge variant="destructive">{issueCount} issue{issueCount > 1 ? 's' : ''}</Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                  {completion.completed_at
+                                    ? new Date(completion.completed_at).toLocaleDateString('en-US', {
+                                        weekday: 'short',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                      })
+                                    : completion.scheduled_date
+                                  }
+                                  {completion.completed_by && ` • by ${completion.completed_by}`}
+                                </p>
+                                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                  <span className="flex items-center gap-1">
+                                    <CheckCircle className="h-3 w-3" />
+                                    {results.filter(r => r.status === 'ok').length} passed
+                                  </span>
+                                  {photoCount > 0 && (
+                                    <span className="flex items-center gap-1">
+                                      <Camera className="h-3 w-3" />
+                                      {photoCount} photos
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <Button size="sm" variant="outline" onClick={(e) => {
+                                e.stopPropagation()
+                                setSelectedCompletion(completion)
+                                setShowReportDialog(true)
+                              }}>
+                                <Eye className="h-4 w-4 mr-1" />
+                                View Report
+                              </Button>
+                            </div>
+                          </Card>
+                        )
+                      })}
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>
@@ -2501,6 +2734,30 @@ export default function AdminDashboard() {
           if (selectedProperty) fetchPropertyData(selectedProperty.id)
         }}
       />
+
+      {/* Report View Dialog */}
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileBarChart className="h-5 w-5" />
+              Inspection Report
+            </DialogTitle>
+          </DialogHeader>
+          {selectedCompletion && (
+            <InspectionReport
+              completion={selectedCompletion}
+              results={(selectedCompletion.results as ChecklistItemResult[]) || []}
+              overallNotes={selectedCompletion.notes || ''}
+            />
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowReportDialog(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

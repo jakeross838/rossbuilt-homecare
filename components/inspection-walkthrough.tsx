@@ -897,7 +897,7 @@ export function InspectionWalkthrough({ completion, onComplete, onCancel }: Insp
 }
 
 // Report Component
-function InspectionReport({
+export function InspectionReport({
   completion,
   results,
   overallNotes
