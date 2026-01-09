@@ -42,6 +42,7 @@ interface ServicePlan {
   tier_level: number
   description: string
   monthly_base_price: number | null
+  price_large: number | null
   inspection_frequency: string
   features: string[]
   services: PlanService[]
@@ -88,13 +89,22 @@ const BILLING_TYPE_INFO: Record<string, { label: string; description: string; co
 const TIER_COLORS: Record<number, { border: string; bg: string; accent: string }> = {
   1: { border: "border-gray-300", bg: "bg-gradient-to-br from-gray-50 to-gray-100", accent: "text-gray-700" },
   2: { border: "border-blue-300", bg: "bg-gradient-to-br from-blue-50 to-blue-100", accent: "text-blue-700" },
-  3: { border: "border-amber-300", bg: "bg-gradient-to-br from-amber-50 to-amber-100", accent: "text-amber-700" }
+  3: { border: "border-amber-300", bg: "bg-gradient-to-br from-amber-50 to-amber-100", accent: "text-amber-700" },
+  4: { border: "border-purple-300", bg: "bg-gradient-to-br from-purple-50 to-purple-100", accent: "text-purple-700" }
 }
 
 const TIER_BADGES: Record<number, string> = {
   1: "bg-gray-600",
   2: "bg-blue-600",
-  3: "bg-amber-500"
+  3: "bg-amber-500",
+  4: "bg-purple-600"
+}
+
+const TIER_SUBTITLES: Record<number, string> = {
+  1: "Insurance Compliance",
+  2: "Full Protection",
+  3: "Premium Service",
+  4: "White Glove"
 }
 
 export function ServicesTab({ selectedProperty, onPropertyPlanChange }: ServicesTabProps) {
@@ -103,6 +113,7 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
   const [loading, setLoading] = useState(true)
   const [activeSubTab, setActiveSubTab] = useState("plans")
   const [expandedBillingType, setExpandedBillingType] = useState<string | null>("managed_markup")
+  const [propertySize, setPropertySize] = useState<"medium" | "large">("medium")
 
   // Dialog states
   const [showAssignPlanDialog, setShowAssignPlanDialog] = useState(false)
@@ -305,27 +316,59 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
             </div>
           </Card>
 
+          {/* Property Size Toggle */}
+          <div className="flex items-center justify-end gap-4 mb-4">
+            <span className="text-sm text-muted-foreground">Property Size:</span>
+            <div className="flex rounded-lg border overflow-hidden">
+              <button
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  propertySize === "medium"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background hover:bg-muted"
+                }`}
+                onClick={() => setPropertySize("medium")}
+              >
+                Medium (1,500-3,000 sqft)
+              </button>
+              <button
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  propertySize === "large"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background hover:bg-muted"
+                }`}
+                onClick={() => setPropertySize("large")}
+              >
+                Large/Luxury (3,000+ sqft)
+              </button>
+            </div>
+          </div>
+
           {/* Plans Comparison Table */}
           <Card className="overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left p-4 font-medium text-muted-foreground w-1/4"></th>
+                    <th className="text-left p-4 font-medium text-muted-foreground w-1/5"></th>
                     {plans.sort((a, b) => a.tier_level - b.tier_level).map((plan) => {
                       const colors = TIER_COLORS[plan.tier_level]
+                      const price = propertySize === "large" && plan.price_large
+                        ? plan.price_large
+                        : plan.monthly_base_price
                       return (
                         <th key={plan.id} className={`p-4 text-center ${colors.bg}`}>
                           <div className="flex flex-col items-center gap-1">
                             {plan.tier_level === 3 && <Star className="h-5 w-5 text-amber-500 fill-amber-500" />}
+                            {plan.tier_level === 4 && <Star className="h-5 w-5 text-purple-500 fill-purple-500" />}
                             <span className="font-bold text-lg">{plan.name}</span>
-                            <span className="text-xs font-medium mt-1">
-                              {plan.tier_level === 1 && 'Check & Report'}
-                              {plan.tier_level === 2 && 'Check, Report & Manage'}
-                              {plan.tier_level === 3 && 'Full Property Concierge'}
+                            <span className="text-xs font-medium mt-1 text-muted-foreground">
+                              {TIER_SUBTITLES[plan.tier_level]}
                             </span>
-                            {plan.monthly_base_price && (
-                              <span className="text-2xl font-bold mt-1">${plan.monthly_base_price}<span className="text-sm font-normal text-muted-foreground">/mo</span></span>
+                            {price && (
+                              <span className="text-2xl font-bold mt-1">${price}<span className="text-sm font-normal text-muted-foreground">/mo</span></span>
+                            )}
+                            {plan.tier_level === 4 && !price && (
+                              <span className="text-xl font-bold mt-1">Custom</span>
                             )}
                             {currentPlan?.id === plan.id && (
                               <Badge className="bg-primary mt-1">Current Plan</Badge>
@@ -337,159 +380,141 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Service Model - Key Differentiator */}
+                  {/* Inspections */}
                   <tr className="bg-primary/10">
-                    <td colSpan={4} className="p-3 font-semibold text-primary text-sm">
-                      Service Model
+                    <td colSpan={5} className="p-3 font-semibold text-primary text-sm">
+                      Inspections
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-4 font-medium">When issues are found</td>
-                    <td className="p-4 text-center text-sm">
-                      <span className="text-slate-600">We report to you</span>
-                      <p className="text-xs text-muted-foreground mt-1">You coordinate repairs</p>
-                    </td>
-                    <td className="p-4 text-center text-sm">
-                      <span className="text-blue-600 font-medium">We handle repairs</span>
-                      <p className="text-xs text-muted-foreground mt-1">Full coordination included</p>
-                    </td>
-                    <td className="p-4 text-center text-sm">
-                      <span className="text-amber-600 font-medium">We handle everything</span>
-                      <p className="text-xs text-muted-foreground mt-1">Repairs + any request</p>
-                    </td>
+                    <td className="p-4 font-medium">Frequency</td>
+                    <td className="p-4 text-center text-sm">Every 14 days</td>
+                    <td className="p-4 text-center text-sm">Every 14 days</td>
+                    <td className="p-4 text-center text-sm font-medium text-amber-700">Weekly</td>
+                    <td className="p-4 text-center text-sm font-medium text-purple-700">2-3x Weekly</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Vendor Coordination</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Recommendations only</td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 font-medium">Inspection Type</td>
+                    <td className="p-4 text-center text-sm">Quick Check</td>
+                    <td className="p-4 text-center text-sm">Standard + Quick</td>
+                    <td className="p-4 text-center text-sm">Standard + Quick</td>
+                    <td className="p-4 text-center text-sm">Full Range</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-4 font-medium">Concierge Requests</td>
+                    <td className="p-4 font-medium">Quarterly Deep Inspection</td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
 
-                  {/* Visit Details */}
+                  {/* Response */}
                   <tr className="bg-slate-100">
-                    <td colSpan={4} className="p-3 font-semibold text-slate-700 text-sm">
-                      Visit Schedule
+                    <td colSpan={5} className="p-3 font-semibold text-slate-700 text-sm">
+                      Response Time
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-4 font-medium">Inspection Frequency</td>
-                    <td className="p-4 text-center font-medium">Monthly</td>
-                    <td className="p-4 text-center font-medium">Bi-weekly</td>
-                    <td className="p-4 text-center font-medium">Bi-weekly</td>
+                    <td className="p-4 font-medium">Issue Alerts</td>
+                    <td className="p-4 text-center text-sm">Within 24 hours</td>
+                    <td className="p-4 text-center text-sm">Same day</td>
+                    <td className="p-4 text-center text-sm font-medium text-green-700">Real-time</td>
+                    <td className="p-4 text-center text-sm font-medium text-green-700">Real-time</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Visit Duration</td>
-                    <td className="p-4 text-center">15-20 min</td>
-                    <td className="p-4 text-center">45 min</td>
-                    <td className="p-4 text-center">60+ min</td>
+                    <td className="p-4 font-medium">Emergency Response</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Best effort</td>
+                    <td className="p-4 text-center text-sm">Priority</td>
+                    <td className="p-4 text-center text-sm font-medium">24/7 SLA</td>
+                    <td className="p-4 text-center text-sm font-medium text-purple-700">24/7 Priority</td>
                   </tr>
 
-                  {/* Inspection Scope */}
+                  {/* Services */}
                   <tr className="bg-blue-50">
-                    <td colSpan={4} className="p-3 font-semibold text-blue-800 text-sm">
-                      What We Inspect
+                    <td colSpan={5} className="p-3 font-semibold text-blue-800 text-sm">
+                      Services Included
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-4 font-medium">Interior Walkthrough</td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 font-medium">Pre-Arrival Service</td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center text-sm">1x/month</td>
+                    <td className="p-4 text-center text-sm font-medium text-green-700">Unlimited</td>
+                    <td className="p-4 text-center text-sm font-medium text-green-700">Unlimited</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Exterior Walkthrough</td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 font-medium">Post-Departure Service</td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center text-sm">1x/month</td>
+                    <td className="p-4 text-center text-sm font-medium text-green-700">Unlimited</td>
+                    <td className="p-4 text-center text-sm font-medium text-green-700">Unlimited</td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-4 font-medium">Photo Report</td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 font-medium">Vendor Coordination</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Recommendations</td>
+                    <td className="p-4 text-center text-sm">We schedule</td>
+                    <td className="p-4 text-center text-sm font-medium">Full management</td>
+                    <td className="p-4 text-center text-sm font-medium text-purple-700">Full + oversight</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Detailed Under-Sink Inspection</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 font-medium">Appliance Testing</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 font-medium">Minor Maintenance</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Report only</td>
                     <td className="p-4 text-center text-sm">Basic</td>
-                    <td className="p-4 text-center text-sm">Comprehensive</td>
-                  </tr>
-                  <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Attic/Crawlspace Inspection</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center text-sm">Quarterly</td>
-                  </tr>
-
-                  {/* Preventive Maintenance */}
-                  <tr className="bg-green-50">
-                    <td colSpan={4} className="p-3 font-semibold text-green-800 text-sm">
-                      Preventive Maintenance Included
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 font-medium">Run Water Fixtures</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                  </tr>
-                  <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Flush Toilets & Run Appliances</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 font-medium">HVAC Filter Replacement</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                  </tr>
-                  <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Smoke/CO Detector Batteries</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 font-medium">Seasonal Prep (Hurricane, etc.)</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 text-center text-sm">&lt;$75 included</td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
 
-                  {/* Premium Services */}
+                  {/* Storm Services */}
                   <tr className="bg-amber-50">
-                    <td colSpan={4} className="p-3 font-semibold text-amber-800 text-sm">
-                      Premium Services
+                    <td colSpan={5} className="p-3 font-semibold text-amber-800 text-sm">
+                      Storm Services
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-4 font-medium">Pre-Arrival Preparation</td>
+                    <td className="p-4 font-medium">Storm Monitoring</td>
+                    <td className="p-4 text-center text-sm">Alerts only</td>
+                    <td className="p-4 text-center text-sm">+ Recommendations</td>
+                    <td className="p-4 text-center text-sm">+ 25% off prep</td>
+                    <td className="p-4 text-center text-sm font-medium text-green-700">Prep included</td>
+                  </tr>
+                  <tr className="border-b bg-muted/30">
+                    <td className="p-4 font-medium">Post-Storm Assessment</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Add-on ($149)</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Add-on ($149)</td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 text-center text-sm font-medium text-purple-700">Priority</td>
+                  </tr>
+
+                  {/* Premium */}
+                  <tr className="bg-purple-50">
+                    <td colSpan={5} className="p-3 font-semibold text-purple-800 text-sm">
+                      Premium Features
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-4 font-medium">Dedicated Account Manager</td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                  </tr>
+                  <tr className="border-b bg-muted/30">
+                    <td className="p-4 font-medium">Concierge Services</td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-4 font-medium">Staff Coordination</td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
                   <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Post-Departure Securing</td>
+                    <td className="p-4 font-medium">Project Oversight</td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 font-medium">Custom Property Checklist</td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
@@ -498,9 +523,10 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                   {/* Best For */}
                   <tr className="bg-slate-50">
                     <td className="p-4 font-medium text-slate-600">Best For</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Budget-conscious owners who want eyes on their property</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Hands-off owners who want repairs handled</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Those wanting complete peace of mind</td>
+                    <td className="p-4 text-center text-xs text-muted-foreground">Insurance compliance & basic monitoring</td>
+                    <td className="p-4 text-center text-xs text-muted-foreground">Comprehensive protection without premium cost</td>
+                    <td className="p-4 text-center text-xs text-muted-foreground">Frequent visitors wanting hassle-free ownership</td>
+                    <td className="p-4 text-center text-xs text-muted-foreground">Luxury estates needing white-glove service</td>
                   </tr>
 
                   {/* Action Row */}

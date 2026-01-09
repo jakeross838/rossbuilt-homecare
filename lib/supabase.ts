@@ -104,3 +104,81 @@ export interface Inspection {
   property?: Property
   unit?: Unit
 }
+
+// Inspection Types
+export interface ChecklistItem {
+  name: string
+  category: string
+  input_type: 'checkbox' | 'text' | 'number' | 'dropdown' | 'condition'
+  options?: string[]
+  requires_photo?: boolean
+  description?: string
+  unit?: string
+}
+
+export interface InspectionType {
+  id: string
+  code: string
+  name: string
+  description: string
+  purpose: string
+  duration_minutes: number
+  checklist_template: ChecklistItem[]
+  deliverables: string[]
+  is_active: boolean
+  created_at: string
+  plan_inclusion?: {
+    frequency: string
+    included_count: number | null
+  } | null
+}
+
+// Service Plans
+export interface ServicePlan {
+  id: string
+  name: string
+  tier_level: 1 | 2 | 3 | 4
+  description: string
+  monthly_base_price: number
+  price_large: number | null
+  inspection_frequency: 'weekly' | 'biweekly' | 'monthly' | 'multiple_weekly'
+  features: string[]
+  vendor_markup_percent: number
+  hourly_rate: number
+  coordination_fee_waived: boolean
+  emergency_response_time: string
+  min_property_sqft: number | null
+  max_property_sqft: number | null
+  is_active: boolean
+  created_at: string
+}
+
+// Add-on Services
+export interface AddonService {
+  id: string
+  name: string
+  description: string
+  price: number
+  price_large: number | null
+  price_type: 'flat' | 'hourly' | 'per_visit' | 'monthly'
+  category: 'recurring' | 'one_time' | 'seasonal'
+  included_in_tiers: number[] | null
+  is_active: boolean
+  created_at: string
+  subscription?: {
+    start_date: string
+    end_date: string | null
+    is_active: boolean
+  } | null
+}
+
+// Property Add-on Subscription
+export interface PropertyAddon {
+  id: string
+  property_id: string
+  addon_id: string
+  start_date: string
+  end_date: string | null
+  is_active: boolean
+  created_at: string
+}
