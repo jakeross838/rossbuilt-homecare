@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Property ID and arrival date are required' }, { status: 400 })
   }
 
-  // Verify this property has a Luxury plan (tier_level = 3)
+  // Verify this property has Premier Protection (tier 3) or Estate Management (tier 4)
   const { data: property, error: propError } = await supabase
     .from('pm_properties')
     .select(`
@@ -69,9 +69,9 @@ export async function POST(request: Request) {
     ? property.current_plan[0]
     : property.current_plan
   const plan = planData as { id: string; tier_level: number; name: string } | null
-  if (!plan || plan.tier_level !== 3) {
+  if (!plan || plan.tier_level < 3) {
     return NextResponse.json({
-      error: 'Owner visit scheduling is only available for Luxury Care tier'
+      error: 'Owner visit scheduling is only available for Premier Protection and Estate Management tiers'
     }, { status: 403 })
   }
 

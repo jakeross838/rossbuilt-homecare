@@ -285,31 +285,38 @@ export default function ClientPortal() {
 
   // Tier level helpers
   const tierLevel = selectedProperty?.current_plan?.tier_level || 0
-  const isLuxuryTier = tierLevel === 3
+  const isPremierOrAbove = tierLevel >= 3  // Tier 3 (Premier) and Tier 4 (Estate) get owner visit scheduling
   const isPremiumOrAbove = tierLevel >= 2
 
   // Tier info for display
   const TIER_INFO: Record<number, { tagline: string; serviceModel: string; icon: React.ElementType; color: string; bgColor: string }> = {
     1: {
-      tagline: "Check & Report",
+      tagline: "Insurance Compliance",
       serviceModel: "We inspect and report — you coordinate repairs",
       icon: Eye,
       color: "text-slate-600",
       bgColor: "bg-slate-100"
     },
     2: {
-      tagline: "Check, Report & Manage",
+      tagline: "Full Protection",
       serviceModel: "We handle all repair coordination for you",
       icon: Shield,
       color: "text-blue-600",
       bgColor: "bg-blue-100"
     },
     3: {
-      tagline: "Full Property Concierge",
-      serviceModel: "Complete care — repairs, visits, any request",
+      tagline: "Premium Service",
+      serviceModel: "Weekly inspections, unlimited services, 24/7 response",
       icon: Star,
       color: "text-amber-600",
       bgColor: "bg-amber-100"
+    },
+    4: {
+      tagline: "White Glove",
+      serviceModel: "2-3x weekly visits, full estate management",
+      icon: Sparkles,
+      color: "text-purple-600",
+      bgColor: "bg-purple-100"
     }
   }
 
@@ -486,7 +493,7 @@ export default function ClientPortal() {
                   <Wrench className="h-4 w-4 mr-2" />
                   Maintenance ({workOrders.filter(w => w.status !== 'completed').length})
                 </TabsTrigger>
-                {isLuxuryTier && (
+                {isPremierOrAbove && (
                   <TabsTrigger value="visits">
                     <Calendar className="h-4 w-4 mr-2" />
                     My Visits ({ownerVisits.length})
@@ -676,8 +683,8 @@ export default function ClientPortal() {
                 )}
               </TabsContent>
 
-              {/* Visits Tab (Luxury tier only) */}
-              {isLuxuryTier && (
+              {/* Visits Tab (Premier and Estate tiers) */}
+              {isPremierOrAbove && (
                 <TabsContent value="visits">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-semibold">Scheduled Visits</h3>
@@ -687,7 +694,7 @@ export default function ClientPortal() {
                     </Button>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    As a Luxury Care member, you receive pre-arrival and post-departure services.
+                    As a {tierLevel === 4 ? 'Estate Management' : 'Premier Protection'} member, you receive unlimited pre-arrival and post-departure services.
                     Schedule your visits and we'll prepare your property for your arrival.
                   </p>
                   {ownerVisits.length === 0 ? (
@@ -796,6 +803,17 @@ export default function ClientPortal() {
                 </div>
                 <p className="text-xs text-amber-600 mt-1">
                   We'll handle everything — repairs, vendor coordination, and any follow-up. No action needed from you.
+                </p>
+              </div>
+            )}
+            {tierLevel === 4 && (
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-purple-700 text-sm font-medium">
+                  <Sparkles className="h-4 w-4" />
+                  White Glove Service
+                </div>
+                <p className="text-xs text-purple-600 mt-1">
+                  Priority handling with your dedicated estate manager. We'll take care of everything.
                 </p>
               </div>
             )}
