@@ -53,6 +53,7 @@ interface Client {
 
 interface WorkOrder {
   id: string
+  property_id: string
   title: string
   description: string
   category: string
@@ -83,6 +84,7 @@ interface InspectionPhoto {
 
 interface SpecialRequest {
   id: string
+  property_id: string
   title: string
   description: string
   status: string

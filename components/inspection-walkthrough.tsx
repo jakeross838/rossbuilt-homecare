@@ -36,7 +36,7 @@ export interface ChecklistItemResult {
   photos: { id: string; url: string }[]
 }
 
-interface ChecklistCompletion {
+export interface ChecklistCompletion {
   id: string
   template_id: string
   property_id: string
@@ -51,6 +51,7 @@ interface ChecklistCompletion {
   template?: {
     id: string
     name: string
+    frequency?: string
     items: ChecklistItemTemplate[]
   }
   property?: {

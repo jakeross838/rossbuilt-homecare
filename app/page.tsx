@@ -25,7 +25,7 @@ import {
 import { PhotoCapture } from "@/components/photo-capture"
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
 import { BillingTab } from "@/components/billing-tab"
-import { InspectionWalkthrough } from "@/components/inspection-walkthrough"
+import { InspectionWalkthrough, ChecklistItemResult, ChecklistCompletion } from "@/components/inspection-walkthrough"
 
 // Types
 interface Client {
@@ -88,18 +88,7 @@ interface ChecklistTemplate {
   }[]
 }
 
-interface ChecklistCompletion {
-  id: string
-  template_id: string
-  property_id: string
-  scheduled_date: string
-  started_at: string | null
-  completed_at: string | null
-  status: string
-  results: { name: string; status: string; notes: string; category: string }[]
-  notes: string
-  template?: ChecklistTemplate
-}
+// ChecklistCompletion is imported from inspection-walkthrough
 
 interface InspectionPhoto {
   id: string

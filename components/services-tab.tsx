@@ -117,7 +117,7 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
     estimated_duration_minutes: 60,
     requires_vendor: true,
     is_add_on: false,
-    billing_type: "managed_markup" as const,
+    billing_type: "managed_markup" as 'managed_markup' | 'schedule_only' | 'direct_task',
     materials_billable: false
   })
 
