@@ -799,9 +799,9 @@ export default function AdminDashboard() {
                   <FileText className="h-4 w-4 mr-2" />
                   Special Requests ({specialRequests.filter(s => s.status === 'pending').length})
                 </TabsTrigger>
-                <TabsTrigger value="services">
+                <TabsTrigger value="plan">
                   <Package className="h-4 w-4 mr-2" />
-                  Services
+                  Plan
                 </TabsTrigger>
               </TabsList>
 
@@ -1296,7 +1296,7 @@ export default function AdminDashboard() {
               </TabsContent>
 
               {/* Services Tab - Property's Plan */}
-              <TabsContent value="services">
+              <TabsContent value="plan">
                 <PropertyPlanTab
                   selectedProperty={selectedProperty}
                   onPropertyPlanChange={() => fetchProperties()}
