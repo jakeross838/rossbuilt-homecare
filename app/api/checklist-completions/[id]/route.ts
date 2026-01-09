@@ -2,6 +2,36 @@ import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { notifyInspectionComplete } from '@/lib/notifications'
 
+/**
+ * Calculate the next inspection date based on frequency
+ */
+function calculateNextInspectionDate(frequency: string, fromDate: Date = new Date()): Date {
+  const date = new Date(fromDate)
+  date.setHours(0, 0, 0, 0)
+
+  switch (frequency) {
+    case 'weekly':
+      date.setDate(date.getDate() + 7)
+      break
+    case 'biweekly':
+      date.setDate(date.getDate() + 14)
+      break
+    case 'monthly':
+      date.setMonth(date.getMonth() + 1)
+      break
+    case 'quarterly':
+      date.setMonth(date.getMonth() + 3)
+      break
+    case 'yearly':
+      date.setFullYear(date.getFullYear() + 1)
+      break
+    default:
+      date.setMonth(date.getMonth() + 1) // Default to monthly
+  }
+
+  return date
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -64,9 +94,62 @@ export async function PATCH(
     if (completion) {
       // Update property's last_inspection_date
       const completedDate = completedAt.split('T')[0]
+
+      // Get property with plan info for scheduling next inspection
+      const { data: propertyWithPlan } = await supabase
+        .from('pm_properties')
+        .select('id, current_plan_id, current_plan:pm_service_plans(inspection_frequency)')
+        .eq('id', completion.property_id)
+        .single()
+
+      // Calculate and schedule next inspection
+      let nextInspectionDate: string | null = null
+      if (propertyWithPlan?.current_plan_id) {
+        const planData = Array.isArray(propertyWithPlan.current_plan)
+          ? propertyWithPlan.current_plan[0]
+          : propertyWithPlan.current_plan
+        const frequency = (planData as { inspection_frequency?: string })?.inspection_frequency || 'monthly'
+
+        const nextDate = calculateNextInspectionDate(frequency, new Date(completedDate))
+        nextInspectionDate = nextDate.toISOString().split('T')[0]
+
+        // Auto-create next scheduled inspection
+        const { data: existingScheduled } = await supabase
+          .from('pm_checklist_completions')
+          .select('id')
+          .eq('property_id', completion.property_id)
+          .eq('status', 'scheduled')
+          .limit(1)
+
+        // Only create if no other scheduled inspections exist
+        if (!existingScheduled || existingScheduled.length === 0) {
+          // Get the template used for this inspection
+          const { data: completionWithTemplate } = await supabase
+            .from('pm_checklist_completions')
+            .select('template_id')
+            .eq('id', id)
+            .single()
+
+          if (completionWithTemplate?.template_id) {
+            await supabase
+              .from('pm_checklist_completions')
+              .insert({
+                template_id: completionWithTemplate.template_id,
+                property_id: completion.property_id,
+                scheduled_date: nextInspectionDate,
+                status: 'scheduled'
+              })
+          }
+        }
+      }
+
+      // Update property dates
       await supabase
         .from('pm_properties')
-        .update({ last_inspection_date: completedDate })
+        .update({
+          last_inspection_date: completedDate,
+          next_inspection_date: nextInspectionDate
+        })
         .eq('id', completion.property_id)
 
       // Count issues and auto-create work orders
