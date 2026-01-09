@@ -212,12 +212,21 @@ export default function AdminDashboard() {
         fetch(`/api/checklists?property_id=${propertyId}`),
         fetch(`/api/checklist-completions?property_id=${propertyId}`)
       ])
-      setWorkOrders(await woRes.json())
-      setSpecialRequests(await srRes.json())
-      setChecklists(await clRes.json())
-      setCompletions(await compRes.json())
+      const woData = await woRes.json()
+      const srData = await srRes.json()
+      const clData = await clRes.json()
+      const compData = await compRes.json()
+
+      setWorkOrders(Array.isArray(woData) ? woData : [])
+      setSpecialRequests(Array.isArray(srData) ? srData : [])
+      setChecklists(Array.isArray(clData) ? clData : [])
+      setCompletions(Array.isArray(compData) ? compData : [])
     } catch (e) {
       console.error(e)
+      setWorkOrders([])
+      setSpecialRequests([])
+      setChecklists([])
+      setCompletions([])
     }
   }
 

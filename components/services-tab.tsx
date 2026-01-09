@@ -132,10 +132,14 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
         fetch("/api/services"),
         fetch("/api/plans")
       ])
-      setServices(await servicesRes.json())
-      setPlans(await plansRes.json())
+      const servicesData = await servicesRes.json()
+      const plansData = await plansRes.json()
+      setServices(Array.isArray(servicesData) ? servicesData : [])
+      setPlans(Array.isArray(plansData) ? plansData : [])
     } catch (e) {
       console.error(e)
+      setServices([])
+      setPlans([])
     }
     setLoading(false)
   }
