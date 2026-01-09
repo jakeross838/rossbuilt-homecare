@@ -1,4 +1,8 @@
+import { Resend } from 'resend'
 import { supabase } from './supabase'
+
+// Initialize Resend client
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 // Notification types
 export type NotificationType =
@@ -27,41 +31,32 @@ interface ClientNotificationPrefs {
   sms_notifications: boolean
 }
 
-// Email sending via Resend (or fallback to console log for dev)
+// Email sending via Resend SDK (or fallback to console log for dev)
 async function sendEmail(to: string, subject: string, body: string): Promise<boolean> {
-  const RESEND_API_KEY = process.env.RESEND_API_KEY
-
-  if (!RESEND_API_KEY) {
+  if (!resend) {
     // Development mode - log to console
     console.log('=== EMAIL (dev mode) ===')
     console.log(`To: ${to}`)
     console.log(`Subject: ${subject}`)
-    console.log(`Body: ${body}`)
+    console.log(`Body: ${body.substring(0, 200)}...`)
     console.log('========================')
     return true
   }
 
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: process.env.EMAIL_FROM || 'PropertyCare <notifications@resend.dev>',
-        to: [to],
-        subject,
-        html: body,
-      }),
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'PropertyCare <notifications@resend.dev>',
+      to: [to],
+      subject,
+      html: body,
     })
 
-    if (!response.ok) {
-      const error = await response.text()
+    if (error) {
       console.error('Resend API error:', error)
       return false
     }
 
+    console.log('Email sent successfully:', data?.id)
     return true
   } catch (error) {
     console.error('Email send error:', error)
