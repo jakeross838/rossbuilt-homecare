@@ -192,6 +192,7 @@ export default function AdminDashboard() {
   // Report viewer state
   const [showReportDialog, setShowReportDialog] = useState(false)
   const [selectedCompletion, setSelectedCompletion] = useState<ChecklistCompletion | null>(null)
+  const [editingReport, setEditingReport] = useState(false)
 
   useEffect(() => {
     fetchProperties()
@@ -2106,14 +2107,24 @@ export default function AdminDashboard() {
                                   )}
                                 </div>
                               </div>
-                              <Button size="sm" variant="outline" onClick={(e) => {
-                                e.stopPropagation()
-                                setSelectedCompletion(completion)
-                                setShowReportDialog(true)
-                              }}>
-                                <Eye className="h-4 w-4 mr-1" />
-                                View Report
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline" onClick={(e) => {
+                                  e.stopPropagation()
+                                  setSelectedCompletion(completion)
+                                  setShowReportDialog(true)
+                                }}>
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  View
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={(e) => {
+                                  e.stopPropagation()
+                                  setSelectedCompletion(completion)
+                                  setEditingReport(true)
+                                }}>
+                                  <Edit2 className="h-4 w-4 mr-1" />
+                                  Edit
+                                </Button>
+                              </div>
                             </div>
                           </Card>
                         )
@@ -2755,7 +2766,34 @@ export default function AdminDashboard() {
             <Button variant="outline" onClick={() => setShowReportDialog(false)}>
               Close
             </Button>
+            <Button onClick={() => {
+              setShowReportDialog(false)
+              setEditingReport(true)
+            }}>
+              <Edit2 className="h-4 w-4 mr-2" />
+              Edit Report
+            </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Report Dialog */}
+      <Dialog open={editingReport} onOpenChange={setEditingReport}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {selectedCompletion && (
+            <InspectionWalkthrough
+              completion={selectedCompletion}
+              onComplete={() => {
+                setEditingReport(false)
+                setSelectedCompletion(null)
+                if (selectedProperty) fetchPropertyData(selectedProperty.id)
+              }}
+              onCancel={() => {
+                setEditingReport(false)
+                setSelectedCompletion(null)
+              }}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
