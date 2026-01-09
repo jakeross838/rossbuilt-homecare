@@ -291,30 +291,30 @@ export default function ClientPortal() {
   // Tier info for display
   const TIER_INFO: Record<number, { tagline: string; serviceModel: string; icon: React.ElementType; color: string; bgColor: string }> = {
     1: {
-      tagline: "Insurance Compliance",
+      tagline: "Check & Report",
       serviceModel: "We inspect and report — you coordinate repairs",
       icon: Eye,
       color: "text-slate-600",
       bgColor: "bg-slate-100"
     },
     2: {
-      tagline: "Full Protection",
+      tagline: "Check & Coordinate",
       serviceModel: "We handle all repair coordination for you",
       icon: Shield,
       color: "text-blue-600",
       bgColor: "bg-blue-100"
     },
     3: {
-      tagline: "Premium Service",
-      serviceModel: "Weekly inspections, unlimited services, 24/7 response",
+      tagline: "Weekly Protection",
+      serviceModel: "Weekly inspections, unlimited arrival/departure prep",
       icon: Star,
       color: "text-amber-600",
       bgColor: "bg-amber-100"
     },
     4: {
-      tagline: "White Glove",
-      serviceModel: "2-3x weekly visits, full estate management",
-      icon: Sparkles,
+      tagline: "Maximum Coverage",
+      serviceModel: "2-3x weekly visits, all services included",
+      icon: Star,
       color: "text-purple-600",
       bgColor: "bg-purple-100"
     }
@@ -694,8 +694,8 @@ export default function ClientPortal() {
                     </Button>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    As a {tierLevel === 4 ? 'Estate Management' : 'Premier Protection'} member, you receive unlimited pre-arrival and post-departure services.
-                    Schedule your visits and we'll prepare your property for your arrival.
+                    Your plan includes unlimited arrival and departure services.
+                    Let us know when you're coming and we'll have your property ready.
                   </p>
                   {ownerVisits.length === 0 ? (
                     <Card className="p-8 text-center">
@@ -799,21 +799,21 @@ export default function ClientPortal() {
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                 <div className="flex items-center gap-2 text-amber-700 text-sm font-medium">
                   <Star className="h-4 w-4" />
-                  Concierge Service
+                  Weekly Protection
                 </div>
                 <p className="text-xs text-amber-600 mt-1">
-                  We'll handle everything — repairs, vendor coordination, and any follow-up. No action needed from you.
+                  We'll handle everything — repairs, vendor coordination, and follow-up. No action needed from you.
                 </p>
               </div>
             )}
             {tierLevel === 4 && (
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
                 <div className="flex items-center gap-2 text-purple-700 text-sm font-medium">
-                  <Sparkles className="h-4 w-4" />
-                  White Glove Service
+                  <Star className="h-4 w-4" />
+                  Maximum Coverage
                 </div>
                 <p className="text-xs text-purple-600 mt-1">
-                  Priority handling with your dedicated estate manager. We'll take care of everything.
+                  We'll take care of everything. All services included in your plan.
                 </p>
               </div>
             )}

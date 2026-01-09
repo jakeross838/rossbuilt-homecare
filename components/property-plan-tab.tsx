@@ -45,7 +45,7 @@ const PLAN_INFO: Record<number, {
   icon: React.ElementType
 }> = {
   1: {
-    tagline: "Insurance Compliance",
+    tagline: "Check & Report",
     serviceModel: "Bi-weekly quick checks with photo documentation",
     bestFor: "Insurance compliance, basic monitoring",
     color: "text-slate-700",
@@ -54,27 +54,27 @@ const PLAN_INFO: Record<number, {
     icon: Eye
   },
   2: {
-    tagline: "Full Protection",
-    serviceModel: "Standard walkthroughs, vendor coordination, monthly arrival service",
-    bestFor: "Comprehensive protection, hands-off owners",
+    tagline: "Check & Coordinate",
+    serviceModel: "Bi-weekly inspections plus we handle all repairs for you",
+    bestFor: "Hands-off owners who want issues handled",
     color: "text-blue-700",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
     icon: Shield
   },
   3: {
-    tagline: "Premium Service",
-    serviceModel: "Weekly inspections, unlimited arrival services, 24/7 emergency response",
-    bestFor: "Frequent visitors, hassle-free ownership",
+    tagline: "Weekly Protection",
+    serviceModel: "Weekly inspections, unlimited arrival/departure prep",
+    bestFor: "Frequent visitors, complete peace of mind",
     color: "text-amber-700",
     bgColor: "bg-amber-50",
     borderColor: "border-amber-300",
     icon: Star
   },
   4: {
-    tagline: "White Glove",
-    serviceModel: "2-3x weekly visits, full vendor management, staff coordination",
-    bestFor: "Luxury estates, white-glove service",
+    tagline: "Maximum Coverage",
+    serviceModel: "2-3x weekly visits, all services included",
+    bestFor: "Larger properties needing frequent attention",
     color: "text-purple-700",
     bgColor: "bg-purple-50",
     borderColor: "border-purple-300",
@@ -172,87 +172,83 @@ const TIER_FEATURES: Record<number, { category: string; icon: React.ElementType;
       category: "Everything in Complete, Plus",
       icon: Star,
       items: [
-        "Weekly inspections (Standard + Quick)",
-        "Quarterly comprehensive inspection",
-        "Unlimited pre-arrival services",
-        "Unlimited post-departure services"
+        "Weekly inspections",
+        "Quarterly deep inspection",
+        "Unlimited pre-arrival prep",
+        "Unlimited post-departure securing"
       ],
       highlight: true
     },
     {
-      category: "Concierge Services",
+      category: "Arrival & Departure",
       icon: Calendar,
       items: [
-        "Pre-arrival property preparation",
-        "Climate control & supplies stocking",
-        "Post-departure securing",
-        "Grocery ordering & reservations"
+        "Property preparation before you arrive",
+        "Climate control adjustment",
+        "Basic supplies restocked",
+        "Property secured after you leave"
       ],
       highlight: true
     },
     {
-      category: "Premium Benefits",
+      category: "Additional Benefits",
       icon: Shield,
       items: [
-        "24/7 emergency response SLA",
-        "Dedicated account manager",
         "Minor repairs included (<$75)",
-        "25% off hurricane prep"
+        "Discounted hurricane prep",
+        "Quarterly property health report"
       ]
     },
     {
-      category: "Advanced Systems",
+      category: "Systems Checks",
       icon: Thermometer,
       items: [
-        "Test all major appliances",
+        "All major appliances tested",
         "Pool/spa equipment check",
-        "Hurricane readiness management",
-        "Quarterly property health report"
+        "Full systems inspection"
       ]
     }
   ],
-  // TIER 4: ESTATE MANAGEMENT - White glove service
+  // TIER 4: MAXIMUM COVERAGE - Most frequent visits
   4: [
     {
       category: "Everything in Premier, Plus",
       icon: Star,
       items: [
         "2-3x weekly property visits",
-        "Full range of inspection types",
+        "More eyes on your property",
         "Hurricane prep included",
-        "Priority for all services"
+        "Priority scheduling"
       ],
       highlight: true
     },
     {
-      category: "Estate Services",
+      category: "All-Inclusive",
       icon: Calendar,
       items: [
-        "Staff coordination (housekeeping, landscaping)",
-        "Capital improvement project oversight",
-        "Personal property inventory management",
-        "Any service request handled"
+        "All arrival/departure services",
+        "Vendor coordination included",
+        "No additional fees",
+        "One simple monthly price"
       ],
       highlight: true
     },
     {
-      category: "Premium Benefits",
+      category: "Coverage Benefits",
       icon: Shield,
       items: [
-        "24/7 priority emergency response",
-        "Dedicated estate manager",
-        "Full vendor vetting & management",
-        "Vendor coordination fee waived"
+        "Most frequent monitoring",
+        "Issues caught faster",
+        "Coordination fee waived"
       ]
     },
     {
-      category: "Comprehensive Coverage",
+      category: "Complete Protection",
       icon: Home,
       items: [
-        "Post-storm assessment priority",
-        "Insurance documentation support",
-        "Seasonal transition management",
-        "Complete peace of mind"
+        "Storm prep and assessment",
+        "Photo documentation",
+        "Worry-free ownership"
       ]
     }
   ]
@@ -397,14 +393,14 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
               </div>
               <div>
                 <h4 className="font-semibold text-amber-900">
-                  {currentPlan.tier_level === 1 && "Want More Comprehensive Protection?"}
-                  {currentPlan.tier_level === 2 && "Want Weekly Inspections & Unlimited Services?"}
-                  {currentPlan.tier_level === 3 && "Need White-Glove Estate Management?"}
+                  {currentPlan.tier_level === 1 && "Want Us to Handle Repairs Too?"}
+                  {currentPlan.tier_level === 2 && "Want Weekly Visits & Arrival Services?"}
+                  {currentPlan.tier_level === 3 && "Need More Frequent Visits?"}
                 </h4>
                 <p className="text-sm text-amber-700">
-                  {currentPlan.tier_level === 1 && "Upgrade to Complete Care — vendor coordination & monthly arrival service"}
-                  {currentPlan.tier_level === 2 && "Upgrade to Premier — weekly visits, 24/7 emergency response, concierge services"}
-                  {currentPlan.tier_level === 3 && "Upgrade to Estate Management — 2-3x weekly, staff coordination, full oversight"}
+                  {currentPlan.tier_level === 1 && "Upgrade to Complete Care — we coordinate all repairs for you"}
+                  {currentPlan.tier_level === 2 && "Upgrade to Premier — weekly inspections, unlimited arrival/departure prep"}
+                  {currentPlan.tier_level === 3 && "Upgrade to Maximum Coverage — 2-3x weekly visits, all services included"}
                 </p>
               </div>
             </div>

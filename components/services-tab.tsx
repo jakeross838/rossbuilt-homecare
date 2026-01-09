@@ -101,10 +101,10 @@ const TIER_BADGES: Record<number, string> = {
 }
 
 const TIER_SUBTITLES: Record<number, string> = {
-  1: "Insurance Compliance",
-  2: "Full Protection",
-  3: "Premium Service",
-  4: "White Glove"
+  1: "Check & Report",
+  2: "Check & Coordinate",
+  3: "Weekly Protection",
+  4: "Maximum Coverage"
 }
 
 export function ServicesTab({ selectedProperty, onPropertyPlanChange }: ServicesTabProps) {
@@ -416,17 +416,17 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                   </tr>
                   <tr className="border-b">
                     <td className="p-4 font-medium">Issue Alerts</td>
-                    <td className="p-4 text-center text-sm">Within 24 hours</td>
                     <td className="p-4 text-center text-sm">Same day</td>
-                    <td className="p-4 text-center text-sm font-medium text-green-700">Real-time</td>
-                    <td className="p-4 text-center text-sm font-medium text-green-700">Real-time</td>
+                    <td className="p-4 text-center text-sm">Same day</td>
+                    <td className="p-4 text-center text-sm">Same day</td>
+                    <td className="p-4 text-center text-sm">Same day</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Emergency Response</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Best effort</td>
-                    <td className="p-4 text-center text-sm">Priority</td>
-                    <td className="p-4 text-center text-sm font-medium">24/7 SLA</td>
-                    <td className="p-4 text-center text-sm font-medium text-purple-700">24/7 Priority</td>
+                    <td className="p-4 font-medium">Repair Coordination</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">You handle</td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
 
                   {/* Services */}
@@ -485,38 +485,24 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                     <td className="p-4 text-center text-sm font-medium text-purple-700">Priority</td>
                   </tr>
 
-                  {/* Premium */}
+                  {/* Additional Benefits */}
                   <tr className="bg-purple-50">
                     <td colSpan={5} className="p-3 font-semibold text-purple-800 text-sm">
-                      Premium Features
+                      Additional Benefits
                     </td>
                   </tr>
                   <tr className="border-b">
-                    <td className="p-4 font-medium">Dedicated Account Manager</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 font-medium">Coordination Fee</td>
+                    <td className="p-4 text-center text-sm">Standard</td>
+                    <td className="p-4 text-center text-sm">Standard</td>
+                    <td className="p-4 text-center text-sm">Standard</td>
+                    <td className="p-4 text-center text-sm font-medium text-green-700">Waived</td>
                   </tr>
                   <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Concierge Services</td>
+                    <td className="p-4 font-medium">Quarterly Deep Inspection</td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="p-4 font-medium">Staff Coordination</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
-                  </tr>
-                  <tr className="border-b bg-muted/30">
-                    <td className="p-4 font-medium">Project Oversight</td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
-                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
                     <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
                   </tr>
 
@@ -524,9 +510,9 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                   <tr className="bg-slate-50">
                     <td className="p-4 font-medium text-slate-600">Best For</td>
                     <td className="p-4 text-center text-xs text-muted-foreground">Insurance compliance & basic monitoring</td>
-                    <td className="p-4 text-center text-xs text-muted-foreground">Comprehensive protection without premium cost</td>
-                    <td className="p-4 text-center text-xs text-muted-foreground">Frequent visitors wanting hassle-free ownership</td>
-                    <td className="p-4 text-center text-xs text-muted-foreground">Luxury estates needing white-glove service</td>
+                    <td className="p-4 text-center text-xs text-muted-foreground">Hands-off owners who want issues handled</td>
+                    <td className="p-4 text-center text-xs text-muted-foreground">Frequent visitors wanting peace of mind</td>
+                    <td className="p-4 text-center text-xs text-muted-foreground">Larger properties needing frequent attention</td>
                   </tr>
 
                   {/* Action Row */}
