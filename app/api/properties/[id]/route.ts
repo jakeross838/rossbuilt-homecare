@@ -38,6 +38,7 @@ export async function PATCH(
   if (body.zip !== undefined) updates.zip = body.zip
   if (body.type !== undefined) updates.type = body.type
   if (body.client_id !== undefined) updates.client_id = body.client_id || null
+  if (body.sqft !== undefined) updates.sqft = body.sqft ? parseInt(body.sqft) : null
 
   const { data, error } = await supabase
     .from('pm_properties')

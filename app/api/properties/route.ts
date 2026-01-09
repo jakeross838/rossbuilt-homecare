@@ -30,7 +30,8 @@ export async function POST(request: Request) {
       state: body.state,
       zip: body.zip,
       type: body.type || 'residential',
-      client_id: body.client_id || null
+      client_id: body.client_id || null,
+      sqft: body.sqft ? parseInt(body.sqft) : null
     })
     .select()
     .single()

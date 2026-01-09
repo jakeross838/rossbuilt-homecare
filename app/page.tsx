@@ -131,7 +131,7 @@ export default function AdminDashboard() {
   const [clientForm, setClientForm] = useState({ name: "", email: "", phone: "", password: "" })
   const [showPropertyDialog, setShowPropertyDialog] = useState(false)
   const [editingProperty, setEditingProperty] = useState<Property | null>(null)
-  const [propertyForm, setPropertyForm] = useState({ name: "", address: "", city: "", state: "", zip: "", type: "residential", client_id: "" })
+  const [propertyForm, setPropertyForm] = useState({ name: "", address: "", city: "", state: "", zip: "", type: "residential", client_id: "", sqft: "" })
 
   // Onboarding flow state
   const [showOnboardingDialog, setShowOnboardingDialog] = useState(false)
@@ -391,11 +391,11 @@ export default function AdminDashboard() {
   // Property management
   function openNewProperty() {
     setEditingProperty(null)
-    setPropertyForm({ name: "", address: "", city: "", state: "", zip: "", type: "residential", client_id: "" })
+    setPropertyForm({ name: "", address: "", city: "", state: "", zip: "", type: "residential", client_id: "", sqft: "" })
     setShowPropertyDialog(true)
   }
 
-  function openEditProperty(property: Property) {
+  function openEditProperty(property: Property & { sqft?: number }) {
     setEditingProperty(property)
     setPropertyForm({
       name: property.name,
@@ -404,7 +404,8 @@ export default function AdminDashboard() {
       state: property.state || "",
       zip: property.zip || "",
       type: property.type || "residential",
-      client_id: property.client_id || ""
+      client_id: property.client_id || "",
+      sqft: property.sqft?.toString() || ""
     })
     setShowPropertyDialog(true)
   }
@@ -431,7 +432,8 @@ export default function AdminDashboard() {
           state: propertyForm.state,
           zip: propertyForm.zip,
           type: propertyForm.type,
-          client_id: propertyForm.client_id || undefined
+          client_id: propertyForm.client_id || undefined,
+          sqft: propertyForm.sqft ? parseInt(propertyForm.sqft) : undefined
         })
       }
     } else {
@@ -2195,6 +2197,18 @@ export default function AdminDashboard() {
                   onChange={(e) => setPropertyForm({ ...propertyForm, zip: e.target.value })}
                 />
               </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Square Footage</label>
+              <Input
+                type="number"
+                placeholder="e.g., 2500"
+                value={propertyForm.sqft}
+                onChange={(e) => setPropertyForm({ ...propertyForm, sqft: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Used for pricing: Under 2,000 (Small) | 2,000-3,500 (Medium) | 3,500+ (Large)
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

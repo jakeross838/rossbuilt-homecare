@@ -39,6 +39,7 @@ export interface Property {
   state: string
   zip: string
   type: 'residential' | 'commercial'
+  sqft?: number
   created_at: string
 }
 
