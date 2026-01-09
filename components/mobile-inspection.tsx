@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import {
   CheckCircle, XCircle, Camera, ChevronLeft, ChevronRight,
-  Upload, Wifi, WifiOff, Home, Save, Check, AlertTriangle
+  Upload, Wifi, WifiOff, Home, Save, Check, AlertTriangle,
+  List, RefreshCw, MapPin, Clock, Play
 } from 'lucide-react'
 
 interface ChecklistItem {
@@ -23,11 +24,54 @@ interface ChecklistCompletion {
   property_id: string
   scheduled_date: string
   status: string
+  started_at?: string
+  property?: {
+    id: string
+    name: string
+    address?: string
+  }
   template?: {
     id: string
     name: string
     items: { name: string; category: string }[]
   }
+}
+
+// Custom hook for swipe gestures
+function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void, threshold = 50) {
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
+  const touchEnd = useRef<{ x: number; y: number } | null>(null)
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchEnd.current = null
+    touchStart.current = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY }
+  }, [])
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEnd.current = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY }
+  }, [])
+
+  const onTouchEnd = useCallback(() => {
+    if (!touchStart.current || !touchEnd.current) return
+
+    const distanceX = touchStart.current.x - touchEnd.current.x
+    const distanceY = Math.abs(touchStart.current.y - touchEnd.current.y)
+
+    // Only trigger if horizontal swipe is greater than vertical (not scrolling)
+    if (Math.abs(distanceX) > distanceY && Math.abs(distanceX) > threshold) {
+      if (distanceX > 0) {
+        onSwipeLeft() // Swiped left = go next
+      } else {
+        onSwipeRight() // Swiped right = go prev
+      }
+      // Haptic feedback
+      if ('vibrate' in navigator) {
+        navigator.vibrate(10)
+      }
+    }
+  }, [onSwipeLeft, onSwipeRight, threshold])
+
+  return { onTouchStart, onTouchMove, onTouchEnd }
 }
 
 interface InspectionPhoto {
@@ -50,7 +94,23 @@ export function MobileInspection({ completion, onComplete, onExit }: MobileInspe
   const [isOnline, setIsOnline] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showComplete, setShowComplete] = useState(false)
+  const [showOverview, setShowOverview] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Swipe gesture handlers
+  const goNext = useCallback(() => {
+    if (currentIndex < items.length - 1) {
+      setCurrentIndex(currentIndex + 1)
+    }
+  }, [currentIndex, items.length])
+
+  const goPrev = useCallback(() => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1)
+    }
+  }, [currentIndex])
+
+  const swipeHandlers = useSwipe(goNext, goPrev)
 
   // Initialize items from template
   useEffect(() => {
@@ -127,6 +187,11 @@ export function MobileInspection({ completion, onComplete, onExit }: MobileInspe
     updated[currentIndex] = { ...updated[currentIndex], status }
     setItems(updated)
 
+    // Haptic feedback
+    if ('vibrate' in navigator) {
+      navigator.vibrate(status === 'ok' ? 20 : [20, 50, 20])
+    }
+
     // Auto-advance to next pending item after a short delay
     setTimeout(() => {
       const nextPending = items.findIndex((item, idx) => idx > currentIndex && item.status === 'pending')
@@ -144,16 +209,9 @@ export function MobileInspection({ completion, onComplete, onExit }: MobileInspe
     setItems(updated)
   }
 
-  function goNext() {
-    if (currentIndex < items.length - 1) {
-      setCurrentIndex(currentIndex + 1)
-    }
-  }
-
-  function goPrev() {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1)
-    }
+  function jumpToItem(index: number) {
+    setCurrentIndex(index)
+    setShowOverview(false)
   }
 
   async function capturePhoto() {
@@ -267,16 +325,24 @@ export function MobileInspection({ completion, onComplete, onExit }: MobileInspe
           <Home className="h-5 w-5" />
         </Button>
 
-        <div className="text-center">
-          <h1 className="font-semibold text-sm truncate max-w-[200px]">
+        <div className="text-center flex-1 mx-2">
+          <h1 className="font-semibold text-sm truncate">
             {completion.template?.name}
           </h1>
+          {completion.property?.name && (
+            <p className="text-xs text-blue-600 truncate">
+              {completion.property.name}
+            </p>
+          )}
           <p className="text-xs text-gray-500">
             {progress}/{total} completed
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={() => setShowOverview(true)}>
+            <List className="h-5 w-5" />
+          </Button>
           {isOnline ? (
             <Wifi className="h-4 w-4 text-green-600" />
           ) : (
@@ -295,10 +361,18 @@ export function MobileInspection({ completion, onComplete, onExit }: MobileInspe
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="flex-1 p-4 overflow-y-auto">
+      {/* Main Content - with swipe gestures */}
+      <main
+        className="flex-1 p-4 overflow-y-auto"
+        {...swipeHandlers}
+      >
+        {/* Swipe hint */}
+        <p className="text-center text-xs text-gray-400 mb-2">
+          ← Swipe to navigate →
+        </p>
+
         {/* Item Card */}
-        <Card className={`p-6 mb-4 ${
+        <Card className={`p-6 mb-4 transition-all ${
           currentItem.status === 'ok' ? 'border-green-500 bg-green-50' :
           currentItem.status === 'issue' ? 'border-red-500 bg-red-50' : ''
         }`}>
@@ -497,6 +571,74 @@ export function MobileInspection({ completion, onComplete, onExit }: MobileInspe
           </Card>
         </div>
       )}
+
+      {/* Item Overview Panel */}
+      {showOverview && (
+        <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowOverview(false)}>
+          <div
+            className="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-xl overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between">
+              <h3 className="font-semibold">All Items</h3>
+              <Button variant="ghost" size="sm" onClick={() => setShowOverview(false)}>
+                <XCircle className="h-5 w-5" />
+              </Button>
+            </div>
+            <div className="p-2">
+              {/* Group by category */}
+              {Array.from(new Set(items.map(i => i.category))).map(category => (
+                <div key={category} className="mb-4">
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase px-2 mb-1">
+                    {category}
+                  </h4>
+                  {items
+                    .map((item, idx) => ({ ...item, index: idx }))
+                    .filter(item => item.category === category)
+                    .map(item => (
+                      <button
+                        key={item.index}
+                        className={`w-full text-left px-3 py-2 rounded-lg mb-1 flex items-center gap-2 transition-colors ${
+                          item.index === currentIndex
+                            ? 'bg-blue-100 border border-blue-300'
+                            : 'hover:bg-gray-100'
+                        }`}
+                        onClick={() => jumpToItem(item.index)}
+                      >
+                        {item.status === 'ok' ? (
+                          <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                        ) : item.status === 'issue' ? (
+                          <XCircle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                        ) : (
+                          <div className="h-4 w-4 rounded-full border-2 border-gray-300 flex-shrink-0" />
+                        )}
+                        <span className="text-sm truncate">{item.name}</span>
+                        {photos.filter(p => p.item_name === item.name).length > 0 && (
+                          <Camera className="h-3 w-3 text-gray-400 ml-auto flex-shrink-0" />
+                        )}
+                      </button>
+                    ))}
+                </div>
+              ))}
+            </div>
+            <div className="sticky bottom-0 bg-white border-t px-4 py-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-green-600">
+                  <CheckCircle className="h-4 w-4 inline mr-1" />
+                  {items.filter(i => i.status === 'ok').length} OK
+                </span>
+                <span className="text-red-600">
+                  <XCircle className="h-4 w-4 inline mr-1" />
+                  {issueCount} Issues
+                </span>
+                <span className="text-gray-500">
+                  {items.filter(i => i.status === 'pending').length} Pending
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -506,22 +648,43 @@ export function MobileInspectionPage() {
   const [completions, setCompletions] = useState<ChecklistCompletion[]>([])
   const [selectedCompletion, setSelectedCompletion] = useState<ChecklistCompletion | null>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
-    fetchPendingInspections()
+    fetchInspections()
   }, [])
 
-  async function fetchPendingInspections() {
+  async function fetchInspections() {
     try {
-      const res = await fetch('/api/checklist-completions?status=scheduled')
-      if (res.ok) {
-        const data = await res.json()
-        setCompletions(Array.isArray(data) ? data : [])
-      }
+      // Fetch both scheduled and in-progress inspections
+      const [scheduledRes, inProgressRes] = await Promise.all([
+        fetch('/api/checklist-completions?status=scheduled'),
+        fetch('/api/checklist-completions?status=in_progress')
+      ])
+
+      const scheduled = scheduledRes.ok ? await scheduledRes.json() : []
+      const inProgress = inProgressRes.ok ? await inProgressRes.json() : []
+
+      // Combine and sort: in-progress first, then by date
+      const all = [
+        ...(Array.isArray(inProgress) ? inProgress : []),
+        ...(Array.isArray(scheduled) ? scheduled : [])
+      ]
+      setCompletions(all)
     } catch (err) {
       console.error('Failed to fetch inspections:', err)
     }
     setLoading(false)
+    setRefreshing(false)
+  }
+
+  async function handleRefresh() {
+    setRefreshing(true)
+    // Haptic feedback
+    if ('vibrate' in navigator) {
+      navigator.vibrate(10)
+    }
+    await fetchInspections()
   }
 
   if (selectedCompletion) {
@@ -530,18 +693,33 @@ export function MobileInspectionPage() {
         completion={selectedCompletion}
         onComplete={() => {
           setSelectedCompletion(null)
-          fetchPendingInspections()
+          fetchInspections()
         }}
         onExit={() => setSelectedCompletion(null)}
       />
     )
   }
 
+  const inProgressCompletions = completions.filter(c => c.status === 'in_progress')
+  const scheduledCompletions = completions.filter(c => c.status === 'scheduled')
+
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow-sm px-4 py-4 sticky top-0">
-        <h1 className="text-xl font-semibold">Inspections</h1>
-        <p className="text-sm text-gray-500">Select an inspection to begin</p>
+      <header className="bg-white shadow-sm px-4 py-4 sticky top-0 z-10">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold">Inspections</h1>
+            <p className="text-sm text-gray-500">Select an inspection to begin</p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+          >
+            <RefreshCw className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
       </header>
 
       <main className="p-4">
@@ -555,34 +733,95 @@ export function MobileInspectionPage() {
             <CheckCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
             <p className="text-gray-600">No pending inspections</p>
             <p className="text-sm text-gray-500 mt-1">All caught up!</p>
+            <Button variant="outline" className="mt-4" onClick={handleRefresh}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
           </Card>
         ) : (
-          <div className="space-y-3">
-            {completions.map((comp) => (
-              <Card
-                key={comp.id}
-                className="p-4 cursor-pointer hover:border-blue-500 active:bg-gray-50 transition-all"
-                onClick={async () => {
-                  // Start the inspection first
-                  await fetch(`/api/checklist-completions/${comp.id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'start' })
-                  })
-                  setSelectedCompletion({ ...comp, status: 'in_progress' })
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold">{comp.template?.name}</h3>
-                    <p className="text-sm text-gray-500">
-                      {comp.template?.items?.length || 0} items • Scheduled: {new Date(comp.scheduled_date).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
+          <div className="space-y-4">
+            {/* In Progress Section */}
+            {inProgressCompletions.length > 0 && (
+              <div>
+                <h2 className="text-sm font-semibold text-amber-600 mb-2 flex items-center gap-1">
+                  <Play className="h-4 w-4" />
+                  In Progress
+                </h2>
+                <div className="space-y-3">
+                  {inProgressCompletions.map((comp) => (
+                    <Card
+                      key={comp.id}
+                      className="p-4 cursor-pointer border-amber-300 bg-amber-50 hover:border-amber-500 active:bg-amber-100 transition-all"
+                      onClick={() => setSelectedCompletion(comp)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold truncate">{comp.template?.name}</h3>
+                            <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300">
+                              Resume
+                            </Badge>
+                          </div>
+                          {comp.property?.name && (
+                            <p className="text-sm text-blue-600 flex items-center gap-1 mt-0.5">
+                              <MapPin className="h-3 w-3" />
+                              {comp.property.name}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-500 mt-1">
+                            {comp.template?.items?.length || 0} items • Started: {comp.started_at ? new Date(comp.started_at).toLocaleTimeString() : 'Today'}
+                          </p>
+                        </div>
+                        <ChevronRight className="h-5 w-5 text-amber-400 flex-shrink-0" />
+                      </div>
+                    </Card>
+                  ))}
                 </div>
-              </Card>
-            ))}
+              </div>
+            )}
+
+            {/* Scheduled Section */}
+            {scheduledCompletions.length > 0 && (
+              <div>
+                <h2 className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  Scheduled ({scheduledCompletions.length})
+                </h2>
+                <div className="space-y-3">
+                  {scheduledCompletions.map((comp) => (
+                    <Card
+                      key={comp.id}
+                      className="p-4 cursor-pointer hover:border-blue-500 active:bg-gray-50 transition-all"
+                      onClick={async () => {
+                        // Start the inspection first
+                        await fetch(`/api/checklist-completions/${comp.id}`, {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ action: 'start' })
+                        })
+                        setSelectedCompletion({ ...comp, status: 'in_progress' })
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold truncate">{comp.template?.name}</h3>
+                          {comp.property?.name && (
+                            <p className="text-sm text-blue-600 flex items-center gap-1 mt-0.5">
+                              <MapPin className="h-3 w-3" />
+                              {comp.property.name}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-500 mt-1">
+                            {comp.template?.items?.length || 0} items • {new Date(comp.scheduled_date).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
