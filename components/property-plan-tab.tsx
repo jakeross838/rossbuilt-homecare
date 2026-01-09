@@ -37,6 +37,7 @@ interface PropertyPlanTabProps {
 
 const PLAN_INFO: Record<number, {
   tagline: string
+  serviceModel: string
   bestFor: string
   color: string
   bgColor: string
@@ -44,24 +45,27 @@ const PLAN_INFO: Record<number, {
   icon: React.ElementType
 }> = {
   1: {
-    tagline: "Eyes on your property",
-    bestFor: "Part-time residents, rental properties",
+    tagline: "Check & Report",
+    serviceModel: "We inspect and report issues — you coordinate repairs",
+    bestFor: "Budget-conscious owners, part-time residents",
     color: "text-slate-700",
     bgColor: "bg-slate-50",
     borderColor: "border-slate-200",
     icon: Eye
   },
   2: {
-    tagline: "Active property caretaker",
-    bestFor: "Vacation homes, snowbirds",
+    tagline: "Check, Report & Manage",
+    serviceModel: "We inspect, report, AND coordinate all repairs for you",
+    bestFor: "Vacation homes, snowbirds, hands-off owners",
     color: "text-blue-700",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-200",
     icon: Shield
   },
   3: {
-    tagline: "Complete estate management",
-    bestFor: "Luxury estates, complete care",
+    tagline: "Full Property Concierge",
+    serviceModel: "Complete care — inspections, repairs, and any service request",
+    bestFor: "Luxury estates, complete peace of mind",
     color: "text-amber-700",
     bgColor: "bg-amber-50",
     borderColor: "border-amber-300",
@@ -69,17 +73,20 @@ const PLAN_INFO: Record<number, {
   }
 }
 
-// Tier-specific features organized by category
-const TIER_FEATURES: Record<number, { category: string; icon: React.ElementType; items: string[] }[]> = {
+// Tier-specific features organized by category - reflects service escalation model
+const TIER_FEATURES: Record<number, { category: string; icon: React.ElementType; items: string[]; highlight?: boolean }[]> = {
+  // TIER 1: CHECK & REPORT - We find issues, you handle fixes
   1: [
     {
-      category: "Inspections",
+      category: "What's Included",
       icon: Eye,
       items: [
         "Monthly property inspection (15-20 min)",
         "Interior & exterior walkthrough",
-        "Photo documentation report"
-      ]
+        "Photo documentation of all areas",
+        "Issue identification and reporting"
+      ],
+      highlight: true
     },
     {
       category: "What We Check",
@@ -87,40 +94,55 @@ const TIER_FEATURES: Record<number, { category: string; icon: React.ElementType;
       items: [
         "HVAC system operation",
         "Water leak detection",
-        "Pest activity inspection",
-        "Security check (doors, windows)",
+        "Pest activity signs",
+        "Security (doors, windows, locks)",
         "General property condition"
       ]
     },
     {
-      category: "Communication",
+      category: "Reporting",
       icon: Camera,
       items: [
-        "Photo report after each visit",
+        "Detailed photo report after each visit",
         "Issue alerts via email",
-        "Maintenance coordination available"
+        "Vendor recommendations provided",
+        "You coordinate repairs directly"
       ]
     }
   ],
+  // TIER 2: CHECK, REPORT & MANAGE - We find issues AND coordinate repairs
   2: [
     {
-      category: "Inspections",
-      icon: Eye,
+      category: "Everything in Essential, Plus",
+      icon: Shield,
       items: [
-        "Bi-weekly property inspection (45 min)",
-        "Detailed interior & exterior walkthrough",
+        "Bi-weekly inspections (45 min)",
         "Comprehensive photo documentation",
-        "Under-sink inspection all bathrooms/kitchen"
-      ]
+        "Under-sink inspections",
+        "We coordinate ALL repairs for you"
+      ],
+      highlight: true
+    },
+    {
+      category: "Repair Management",
+      icon: Wrench,
+      items: [
+        "We schedule and oversee vendors",
+        "Get quotes and approve on your behalf",
+        "Quality control on completed work",
+        "Consolidated monthly billing",
+        "No hassle — we handle everything"
+      ],
+      highlight: true
     },
     {
       category: "Preventive Maintenance",
-      icon: Wrench,
+      icon: Droplets,
       items: [
-        "Run all water fixtures to prevent pipe issues",
-        "Flush all toilets",
+        "Run water fixtures (prevents pipe issues)",
+        "Flush toilets regularly",
         "HVAC filter replacement",
-        "Smoke/CO detector battery replacement",
+        "Smoke/CO detector batteries",
         "Seasonal storm preparation"
       ]
     },
@@ -133,69 +155,51 @@ const TIER_FEATURES: Record<number, { category: string; icon: React.ElementType;
         "Basic appliance testing",
         "Electrical panel visual check"
       ]
-    },
-    {
-      category: "Communication",
-      icon: Camera,
-      items: [
-        "Detailed photo report after each visit",
-        "Priority issue alerts",
-        "Maintenance coordination included"
-      ]
     }
   ],
+  // TIER 3: FULL CONCIERGE - Repairs + any service request
   3: [
     {
-      category: "Inspections",
-      icon: Eye,
+      category: "Everything in Premium, Plus",
+      icon: Star,
       items: [
         "Bi-weekly comprehensive inspection (60+ min)",
-        "Full property walkthrough with documentation",
         "Quarterly attic/crawlspace inspection",
-        "Custom property-specific checklist"
-      ]
+        "Custom property-specific checklist",
+        "Handle ANY service request"
+      ],
+      highlight: true
     },
     {
-      category: "Preventive Maintenance",
-      icon: Wrench,
-      items: [
-        "Run all water fixtures & flush toilets",
-        "HVAC filter replacement",
-        "Smoke/CO detector battery replacement",
-        "Seasonal storm preparation",
-        "Hurricane readiness (shutters, supplies)"
-      ]
-    },
-    {
-      category: "Systems Testing",
-      icon: Thermometer,
-      items: [
-        "Test all major appliances",
-        "Outlet testing throughout property",
-        "HVAC comprehensive testing",
-        "Water heater inspection",
-        "Pool/spa equipment check (if applicable)"
-      ]
-    },
-    {
-      category: "Owner Visits",
+      category: "Concierge Services",
       icon: Calendar,
       items: [
         "Pre-arrival property preparation",
-        "Climate control adjustment",
-        "Supplies stocking coordination",
-        "Post-departure property securing",
-        "Utility management"
-      ]
+        "Climate control & supplies stocking",
+        "Post-departure securing",
+        "Grocery/supply delivery coordination",
+        "Arrange any service you need"
+      ],
+      highlight: true
     },
     {
-      category: "Premium Service",
-      icon: Star,
+      category: "Premium Benefits",
+      icon: Shield,
       items: [
         "Priority emergency response",
         "Dedicated property manager",
         "Vendor coordination fee waived",
         "Quarterly property condition report"
+      ]
+    },
+    {
+      category: "Advanced Systems",
+      icon: Thermometer,
+      items: [
+        "Test all major appliances",
+        "Outlet testing throughout",
+        "Pool/spa equipment check",
+        "Hurricane readiness management"
       ]
     }
   ]
@@ -290,7 +294,8 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
                 <h3 className="text-xl font-bold">{currentPlan.name}</h3>
                 <Badge variant="secondary" className="bg-white">Active</Badge>
               </div>
-              <p className={`${info.color}`}>{info.tagline}</p>
+              <p className={`${info.color} font-medium`}>{info.tagline}</p>
+              <p className="text-sm text-muted-foreground mt-1">{info.serviceModel}</p>
               {currentPlan.monthly_base_price && (
                 <p className="text-2xl font-bold mt-2">${currentPlan.monthly_base_price}<span className="text-sm font-normal text-muted-foreground">/month</span></p>
               )}
@@ -306,13 +311,15 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
       <div className="grid md:grid-cols-2 gap-4">
         {tierFeatures.map((category, idx) => {
           const CategoryIcon = category.icon
+          const isHighlight = category.highlight
           return (
-            <Card key={idx} className="p-5">
+            <Card key={idx} className={`p-5 ${isHighlight ? `${info.bgColor} ${info.borderColor} border-2` : ""}`}>
               <div className="flex items-center gap-2 mb-4">
-                <div className={`p-2 rounded-lg ${info.bgColor}`}>
+                <div className={`p-2 rounded-lg ${isHighlight ? "bg-white" : info.bgColor}`}>
                   <CategoryIcon className={`h-5 w-5 ${info.color}`} />
                 </div>
                 <h4 className="font-semibold">{category.category}</h4>
+                {isHighlight && <Badge variant="secondary" className="text-xs">Key Feature</Badge>}
               </div>
               <ul className="space-y-2">
                 {category.items.map((item, i) => (
@@ -336,11 +343,13 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
                 <ArrowUp className="h-5 w-5 text-amber-600" />
               </div>
               <div>
-                <h4 className="font-semibold text-amber-900">Upgrade Your Protection</h4>
+                <h4 className="font-semibold text-amber-900">
+                  {currentPlan.tier_level === 1 ? "Tired of Coordinating Repairs?" : "Want Complete Peace of Mind?"}
+                </h4>
                 <p className="text-sm text-amber-700">
                   {currentPlan.tier_level === 1
-                    ? "Get bi-weekly visits and preventive maintenance with Premium Care"
-                    : "Get pre-arrival prep and complete estate management with Luxury Care"}
+                    ? "Upgrade to Premium — we'll handle all repair coordination for you"
+                    : "Upgrade to Luxury — pre-arrival prep, concierge services, and ANY request handled"}
                 </p>
               </div>
             </div>
@@ -349,7 +358,7 @@ export function PropertyPlanTab({ selectedProperty, onPropertyPlanChange }: Prop
               className="border-amber-300 text-amber-700 hover:bg-amber-100"
               onClick={() => setShowChangePlanDialog(true)}
             >
-              View Options
+              Compare Plans
             </Button>
           </div>
         </Card>
@@ -413,7 +422,7 @@ function PlanDialog({ open, onOpenChange, plans, selectedPlanId, onSelectPlan, o
                     <span className="font-semibold">${plan.monthly_base_price}/mo</span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">{info.tagline}</p>
+                <p className="text-sm text-muted-foreground mt-1">{info.serviceModel}</p>
               </div>
             )
           })}

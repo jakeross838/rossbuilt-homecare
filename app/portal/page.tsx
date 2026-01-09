@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import {
   Building2, Wrench, ClipboardCheck, FileText, LogOut, MapPin,
-  CheckCircle, Clock, AlertCircle, Calendar, ChevronDown, Camera, Image, Plus
+  CheckCircle, Clock, AlertCircle, Calendar, ChevronDown, Camera, Image, Plus,
+  Eye, Shield, Star, Sparkles
 } from "lucide-react"
 import { PhotoGallery } from "@/components/photo-capture"
 import { WorkOrderDetailDialog } from "@/components/work-order-detail-dialog"
@@ -280,8 +281,37 @@ export default function ClientPortal() {
     setSubmitting(false)
   }
 
-  // Check if current property has Luxury tier
-  const isLuxuryTier = selectedProperty?.current_plan?.tier_level === 3
+  // Tier level helpers
+  const tierLevel = selectedProperty?.current_plan?.tier_level || 0
+  const isLuxuryTier = tierLevel === 3
+  const isPremiumOrAbove = tierLevel >= 2
+
+  // Tier info for display
+  const TIER_INFO: Record<number, { tagline: string; serviceModel: string; icon: React.ElementType; color: string; bgColor: string }> = {
+    1: {
+      tagline: "Check & Report",
+      serviceModel: "We inspect and report — you coordinate repairs",
+      icon: Eye,
+      color: "text-slate-600",
+      bgColor: "bg-slate-100"
+    },
+    2: {
+      tagline: "Check, Report & Manage",
+      serviceModel: "We handle all repair coordination for you",
+      icon: Shield,
+      color: "text-blue-600",
+      bgColor: "bg-blue-100"
+    },
+    3: {
+      tagline: "Full Property Concierge",
+      serviceModel: "Complete care — repairs, visits, any request",
+      icon: Star,
+      color: "text-amber-600",
+      bgColor: "bg-amber-100"
+    }
+  }
+
+  const currentTierInfo = selectedProperty?.current_plan ? TIER_INFO[tierLevel] : null
 
   const getStatusColor = (s: string) => {
     if (s === "completed") return "bg-green-600 text-white"
@@ -415,7 +445,18 @@ export default function ClientPortal() {
                     <MapPin className="h-4 w-4" />
                     {selectedProperty.address}, {selectedProperty.city}, {selectedProperty.state} {selectedProperty.zip}
                   </p>
-                  <Badge variant="outline" className="mt-2">{selectedProperty.type}</Badge>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Badge variant="outline">{selectedProperty.type}</Badge>
+                    {currentTierInfo && (
+                      <Badge className={`${currentTierInfo.bgColor} ${currentTierInfo.color} border-0`}>
+                        {React.createElement(currentTierInfo.icon, { className: "h-3 w-3 mr-1" })}
+                        {selectedProperty.current_plan?.name}
+                      </Badge>
+                    )}
+                  </div>
+                  {currentTierInfo && (
+                    <p className="text-xs text-muted-foreground mt-2">{currentTierInfo.serviceModel}</p>
+                  )}
                 </div>
 
                 {/* Quick Stats */}
@@ -722,6 +763,41 @@ export default function ClientPortal() {
             <DialogTitle>Submit Maintenance Request</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Tier-based info banner */}
+            {tierLevel === 1 && (
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-slate-700 text-sm font-medium">
+                  <Eye className="h-4 w-4" />
+                  Check & Report Plan
+                </div>
+                <p className="text-xs text-slate-600 mt-1">
+                  We'll document the issue and provide vendor recommendations. You'll coordinate the repair directly.
+                </p>
+              </div>
+            )}
+            {tierLevel === 2 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-blue-700 text-sm font-medium">
+                  <Shield className="h-4 w-4" />
+                  We'll Handle It
+                </div>
+                <p className="text-xs text-blue-600 mt-1">
+                  We'll coordinate the entire repair process — get quotes, schedule vendors, and oversee the work.
+                </p>
+              </div>
+            )}
+            {tierLevel === 3 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-amber-700 text-sm font-medium">
+                  <Star className="h-4 w-4" />
+                  Concierge Service
+                </div>
+                <p className="text-xs text-amber-600 mt-1">
+                  We'll handle everything — repairs, vendor coordination, and any follow-up. No action needed from you.
+                </p>
+              </div>
+            )}
+
             <div>
               <label className="text-sm font-medium">What needs attention? *</label>
               <Input
@@ -773,7 +849,9 @@ export default function ClientPortal() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              We'll review your request and get back to you promptly. Emergency requests are prioritized immediately.
+              {isPremiumOrAbove
+                ? "We'll take care of coordinating the repair. You'll receive updates as we progress."
+                : "We'll document the issue and send you a report with our recommendations."}
             </p>
           </div>
           <DialogFooter>

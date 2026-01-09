@@ -39,6 +39,27 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const body = await request.json()
 
+  // Determine management type based on property's service tier
+  // Tier 1 (Essential) = client_coordinated (we report, they fix)
+  // Tier 2+ (Premium/Luxury) = managed (we coordinate repairs)
+  let managementType = 'managed' // Default to managed
+
+  if (body.property_id) {
+    const { data: property } = await supabase
+      .from('pm_properties')
+      .select('current_plan:pm_service_plans(tier_level)')
+      .eq('id', body.property_id)
+      .single()
+
+    if (property?.current_plan) {
+      const plan = Array.isArray(property.current_plan)
+        ? property.current_plan[0]
+        : property.current_plan
+      const tierLevel = (plan as { tier_level?: number })?.tier_level || 0
+      managementType = tierLevel === 1 ? 'client_coordinated' : 'managed'
+    }
+  }
+
   const { data, error } = await supabase
     .from('pm_work_orders')
     .insert({
@@ -53,7 +74,8 @@ export async function POST(request: Request) {
       source: body.source || 'admin',
       assigned_to: body.assigned_to || null,
       scheduled_date: body.scheduled_date || null,
-      notes: body.notes || null
+      notes: body.notes || null,
+      management_type: managementType
     })
     .select(`
       *,

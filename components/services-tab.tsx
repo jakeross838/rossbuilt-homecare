@@ -315,10 +315,10 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                           <div className="flex flex-col items-center gap-1">
                             {plan.tier_level === 3 && <Star className="h-5 w-5 text-amber-500 fill-amber-500" />}
                             <span className="font-bold text-lg">{plan.name}</span>
-                            <span className="text-xs text-muted-foreground italic">
-                              {plan.tier_level === 1 && '"Eyes on your property"'}
-                              {plan.tier_level === 2 && '"Active caretaker"'}
-                              {plan.tier_level === 3 && '"Complete management"'}
+                            <span className="text-xs font-medium mt-1">
+                              {plan.tier_level === 1 && 'Check & Report'}
+                              {plan.tier_level === 2 && 'Check, Report & Manage'}
+                              {plan.tier_level === 3 && 'Full Property Concierge'}
                             </span>
                             {plan.monthly_base_price && (
                               <span className="text-2xl font-bold mt-1">${plan.monthly_base_price}<span className="text-sm font-normal text-muted-foreground">/mo</span></span>
@@ -333,6 +333,40 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                   </tr>
                 </thead>
                 <tbody>
+                  {/* Service Model - Key Differentiator */}
+                  <tr className="bg-primary/10">
+                    <td colSpan={4} className="p-3 font-semibold text-primary text-sm">
+                      Service Model
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-4 font-medium">When issues are found</td>
+                    <td className="p-4 text-center text-sm">
+                      <span className="text-slate-600">We report to you</span>
+                      <p className="text-xs text-muted-foreground mt-1">You coordinate repairs</p>
+                    </td>
+                    <td className="p-4 text-center text-sm">
+                      <span className="text-blue-600 font-medium">We handle repairs</span>
+                      <p className="text-xs text-muted-foreground mt-1">Full coordination included</p>
+                    </td>
+                    <td className="p-4 text-center text-sm">
+                      <span className="text-amber-600 font-medium">We handle everything</span>
+                      <p className="text-xs text-muted-foreground mt-1">Repairs + any request</p>
+                    </td>
+                  </tr>
+                  <tr className="border-b bg-muted/30">
+                    <td className="p-4 font-medium">Vendor Coordination</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Recommendations only</td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-4 font-medium">Concierge Requests</td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center"><span className="text-gray-400">—</span></td>
+                    <td className="p-4 text-center"><Check className="h-5 w-5 text-green-600 mx-auto" /></td>
+                  </tr>
+
                   {/* Visit Details */}
                   <tr className="bg-slate-100">
                     <td colSpan={4} className="p-3 font-semibold text-slate-700 text-sm">
@@ -460,9 +494,9 @@ export function ServicesTab({ selectedProperty, onPropertyPlanChange }: Services
                   {/* Best For */}
                   <tr className="bg-slate-50">
                     <td className="p-4 font-medium text-slate-600">Best For</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Part-time residents, rental properties</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Vacation homes, snowbirds</td>
-                    <td className="p-4 text-center text-sm text-muted-foreground">Luxury estates, complete care</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Budget-conscious owners who want eyes on their property</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Hands-off owners who want repairs handled</td>
+                    <td className="p-4 text-center text-sm text-muted-foreground">Those wanting complete peace of mind</td>
                   </tr>
 
                   {/* Action Row */}
