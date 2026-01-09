@@ -19,7 +19,7 @@ import {
   Wrench, Building2, ClipboardCheck, AlertTriangle, Plus, Calendar,
   MapPin, ChevronLeft, ChevronRight, Play, CheckCircle, Trash2,
   FileText, Clock, AlertCircle, X, Edit2, GripVertical, Users, Settings,
-  Package, Truck, Camera, Image, DollarSign, TrendingUp, BarChart3
+  Package, Truck, Camera, Image, DollarSign, TrendingUp, BarChart3, UserPlus
 } from "lucide-react"
 import { PhotoCapture } from "@/components/photo-capture"
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
@@ -127,7 +127,15 @@ export default function AdminDashboard() {
   const [editingClient, setEditingClient] = useState<Client | null>(null)
   const [clientForm, setClientForm] = useState({ name: "", email: "", phone: "", password: "" })
   const [showPropertyDialog, setShowPropertyDialog] = useState(false)
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null)
   const [propertyForm, setPropertyForm] = useState({ name: "", address: "", city: "", state: "", zip: "", type: "residential", client_id: "" })
+
+  // Onboarding flow state
+  const [showOnboardingDialog, setShowOnboardingDialog] = useState(false)
+  const [onboardingStep, setOnboardingStep] = useState<"client" | "properties" | "plan">("client")
+  const [newClientId, setNewClientId] = useState<string | null>(null)
+  const [onboardingProperties, setOnboardingProperties] = useState<{ name: string; address: string; city: string; state: string; zip: string }[]>([])
+  const [newOnboardingProperty, setNewOnboardingProperty] = useState({ name: "", address: "", city: "", state: "", zip: "" })
 
   // Calendar state
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -265,28 +273,80 @@ export default function AdminDashboard() {
     if (!confirm("Delete this client? Their properties will be unassigned.")) return
     await fetch(`/api/clients/${id}`, { method: "DELETE" })
     fetchClients()
+    fetchProperties() // Refresh to show unassigned properties
   }
 
   // Property management
   function openNewProperty() {
+    setEditingProperty(null)
     setPropertyForm({ name: "", address: "", city: "", state: "", zip: "", type: "residential", client_id: "" })
+    setShowPropertyDialog(true)
+  }
+
+  function openEditProperty(property: Property) {
+    setEditingProperty(property)
+    setPropertyForm({
+      name: property.name,
+      address: property.address,
+      city: property.city || "",
+      state: property.state || "",
+      zip: property.zip || "",
+      type: property.type || "residential",
+      client_id: property.client_id || ""
+    })
     setShowPropertyDialog(true)
   }
 
   async function saveProperty() {
     if (!propertyForm.name || !propertyForm.address) return
 
-    await fetch("/api/properties", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...propertyForm,
-        client_id: propertyForm.client_id || null
+    if (editingProperty) {
+      await fetch(`/api/properties/${editingProperty.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...propertyForm,
+          client_id: propertyForm.client_id || null
+        })
       })
-    })
+      // Update selected property if we edited it
+      if (selectedProperty?.id === editingProperty.id) {
+        setSelectedProperty({
+          ...selectedProperty,
+          name: propertyForm.name,
+          address: propertyForm.address,
+          city: propertyForm.city,
+          state: propertyForm.state,
+          zip: propertyForm.zip,
+          type: propertyForm.type,
+          client_id: propertyForm.client_id || undefined
+        })
+      }
+    } else {
+      await fetch("/api/properties", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...propertyForm,
+          client_id: propertyForm.client_id || null
+        })
+      })
+    }
 
     setShowPropertyDialog(false)
+    setEditingProperty(null)
     fetchProperties()
+    fetchClients() // Refresh client property counts
+  }
+
+  async function deleteProperty(id: string) {
+    if (!confirm("Delete this property? All work orders, checklists, and related data will be permanently deleted.")) return
+    await fetch(`/api/properties/${id}`, { method: "DELETE" })
+    if (selectedProperty?.id === id) {
+      setSelectedProperty(null)
+    }
+    fetchProperties()
+    fetchClients() // Refresh client property counts
   }
 
   async function assignClientToProperty(propertyId: string, clientId: string | null) {
@@ -296,6 +356,79 @@ export default function AdminDashboard() {
       body: JSON.stringify({ client_id: clientId })
     })
     fetchProperties()
+  }
+
+  // Onboarding flow functions
+  function startOnboarding() {
+    setOnboardingStep("client")
+    setClientForm({ name: "", email: "", phone: "", password: "" })
+    setOnboardingProperties([])
+    setNewOnboardingProperty({ name: "", address: "", city: "", state: "", zip: "" })
+    setNewClientId(null)
+    setShowOnboardingDialog(true)
+  }
+
+  function addOnboardingProperty() {
+    if (!newOnboardingProperty.name || !newOnboardingProperty.address) return
+    setOnboardingProperties([...onboardingProperties, { ...newOnboardingProperty }])
+    setNewOnboardingProperty({ name: "", address: "", city: "", state: "", zip: "" })
+  }
+
+  function removeOnboardingProperty(index: number) {
+    setOnboardingProperties(onboardingProperties.filter((_, i) => i !== index))
+  }
+
+  async function saveOnboardingClient() {
+    if (!clientForm.name || !clientForm.email || !clientForm.password) return
+
+    const res = await fetch("/api/clients", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: clientForm.name,
+        email: clientForm.email,
+        phone: clientForm.phone,
+        password: clientForm.password
+      })
+    })
+    const newClient = await res.json()
+    if (newClient.id) {
+      setNewClientId(newClient.id)
+      setOnboardingStep("properties")
+      fetchClients()
+    }
+  }
+
+  async function saveOnboardingProperties() {
+    if (onboardingProperties.length === 0) {
+      finishOnboarding()
+      return
+    }
+
+    for (const prop of onboardingProperties) {
+      await fetch("/api/properties", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: prop.name,
+          address: prop.address,
+          city: prop.city,
+          state: prop.state,
+          zip: prop.zip,
+          type: "residential",
+          client_id: newClientId
+        })
+      })
+    }
+    fetchProperties()
+    finishOnboarding()
+  }
+
+  function finishOnboarding() {
+    setShowOnboardingDialog(false)
+    setOnboardingStep("client")
+    setNewClientId(null)
+    setOnboardingProperties([])
   }
 
   // Work Order Actions
@@ -614,25 +747,54 @@ export default function AdminDashboard() {
               ) : (
                 <div className="space-y-1">
                   {properties.map((prop) => (
-                    <button
+                    <div
                       key={prop.id}
-                      onClick={() => setSelectedProperty(prop)}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                      className={`px-3 py-2 rounded-lg transition-colors group ${
                         selectedProperty?.id === prop.id
                           ? "bg-primary text-primary-foreground"
                           : "hover:bg-muted"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 flex-shrink-0" />
-                        <div className="min-w-0">
-                          <p className="font-medium truncate">{prop.name}</p>
-                          <p className={`text-xs truncate ${selectedProperty?.id === prop.id ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                            {prop.city}, {prop.state}
-                          </p>
+                      <div className="flex items-center justify-between">
+                        <button
+                          onClick={() => setSelectedProperty(prop)}
+                          className="flex items-center gap-2 min-w-0 flex-1 text-left"
+                        >
+                          <Building2 className="h-4 w-4 flex-shrink-0" />
+                          <div className="min-w-0">
+                            <p className="font-medium truncate">{prop.name}</p>
+                            <p className={`text-xs truncate ${selectedProperty?.id === prop.id ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                              {prop.city}, {prop.state}
+                            </p>
+                          </div>
+                        </button>
+                        <div className={`flex gap-1 transition-opacity ${
+                          selectedProperty?.id === prop.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                        }`}>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className={`h-6 w-6 p-0 ${selectedProperty?.id === prop.id ? "hover:bg-primary-foreground/20" : ""}`}
+                            onClick={(e) => { e.stopPropagation(); openEditProperty(prop) }}
+                          >
+                            <Edit2 className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className={`h-6 w-6 p-0 ${selectedProperty?.id === prop.id ? "hover:bg-primary-foreground/20 text-red-300" : "text-red-500"}`}
+                            onClick={(e) => { e.stopPropagation(); deleteProperty(prop.id) }}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
                         </div>
                       </div>
-                    </button>
+                      {prop.client?.name && (
+                        <p className={`text-xs mt-1 pl-6 truncate ${selectedProperty?.id === prop.id ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                          Client: {prop.client.name}
+                        </p>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}
@@ -645,17 +807,22 @@ export default function AdminDashboard() {
           <>
             <div className="p-3 flex justify-between items-center">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2">Clients</p>
-              <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={openNewClient}>
-                <Plus className="h-4 w-4" />
-              </Button>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={startOnboarding} title="Onboard new client with properties">
+                  <UserPlus className="h-4 w-4 mr-1" />Onboard
+                </Button>
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={openNewClient} title="Quick add client">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             <nav className="flex-1 overflow-y-auto px-3">
               {clients.length === 0 ? (
                 <div className="text-center py-8">
                   <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
                   <p className="text-sm text-muted-foreground mb-2">No clients</p>
-                  <Button size="sm" onClick={openNewClient}>
-                    <Plus className="h-4 w-4 mr-1" />Add Client
+                  <Button size="sm" onClick={startOnboarding}>
+                    <UserPlus className="h-4 w-4 mr-1" />Onboard Client
                   </Button>
                 </div>
               ) : (
@@ -1594,10 +1761,10 @@ export default function AdminDashboard() {
       </Dialog>
 
       {/* Property Dialog */}
-      <Dialog open={showPropertyDialog} onOpenChange={setShowPropertyDialog}>
+      <Dialog open={showPropertyDialog} onOpenChange={(open) => { setShowPropertyDialog(open); if (!open) setEditingProperty(null); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New Property</DialogTitle>
+            <DialogTitle>{editingProperty ? "Edit Property" : "New Property"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -1671,8 +1838,157 @@ export default function AdminDashboard() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowPropertyDialog(false)}>Cancel</Button>
             <Button onClick={saveProperty} disabled={!propertyForm.name || !propertyForm.address}>
-              Create Property
+              {editingProperty ? "Save Changes" : "Create Property"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Onboarding Dialog - New Client with Properties */}
+      <Dialog open={showOnboardingDialog} onOpenChange={setShowOnboardingDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {onboardingStep === "client" && "Step 1: New Client"}
+              {onboardingStep === "properties" && "Step 2: Add Properties"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* Progress indicator */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className={`flex-1 h-2 rounded-full ${onboardingStep === "client" || onboardingStep === "properties" ? "bg-primary" : "bg-muted"}`} />
+            <div className={`flex-1 h-2 rounded-full ${onboardingStep === "properties" ? "bg-primary" : "bg-muted"}`} />
+          </div>
+
+          {onboardingStep === "client" && (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Enter the client&apos;s information. They&apos;ll use these credentials to access the portal.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Name *</label>
+                  <Input
+                    placeholder="Client name"
+                    value={clientForm.name}
+                    onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Email *</label>
+                  <Input
+                    type="email"
+                    placeholder="client@example.com"
+                    value={clientForm.email}
+                    onChange={(e) => setClientForm({ ...clientForm, email: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Phone</label>
+                  <Input
+                    placeholder="555-123-4567"
+                    value={clientForm.phone}
+                    onChange={(e) => setClientForm({ ...clientForm, phone: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Password *</label>
+                  <Input
+                    type="password"
+                    placeholder="Create password"
+                    value={clientForm.password}
+                    onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {onboardingStep === "properties" && (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Add properties for this client. You can also add more properties later.
+              </p>
+
+              {/* Properties added list */}
+              {onboardingProperties.length > 0 && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Properties to create:</label>
+                  {onboardingProperties.map((prop, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                      <div>
+                        <p className="font-medium">{prop.name}</p>
+                        <p className="text-sm text-muted-foreground">{prop.address}, {prop.city}, {prop.state} {prop.zip}</p>
+                      </div>
+                      <Button size="sm" variant="ghost" onClick={() => removeOnboardingProperty(idx)}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add new property form */}
+              <div className="p-4 border border-dashed rounded-lg space-y-3">
+                <label className="text-sm font-medium">Add a property:</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <Input
+                    placeholder="Property name *"
+                    value={newOnboardingProperty.name}
+                    onChange={(e) => setNewOnboardingProperty({ ...newOnboardingProperty, name: e.target.value })}
+                  />
+                  <Input
+                    placeholder="Address *"
+                    value={newOnboardingProperty.address}
+                    onChange={(e) => setNewOnboardingProperty({ ...newOnboardingProperty, address: e.target.value })}
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <Input
+                    placeholder="City"
+                    value={newOnboardingProperty.city}
+                    onChange={(e) => setNewOnboardingProperty({ ...newOnboardingProperty, city: e.target.value })}
+                  />
+                  <Input
+                    placeholder="State"
+                    value={newOnboardingProperty.state}
+                    onChange={(e) => setNewOnboardingProperty({ ...newOnboardingProperty, state: e.target.value })}
+                  />
+                  <Input
+                    placeholder="ZIP"
+                    value={newOnboardingProperty.zip}
+                    onChange={(e) => setNewOnboardingProperty({ ...newOnboardingProperty, zip: e.target.value })}
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={addOnboardingProperty}
+                  disabled={!newOnboardingProperty.name || !newOnboardingProperty.address}
+                >
+                  <Plus className="h-4 w-4 mr-1" /> Add Property
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowOnboardingDialog(false)}>Cancel</Button>
+            {onboardingStep === "client" && (
+              <Button
+                onClick={saveOnboardingClient}
+                disabled={!clientForm.name || !clientForm.email || !clientForm.password}
+              >
+                Next: Add Properties
+              </Button>
+            )}
+            {onboardingStep === "properties" && (
+              <Button onClick={saveOnboardingProperties}>
+                {onboardingProperties.length === 0 ? "Finish Without Properties" : `Create ${onboardingProperties.length} ${onboardingProperties.length === 1 ? "Property" : "Properties"}`}
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
