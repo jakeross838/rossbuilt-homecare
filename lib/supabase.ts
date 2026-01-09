@@ -1,14 +1,20 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-
 // Lazy initialization to prevent build-time errors
 let _supabase: SupabaseClient | null = null
 
 function getSupabaseClient(): SupabaseClient {
   if (!_supabase) {
+    // Read environment variables at runtime, not at module load
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
     if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('Missing env vars:', {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseServiceKey,
+        url: supabaseUrl?.substring(0, 20) + '...'
+      })
       throw new Error('Supabase environment variables are not configured. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.')
     }
     _supabase = createClient(supabaseUrl, supabaseServiceKey)
