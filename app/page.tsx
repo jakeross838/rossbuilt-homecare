@@ -132,10 +132,13 @@ export default function AdminDashboard() {
 
   // Onboarding flow state
   const [showOnboardingDialog, setShowOnboardingDialog] = useState(false)
-  const [onboardingStep, setOnboardingStep] = useState<"client" | "properties" | "plan">("client")
+  const [onboardingStep, setOnboardingStep] = useState<"client" | "properties" | "plans">("client")
   const [newClientId, setNewClientId] = useState<string | null>(null)
   const [onboardingProperties, setOnboardingProperties] = useState<{ name: string; address: string; city: string; state: string; zip: string }[]>([])
   const [newOnboardingProperty, setNewOnboardingProperty] = useState({ name: "", address: "", city: "", state: "", zip: "" })
+  const [createdPropertyIds, setCreatedPropertyIds] = useState<string[]>([])
+  const [propertyPlanSelections, setPropertyPlanSelections] = useState<Record<number, string>>({})
+  const [servicePlans, setServicePlans] = useState<{ id: string; name: string; tier_level: number; monthly_base_price: number }[]>([])
 
   // Calendar state
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -359,13 +362,24 @@ export default function AdminDashboard() {
   }
 
   // Onboarding flow functions
-  function startOnboarding() {
+  async function startOnboarding() {
     setOnboardingStep("client")
     setClientForm({ name: "", email: "", phone: "", password: "" })
     setOnboardingProperties([])
     setNewOnboardingProperty({ name: "", address: "", city: "", state: "", zip: "" })
     setNewClientId(null)
+    setCreatedPropertyIds([])
+    setPropertyPlanSelections({})
     setShowOnboardingDialog(true)
+
+    // Fetch service plans for step 3
+    try {
+      const res = await fetch("/api/plans")
+      const plans = await res.json()
+      setServicePlans(Array.isArray(plans) ? plans.sort((a: { tier_level: number }, b: { tier_level: number }) => a.tier_level - b.tier_level) : [])
+    } catch (e) {
+      console.error("Failed to fetch plans", e)
+    }
   }
 
   function addOnboardingProperty() {
@@ -376,6 +390,20 @@ export default function AdminDashboard() {
 
   function removeOnboardingProperty(index: number) {
     setOnboardingProperties(onboardingProperties.filter((_, i) => i !== index))
+    // Also remove any plan selection for this property
+    const newSelections = { ...propertyPlanSelections }
+    delete newSelections[index]
+    // Shift remaining selections down
+    const updated: Record<number, string> = {}
+    Object.keys(newSelections).forEach(key => {
+      const idx = parseInt(key)
+      if (idx > index) {
+        updated[idx - 1] = newSelections[idx]
+      } else {
+        updated[idx] = newSelections[idx]
+      }
+    })
+    setPropertyPlanSelections(updated)
   }
 
   async function saveOnboardingClient() {
@@ -405,8 +433,10 @@ export default function AdminDashboard() {
       return
     }
 
+    // Create all properties and store their IDs
+    const propertyIds: string[] = []
     for (const prop of onboardingProperties) {
-      await fetch("/api/properties", {
+      const res = await fetch("/api/properties", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -419,7 +449,35 @@ export default function AdminDashboard() {
           client_id: newClientId
         })
       })
+      const created = await res.json()
+      if (created.id) {
+        propertyIds.push(created.id)
+      }
     }
+
+    setCreatedPropertyIds(propertyIds)
+    fetchProperties()
+
+    // Go to plan selection step
+    setOnboardingStep("plans")
+  }
+
+  async function saveOnboardingPlans() {
+    // Assign plans to properties
+    for (let i = 0; i < createdPropertyIds.length; i++) {
+      const planId = propertyPlanSelections[i]
+      if (planId) {
+        await fetch("/api/property-plans", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            property_id: createdPropertyIds[i],
+            plan_id: planId
+          })
+        })
+      }
+    }
+
     fetchProperties()
     finishOnboarding()
   }
@@ -429,6 +487,8 @@ export default function AdminDashboard() {
     setOnboardingStep("client")
     setNewClientId(null)
     setOnboardingProperties([])
+    setCreatedPropertyIds([])
+    setPropertyPlanSelections({})
   }
 
   // Work Order Actions
@@ -1844,20 +1904,22 @@ export default function AdminDashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Onboarding Dialog - New Client with Properties */}
+      {/* Onboarding Dialog - New Client with Properties and Plans */}
       <Dialog open={showOnboardingDialog} onOpenChange={setShowOnboardingDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
               {onboardingStep === "client" && "Step 1: New Client"}
               {onboardingStep === "properties" && "Step 2: Add Properties"}
+              {onboardingStep === "plans" && "Step 3: Select Service Plans"}
             </DialogTitle>
           </DialogHeader>
 
           {/* Progress indicator */}
           <div className="flex items-center gap-2 mb-4">
-            <div className={`flex-1 h-2 rounded-full ${onboardingStep === "client" || onboardingStep === "properties" ? "bg-primary" : "bg-muted"}`} />
-            <div className={`flex-1 h-2 rounded-full ${onboardingStep === "properties" ? "bg-primary" : "bg-muted"}`} />
+            <div className={`flex-1 h-2 rounded-full ${["client", "properties", "plans"].includes(onboardingStep) ? "bg-primary" : "bg-muted"}`} />
+            <div className={`flex-1 h-2 rounded-full ${["properties", "plans"].includes(onboardingStep) ? "bg-primary" : "bg-muted"}`} />
+            <div className={`flex-1 h-2 rounded-full ${onboardingStep === "plans" ? "bg-primary" : "bg-muted"}`} />
           </div>
 
           {onboardingStep === "client" && (
@@ -1974,6 +2036,55 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {onboardingStep === "plans" && (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Select a service plan for each property. You can change plans later from the property&apos;s Plan tab.
+              </p>
+
+              {onboardingProperties.map((prop, idx) => (
+                <div key={idx} className="p-4 border rounded-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{prop.name}</p>
+                      <p className="text-sm text-muted-foreground">{prop.address}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {servicePlans.map((plan) => {
+                      const isSelected = propertyPlanSelections[idx] === plan.id
+                      const tierColors: Record<number, string> = {
+                        1: "border-slate-300 bg-slate-50",
+                        2: "border-blue-300 bg-blue-50",
+                        3: "border-amber-300 bg-amber-50"
+                      }
+                      return (
+                        <button
+                          key={plan.id}
+                          onClick={() => setPropertyPlanSelections({ ...propertyPlanSelections, [idx]: plan.id })}
+                          className={`p-3 rounded-lg border-2 text-left transition-all ${
+                            isSelected
+                              ? `${tierColors[plan.tier_level]} ring-2 ring-primary`
+                              : "border-gray-200 hover:border-gray-300"
+                          }`}
+                        >
+                          <p className="font-medium text-sm">{plan.name}</p>
+                          <p className="text-lg font-bold">${plan.monthly_base_price}<span className="text-xs font-normal">/mo</span></p>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              {onboardingProperties.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>No properties to assign plans to.</p>
+                </div>
+              )}
+            </div>
+          )}
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowOnboardingDialog(false)}>Cancel</Button>
             {onboardingStep === "client" && (
@@ -1985,8 +2096,15 @@ export default function AdminDashboard() {
               </Button>
             )}
             {onboardingStep === "properties" && (
-              <Button onClick={saveOnboardingProperties}>
-                {onboardingProperties.length === 0 ? "Finish Without Properties" : `Create ${onboardingProperties.length} ${onboardingProperties.length === 1 ? "Property" : "Properties"}`}
+              <Button onClick={saveOnboardingProperties} disabled={onboardingProperties.length === 0}>
+                Next: Select Plans
+              </Button>
+            )}
+            {onboardingStep === "plans" && (
+              <Button onClick={saveOnboardingPlans}>
+                {Object.keys(propertyPlanSelections).length === 0
+                  ? "Finish Without Plans"
+                  : `Assign ${Object.keys(propertyPlanSelections).length} ${Object.keys(propertyPlanSelections).length === 1 ? "Plan" : "Plans"} & Finish`}
               </Button>
             )}
           </DialogFooter>
