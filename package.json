@@ -1,0 +1,16 @@
+{
+  "name": "home-care-os",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The operating system for luxury home care companies",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:gen-types": "supabase gen types typescript --project-id qzbmnbinhxzkcwfjnmtb > src/types/database.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
