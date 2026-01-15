@@ -12,6 +12,7 @@ import {
   BarChart3,
   Settings,
   DollarSign,
+  FileText,
   ChevronLeft,
   ChevronRight,
   X,
@@ -41,6 +42,7 @@ const navItems: NavItem[] = [
 ]
 
 const bottomNavItems: NavItem[] = [
+  { title: 'Templates', href: '/settings/templates', icon: FileText },
   { title: 'Pricing', href: '/settings/pricing', icon: DollarSign },
   { title: 'Settings', href: '/settings', icon: Settings },
 ]
