@@ -1,69 +1,85 @@
-import { cn } from './lib/utils'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+import { AppLayout } from '@/components/layout/app-layout'
+import LoginPage from '@/pages/auth/login'
+import DashboardPage from '@/pages/dashboard'
+
+// Create a query client instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+})
+
+// Placeholder pages for routes not yet implemented
+function PlaceholderPage({ title }: { title: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center h-64 text-center">
+      <h2 className="text-2xl font-semibold text-foreground mb-2">{title}</h2>
+      <p className="text-muted-foreground">Coming soon in future phases</p>
+    </div>
+  )
+}
 
 function App() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">
-            Home Care OS - Admin
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            The operating system for luxury home care companies
-          </p>
-        </header>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<LoginPage />} />
 
-        <main className="space-y-6">
-          <div className={cn(
-            "rounded-lg border bg-card p-6",
-            "shadow-sm"
-          )}>
-            <h2 className="text-xl font-semibold text-card-foreground mb-4">
-              Welcome to Ross Built Home Care
-            </h2>
-            <p className="text-muted-foreground">
-              Admin dashboard coming soon. This app is configured with:
-            </p>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-rb-green-500" />
-                Vite + React + TypeScript
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-rb-green-500" />
-                Tailwind CSS with shadcn/ui theming
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-rb-green-500" />
-                Supabase client with typed database
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-rb-green-500" />
-                React Query, Zustand, React Router
-              </li>
-            </ul>
-          </div>
+          {/* Protected routes with AppLayout */}
+          <Route element={<AppLayout />}>
+            {/* Redirect root to dashboard */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-lg border bg-card p-4">
-              <h3 className="font-medium text-card-foreground">Clients</h3>
-              <p className="text-2xl font-bold text-primary mt-1">-</p>
-              <p className="text-xs text-muted-foreground">Coming in Phase 2</p>
-            </div>
-            <div className="rounded-lg border bg-card p-4">
-              <h3 className="font-medium text-card-foreground">Properties</h3>
-              <p className="text-2xl font-bold text-primary mt-1">-</p>
-              <p className="text-xs text-muted-foreground">Coming in Phase 2</p>
-            </div>
-            <div className="rounded-lg border bg-card p-4">
-              <h3 className="font-medium text-card-foreground">Inspections</h3>
-              <p className="text-2xl font-bold text-primary mt-1">-</p>
-              <p className="text-xs text-muted-foreground">Coming in Phase 3</p>
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
+            {/* Dashboard */}
+            <Route path="/dashboard" element={<DashboardPage />} />
+
+            {/* Clients */}
+            <Route path="/clients" element={<PlaceholderPage title="Clients" />} />
+            <Route path="/clients/:id" element={<PlaceholderPage title="Client Details" />} />
+
+            {/* Properties */}
+            <Route path="/properties" element={<PlaceholderPage title="Properties" />} />
+            <Route path="/properties/:id" element={<PlaceholderPage title="Property Details" />} />
+
+            {/* Calendar */}
+            <Route path="/calendar" element={<PlaceholderPage title="Calendar" />} />
+
+            {/* Inspections */}
+            <Route path="/inspections" element={<PlaceholderPage title="Inspections" />} />
+            <Route path="/inspections/:id" element={<PlaceholderPage title="Inspection Details" />} />
+
+            {/* Work Orders */}
+            <Route path="/work-orders" element={<PlaceholderPage title="Work Orders" />} />
+            <Route path="/work-orders/:id" element={<PlaceholderPage title="Work Order Details" />} />
+
+            {/* Billing */}
+            <Route path="/billing" element={<PlaceholderPage title="Billing" />} />
+
+            {/* Vendors */}
+            <Route path="/vendors" element={<PlaceholderPage title="Vendors" />} />
+            <Route path="/vendors/:id" element={<PlaceholderPage title="Vendor Details" />} />
+
+            {/* Reports */}
+            <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+
+            {/* Settings */}
+            <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+            <Route path="/settings/profile" element={<PlaceholderPage title="Profile Settings" />} />
+          </Route>
+
+          {/* Catch all - redirect to dashboard */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   )
 }
 
