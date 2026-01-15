@@ -91,7 +91,12 @@ Reference: `~/Downloads/home-care-os-docs/phase-04-programs-pricing.md`
 **Goal**: Inspection template builder with dynamic checklist generation
 **Depends on**: Phase 3, Phase 4
 **Research**: Unlikely (internal patterns)
-**Plans**: TBD
+**Plans**: 5 plans in 4 waves
+- 05-01: Template Data Foundation (types, constants)
+- 05-02: Template Validation & Hooks (Zod schemas, React Query CRUD)
+- 05-03: Checklist Generation Engine (dynamic checklist builder)
+- 05-04: Template Management UI (settings page, editor)
+- 05-05: Checklist Preview & Integration (property page integration)
 
 Reference: `~/Downloads/home-care-os-docs/phase-05-templates-checklists.md`
 
@@ -175,7 +180,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 2. Core Entities | 6/6 | ✅ Complete | 2026-01-15 |
 | 3. Equipment & AI | 4/4 | ✅ Complete | 2026-01-15 |
 | 4. Programs & Pricing | 5/5 | Complete | 2026-01-15 |
-| 5. Templates & Checklists | 0/TBD | Not started | - |
+| 5. Templates & Checklists | 1/5 | In progress | - |
 | 6. Smart Scheduling | 0/TBD | Not started | - |
 | 7. Inspector Mobile | 0/TBD | Not started | - |
 | 8. Findings & Reports | 0/TBD | Not started | - |

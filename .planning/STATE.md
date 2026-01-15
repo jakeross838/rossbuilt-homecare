@@ -5,16 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 5 — Templates & Checklists (NEXT)
+**Current focus:** Phase 5 — Templates & Checklists (IN PROGRESS)
 
 ## Current Position
 
 Phase: 5 of 14 (Templates & Checklists)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-01-15 - Completed Phase 4 (Programs & Pricing)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-01-15 - Completed 05-01-PLAN.md
 
-Progress: ██████░░░░ 35% (19 of ~55 plans)
+Progress: ██████░░░░ 37% (20 of ~60 plans)
+
+### Phase 5 Plans (IN PROGRESS)
+
+| Plan | Name | Files | Status |
+|------|------|-------|--------|
+| 05-01 | Template Data Foundation | Types, constants | **Complete** |
+| 05-02 | Template Validation & Hooks | Zod schemas, React Query CRUD | Pending |
+| 05-03 | Checklist Generation Engine | Dynamic checklist builder | Pending |
+| 05-04 | Template Management UI | Settings page, editor | Pending |
+| 05-05 | Checklist Preview & Integration | Property page integration | Pending |
+
+**Wave Structure:**
+- Wave 1: 05-01 (no dependencies)
+- Wave 2: 05-02, 05-03 (parallel - both depend on 05-01)
+- Wave 3: 05-04 (depends on 05-02)
+- Wave 4: 05-05 (depends on 05-03, 05-04 - integration)
 
 ### Phase 4 Plans (COMPLETE)
 
@@ -44,9 +60,9 @@ Progress: ██████░░░░ 35% (19 of ~55 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: 6 min
-- Total execution time: 112 min
+- Total execution time: 115 min
 
 **By Phase:**
 
@@ -126,7 +142,8 @@ Resume file: None
 
 ## Next Action
 
-Ready for Phase 5 planning: Templates & Checklists
+Ready to execute Phase 5: Templates & Checklists
+Run: `/gsd:execute-phase 5`
 Reference: ~/Downloads/home-care-os-docs/phase-05-templates-checklists.md
 
 ## Phase 1 Summary
