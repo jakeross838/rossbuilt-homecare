@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+import { useEffect } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
   Calendar,
@@ -12,6 +13,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  X,
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -42,17 +44,29 @@ const bottomNavItems: NavItem[] = [
 ]
 
 export function Sidebar() {
-  const { sidebarCollapsed, toggleSidebarCollapsed } = useUIStore()
+  const location = useLocation()
+  const { sidebarOpen, sidebarCollapsed, toggleSidebarCollapsed, setSidebarOpen } = useUIStore()
 
-  return (
-    <aside
-      className={cn(
-        'flex flex-col h-screen bg-card border-r transition-all duration-300',
-        sidebarCollapsed ? 'w-16' : 'w-64'
-      )}
-    >
+  // Close mobile sidebar on navigation
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location.pathname, setSidebarOpen])
+
+  // Close mobile sidebar on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSidebarOpen(false)
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [setSidebarOpen])
+
+  const sidebarContent = (isMobile: boolean) => (
+    <>
       {/* Logo */}
-      <div className="flex items-center h-16 px-4 border-b">
+      <div className="flex items-center justify-between h-16 px-4 border-b">
         <div className="flex items-center gap-3">
           <div className="flex-shrink-0 w-8 h-8 rounded-full bg-rb-green-500 flex items-center justify-center">
             <svg
@@ -68,13 +82,24 @@ export function Sidebar() {
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </div>
-          {!sidebarCollapsed && (
+          {(isMobile || !sidebarCollapsed) && (
             <div className="flex flex-col">
               <span className="font-semibold text-foreground">Ross Built</span>
               <span className="text-xs text-muted-foreground">Home Care OS</span>
             </div>
           )}
         </div>
+        {/* Mobile close button */}
+        {isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close sidebar"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        )}
       </div>
 
       {/* Navigation */}
@@ -91,13 +116,13 @@ export function Sidebar() {
                     isActive
                       ? 'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground'
                       : 'text-muted-foreground',
-                    sidebarCollapsed && 'justify-center'
+                    !isMobile && sidebarCollapsed && 'justify-center'
                   )
                 }
-                title={sidebarCollapsed ? item.title : undefined}
+                title={!isMobile && sidebarCollapsed ? item.title : undefined}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0" />
-                {!sidebarCollapsed && <span>{item.title}</span>}
+                {(isMobile || !sidebarCollapsed) && <span>{item.title}</span>}
               </NavLink>
             </li>
           ))}
@@ -118,41 +143,77 @@ export function Sidebar() {
                     isActive
                       ? 'bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground'
                       : 'text-muted-foreground',
-                    sidebarCollapsed && 'justify-center'
+                    !isMobile && sidebarCollapsed && 'justify-center'
                   )
                 }
-                title={sidebarCollapsed ? item.title : undefined}
+                title={!isMobile && sidebarCollapsed ? item.title : undefined}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0" />
-                {!sidebarCollapsed && <span>{item.title}</span>}
+                {(isMobile || !sidebarCollapsed) && <span>{item.title}</span>}
               </NavLink>
             </li>
           ))}
         </ul>
 
-        <Separator className="my-4" />
-
-        {/* Collapse toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            'w-full justify-center',
-            !sidebarCollapsed && 'justify-start'
-          )}
-          onClick={toggleSidebarCollapsed}
-        >
-          {sidebarCollapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <>
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              <span>Collapse</span>
-            </>
-          )}
-        </Button>
+        {/* Collapse toggle - desktop only */}
+        {!isMobile && (
+          <>
+            <Separator className="my-4" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                'w-full justify-center',
+                !sidebarCollapsed && 'justify-start'
+              )}
+              onClick={toggleSidebarCollapsed}
+            >
+              {sidebarCollapsed ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
+                <>
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  <span>Collapse</span>
+                </>
+              )}
+            </Button>
+          </>
+        )}
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar - Mobile (drawer) */}
+      <aside
+        className={cn(
+          'fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-card border-r transform transition-transform duration-300 lg:hidden',
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        {sidebarContent(true)}
+      </aside>
+
+      {/* Sidebar - Desktop (static) */}
+      <aside
+        className={cn(
+          'hidden lg:flex flex-col h-screen bg-card border-r transition-all duration-300',
+          sidebarCollapsed ? 'w-16' : 'w-64'
+        )}
+      >
+        {sidebarContent(false)}
+      </aside>
+    </>
   )
 }
 

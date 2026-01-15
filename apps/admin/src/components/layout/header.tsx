@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Search, LogOut, User, ChevronDown } from 'lucide-react'
+import { Search, LogOut, User, ChevronDown, Menu } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,10 +13,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useAuthStore } from '@/stores/auth-store'
+import { useUIStore } from '@/stores/ui-store'
 
 export function Header() {
   const navigate = useNavigate()
   const { user, profile, signOut } = useAuthStore()
+  const { setSidebarOpen } = useUIStore()
 
   const handleSignOut = async () => {
     await signOut()
@@ -43,9 +45,20 @@ export function Header() {
   }
 
   return (
-    <header className="flex items-center justify-between h-16 px-6 border-b bg-card">
+    <header className="flex items-center justify-between h-16 px-4 lg:px-6 border-b bg-card">
+      {/* Mobile menu button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="lg:hidden mr-2"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Open menu"
+      >
+        <Menu className="h-5 w-5" />
+      </Button>
+
       {/* Search bar (placeholder) */}
-      <div className="flex-1 max-w-md">
+      <div className="flex-1 max-w-md hidden sm:block">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
