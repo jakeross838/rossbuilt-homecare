@@ -8,6 +8,7 @@ import {
   User,
   Building,
   FileText,
+  Plus,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -257,14 +258,22 @@ export function ClientDetailPage() {
 
         {/* Properties */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building className="h-5 w-5" />
-              Properties
-            </CardTitle>
-            <CardDescription>
-              Properties associated with this client
-            </CardDescription>
+          <CardHeader className="flex flex-row items-start justify-between space-y-0">
+            <div className="space-y-1">
+              <CardTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                Properties
+              </CardTitle>
+              <CardDescription>
+                Properties associated with this client
+              </CardDescription>
+            </div>
+            <Button asChild size="sm">
+              <Link to={`/properties/new?client=${id}`}>
+                <Plus className="mr-1 h-4 w-4" />
+                Add Property
+              </Link>
+            </Button>
           </CardHeader>
           <CardContent>
             {hasProperties ? (
