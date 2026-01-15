@@ -105,11 +105,10 @@ export const clientSchema = z.object({
     .or(z.literal('')),
   tags: z
     .array(z.string())
-    .optional()
     .default([]),
 })
 
-export type ClientFormData = z.infer<typeof clientSchema>
+export type ClientFormData = z.input<typeof clientSchema>
 
 /**
  * Transform form data for Supabase insert/update

@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Separator } from '@/components/ui/separator'
 import { PageHeader } from '@/components/layout/page-header'
 import { useClient } from '@/hooks/use-clients'
 
@@ -75,16 +74,7 @@ export function ClientDetailPage() {
     <div>
       <PageHeader
         title={`${client.first_name} ${client.last_name}`}
-        description={
-          <div className="flex items-center gap-2">
-            <Badge variant={client.is_active ? 'success' : 'secondary'}>
-              {client.is_active ? 'Active' : 'Archived'}
-            </Badge>
-            {client.source && (
-              <span className="text-muted-foreground">via {client.source}</span>
-            )}
-          </div>
-        }
+        description={client.source ? `via ${client.source}` : undefined}
       >
         <Button variant="outline" onClick={() => navigate('/clients')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -97,6 +87,12 @@ export function ClientDetailPage() {
           </Link>
         </Button>
       </PageHeader>
+
+      <div className="flex items-center gap-2 mb-6">
+        <Badge variant={client.is_active ? 'success' : 'secondary'}>
+          {client.is_active ? 'Active' : 'Archived'}
+        </Badge>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Contact Information */}
@@ -276,10 +272,10 @@ export function ClientDetailPage() {
                 {client.properties.map((property: {
                   id: string
                   name: string
-                  address_line1?: string
-                  city?: string
-                  state?: string
-                  is_active?: boolean
+                  address_line1: string | null
+                  city: string | null
+                  state: string | null
+                  is_active: boolean | null
                 }) => (
                   <Link
                     key={property.id}
