@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 7 of 14 (Inspector Mobile) - IN PROGRESS
-Plan: 2 of 8 in current phase
+Plan: 3 of 8 in current phase
 Status: In progress
-Last activity: 2026-01-15 - Completed 07-02-PLAN.md
+Last activity: 2026-01-15 - Completed 07-05-PLAN.md
 
-Progress: ███████░░░ 53% (32 of ~60 plans)
+Progress: ███████░░░ 55% (33 of ~60 plans)
 
 ### Phase 7 Plans (IN PROGRESS)
 
@@ -22,9 +22,9 @@ Progress: ███████░░░ 53% (32 of ~60 plans)
 |------|------|-------|--------|
 | 07-01 | PWA Setup & Foundation | manifest, service worker, pwa.ts | **Complete** |
 | 07-02 | Inspector Types & Schedule | Types, constants, schedule hooks | **Complete** |
-| 07-03 | Offline Storage | IndexedDB, sync queue | Pending |
+| 07-03 | Offline Storage | IndexedDB, sync queue | **Complete** |
 | 07-04 | Inspection Execution Hooks | Mutations with offline support | Pending |
-| 07-05 | Photo Capture | Camera access, local storage | Pending |
+| 07-05 | Photo Capture | Camera access, local storage | **Complete** |
 | 07-06 | Inspector UI Components | Schedule list, checklist, forms | Pending |
 | 07-07 | Completion & Sync Status | Completion form, sync indicators | Pending |
 | 07-08 | Inspector Pages | Dashboard, inspection execution | Pending |
@@ -162,6 +162,8 @@ Recent decisions affecting current work:
 - **07-01**: NetworkFirst caching strategy for Supabase API (1 hour expiry)
 - **07-02**: Nested join pattern for clients through properties foreign key
 - **07-02**: Type assertion via unknown for JSONB fields (checklist, findings, weather_conditions)
+- **07-05**: Separate IndexedDB database for photos (rossbuilt-photos)
+- **07-05**: Canvas-based JPEG compression at 80% quality, max 1920px width
 
 ### Pending Todos
 
@@ -180,13 +182,13 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 07-01-PLAN.md (PWA Setup & Foundation)
+Stopped at: Completed 07-05-PLAN.md (Photo Capture)
 Resume file: None
 
 ## Next Action
 
 Continue Phase 7: Inspector Mobile PWA - Wave 2
-Run: `/gsd:execute-plan 07-03` (or run Wave 2 plans in parallel: 07-03, 07-04, 07-05)
+Run: `/gsd:execute-plan 07-03` or `/gsd:execute-plan 07-04` (remaining Wave 2 plans)
 
 ## Phase 1 Summary
 
