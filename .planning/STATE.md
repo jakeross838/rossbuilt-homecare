@@ -5,18 +5,18 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 2 — Core Entities
+**Current focus:** Phase 2 — Core Entities (COMPLETE)
 
 ## Current Position
 
-Phase: 2 of 14 (Core Entities)
-Plan: 5 of 6 in current phase
-Status: In progress
-Last activity: 2026-01-15 - Completed 02-05-PLAN.md (Property Management)
+Phase: 2 of 14 (Core Entities) - COMPLETE
+Plan: 6 of 6 in current phase - DONE
+Status: Phase complete
+Last activity: 2026-01-15 - Completed 02-06-PLAN.md (Polish & Testing)
 
-Progress: ███░░░░░░░ 20% (9 of ~46 plans)
+Progress: ███░░░░░░░ 21% (10 of ~46 plans)
 
-### Phase 2 Plans (IN PROGRESS)
+### Phase 2 Plans (COMPLETE)
 
 | Plan | Name | Files | Status |
 |------|------|-------|--------|
@@ -25,32 +25,32 @@ Progress: ███░░░░░░░ 20% (9 of ~46 plans)
 | 02-03 | Authentication & Layout | Auth store, login, sidebar, header | **Complete** |
 | 02-04 | Client Management | Validation, hooks, CRUD pages | **Complete** |
 | 02-05 | Property Management | Validation, hooks, CRUD pages | **Complete** |
-| 02-06 | Polish & Testing | Toasts, errors, manual testing | Pending |
+| 02-06 | Polish & Testing | Toasts, errors, responsive, a11y | **Complete** |
 
 **Wave Structure:**
 - Wave 1: 02-01 (must complete first - project setup) - DONE
 - Wave 2: 02-02 (depends on 02-01 - UI components) - DONE
 - Wave 3: 02-03 (depends on 02-02 - auth & layout) - DONE
 - Wave 4: 02-04, 02-05 (can run in parallel - client & property CRUD) - DONE
-- Wave 5: 02-06 (final polish after all features complete)
+- Wave 5: 02-06 (final polish after all features complete) - DONE
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 6 min
-- Total execution time: 49 min
+- Total plans completed: 10
+- Average duration: 7 min
+- Total execution time: 74 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 4/4 | 21 min | 5 min |
-| 2 | 5/6 | 53 min | 11 min |
+| 2 | 6/6 | 78 min | 13 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-04 (12 min), 02-01 (8 min), 02-02 (8 min), 02-03 (12 min)
-- Trend: stable
+- Last 5 plans: 02-02 (8 min), 02-03 (12 min), 02-04 (15 min), 02-05 (18 min), 02-06 (25 min)
+- Trend: increasing complexity as features mature
 
 ## Accumulated Context
 
@@ -78,6 +78,9 @@ Recent decisions affecting current work:
 - **02-03**: AuthProvider pattern for app-level auth initialization
 - **02-03**: Collapsible sidebar with persisted preference
 - **02-05**: Used 24 boolean flags for property features with category-based organization
+- **02-06**: React class-based ErrorBoundary for catching render errors
+- **02-06**: Mobile sidebar as drawer with lg breakpoint (1024px)
+- **02-06**: Skip link and ARIA landmarks for accessibility
 
 ### Pending Todos
 
@@ -95,12 +98,12 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 02-05-PLAN.md (Property Management)
+Stopped at: Completed 02-06-PLAN.md (Polish & Testing)
 Resume file: None
 
 ## Next Action
 
-Wave 4 complete. Next: 02-06 (Polish & Testing)
+Phase 2 complete. Ready for Phase 3 (Equipment Management)
 
 ## Phase 1 Summary
 
@@ -113,5 +116,27 @@ Wave 4 complete. Next: 02-06 (Polish & Testing)
 - TypeScript types (6,123 lines) for full type safety
 
 **Key Files Created:**
-- `supabase/migrations/001-019` - Complete database schema
-- `src/types/database.types.ts` - Auto-generated TypeScript types
+- supabase/migrations/001-019 - Complete database schema
+- src/types/database.types.ts - Auto-generated TypeScript types
+
+## Phase 2 Summary
+
+**Admin App Foundation Complete:**
+- React + TypeScript + Vite application with Tailwind v4
+- 18 shadcn/ui components + 5 shared components
+- Authentication with Supabase Auth (email/password)
+- Zustand stores for auth and UI state
+- Full Client CRUD (list, detail, create, edit, delete)
+- Full Property CRUD with rich features (24 property features, access codes)
+- Toast notifications for user feedback
+- Error boundaries for graceful error handling
+- Responsive mobile design with drawer sidebar
+- Accessibility improvements (skip link, ARIA, keyboard nav)
+
+**Key Files Created:**
+- apps/admin/ - Complete admin application
+- Components: components/ui/, components/layout/, components/shared/
+- Pages: pages/clients/, pages/properties/, pages/auth/, pages/dashboard/
+- Hooks: hooks/use-clients.ts, hooks/use-properties.ts, hooks/use-toast.ts
+- Stores: stores/auth-store.ts, stores/ui-store.ts
+- Validations: lib/validations/client.ts, lib/validations/property.ts
