@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { AuthProvider } from '@/components/providers/auth-provider'
+import { ErrorBoundary } from '@/components/shared/error-boundary'
 import { AppLayout } from '@/components/layout/app-layout'
 import LoginPage from '@/pages/auth/login'
 import DashboardPage from '@/pages/dashboard'
@@ -38,6 +39,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <ErrorBoundary>
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
@@ -93,6 +95,7 @@ function App() {
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </BrowserRouter>
+        </ErrorBoundary>
       </AuthProvider>
     </QueryClientProvider>
   )
