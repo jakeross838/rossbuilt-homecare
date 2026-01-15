@@ -180,7 +180,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 2. Core Entities | 6/6 | ✅ Complete | 2026-01-15 |
 | 3. Equipment & AI | 4/4 | ✅ Complete | 2026-01-15 |
 | 4. Programs & Pricing | 5/5 | Complete | 2026-01-15 |
-| 5. Templates & Checklists | 1/5 | In progress | - |
+| 5. Templates & Checklists | 5/5 | ✅ Complete | 2026-01-15 |
 | 6. Smart Scheduling | 0/TBD | Not started | - |
 | 7. Inspector Mobile | 0/TBD | Not started | - |
 | 8. Findings & Reports | 0/TBD | Not started | - |
