@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 Phase: 7 of 14 (Inspector Mobile) - IN PROGRESS
 Plan: 3 of 8 in current phase
 Status: In progress
-Last activity: 2026-01-15 - Completed 07-05-PLAN.md
+Last activity: 2026-01-15 - Completed 07-03-PLAN.md
 
 Progress: ███████░░░ 55% (33 of ~60 plans)
 
@@ -162,6 +162,9 @@ Recent decisions affecting current work:
 - **07-01**: NetworkFirst caching strategy for Supabase API (1 hour expiry)
 - **07-02**: Nested join pattern for clients through properties foreign key
 - **07-02**: Type assertion via unknown for JSONB fields (checklist, findings, weather_conditions)
+- **07-03**: 24-hour cache expiry for offline inspections
+- **07-03**: Sync photos before findings (findings may reference photo URLs)
+- **07-03**: Batch findings updates per inspection for efficiency
 - **07-05**: Separate IndexedDB database for photos (rossbuilt-photos)
 - **07-05**: Canvas-based JPEG compression at 80% quality, max 1920px width
 
@@ -182,13 +185,13 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 07-05-PLAN.md (Photo Capture)
+Stopped at: Completed 07-03-PLAN.md (Offline Storage)
 Resume file: None
 
 ## Next Action
 
 Continue Phase 7: Inspector Mobile PWA - Wave 2
-Run: `/gsd:execute-plan 07-03` or `/gsd:execute-plan 07-04` (remaining Wave 2 plans)
+Run: `/gsd:execute-plan 07-04` (last remaining Wave 2 plan)
 
 ## Phase 1 Summary
 
