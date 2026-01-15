@@ -14,6 +14,7 @@ import PropertiesPage from '@/pages/properties'
 import NewPropertyPage from '@/pages/properties/new'
 import PropertyDetailPage from '@/pages/properties/[id]'
 import EditPropertyPage from '@/pages/properties/[id]/edit'
+import PricingSettingsPage from '@/pages/settings/pricing'
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -89,6 +90,7 @@ function App() {
               {/* Settings */}
               <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
               <Route path="/settings/profile" element={<PlaceholderPage title="Profile Settings" />} />
+              <Route path="/settings/pricing" element={<PricingSettingsPage />} />
             </Route>
 
             {/* Catch all - redirect to dashboard */}

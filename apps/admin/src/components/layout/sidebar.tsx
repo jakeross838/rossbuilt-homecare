@@ -11,6 +11,7 @@ import {
   Truck,
   BarChart3,
   Settings,
+  DollarSign,
   ChevronLeft,
   ChevronRight,
   X,
@@ -40,6 +41,7 @@ const navItems: NavItem[] = [
 ]
 
 const bottomNavItems: NavItem[] = [
+  { title: 'Pricing', href: '/settings/pricing', icon: DollarSign },
   { title: 'Settings', href: '/settings', icon: Settings },
 ]
 
