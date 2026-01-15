@@ -9,6 +9,10 @@ import ClientsPage from '@/pages/clients'
 import NewClientPage from '@/pages/clients/new'
 import ClientDetailPage from '@/pages/clients/[id]'
 import EditClientPage from '@/pages/clients/[id]/edit'
+import PropertiesPage from '@/pages/properties'
+import NewPropertyPage from '@/pages/properties/new'
+import PropertyDetailPage from '@/pages/properties/[id]'
+import EditPropertyPage from '@/pages/properties/[id]/edit'
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -54,8 +58,10 @@ function App() {
               <Route path="/clients/:id/edit" element={<EditClientPage />} />
 
               {/* Properties */}
-              <Route path="/properties" element={<PlaceholderPage title="Properties" />} />
-              <Route path="/properties/:id" element={<PlaceholderPage title="Property Details" />} />
+              <Route path="/properties" element={<PropertiesPage />} />
+              <Route path="/properties/new" element={<NewPropertyPage />} />
+              <Route path="/properties/:id" element={<PropertyDetailPage />} />
+              <Route path="/properties/:id/edit" element={<EditPropertyPage />} />
 
               {/* Calendar */}
               <Route path="/calendar" element={<PlaceholderPage title="Calendar" />} />
