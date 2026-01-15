@@ -16,6 +16,7 @@ import PropertyDetailPage from '@/pages/properties/[id]'
 import EditPropertyPage from '@/pages/properties/[id]/edit'
 import PricingSettingsPage from '@/pages/settings/pricing'
 import TemplatesPage from '@/pages/settings/templates'
+import CalendarPage from '@/pages/calendar'
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -68,7 +69,7 @@ function App() {
               <Route path="/properties/:id/edit" element={<EditPropertyPage />} />
 
               {/* Calendar */}
-              <Route path="/calendar" element={<PlaceholderPage title="Calendar" />} />
+              <Route path="/calendar" element={<CalendarPage />} />
 
               {/* Inspections */}
               <Route path="/inspections" element={<PlaceholderPage title="Inspections" />} />

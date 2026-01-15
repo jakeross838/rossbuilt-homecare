@@ -5,16 +5,31 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 6 — Scheduling & Calendar (NEXT)
+**Current focus:** Phase 7 — Work Orders & Tasks (NEXT)
 
 ## Current Position
 
-Phase: 5 of 14 (Templates & Checklists) - COMPLETE
+Phase: 6 of 14 (Smart Scheduling) - COMPLETE
 Plan: 5 of 5 in current phase
 Status: Complete
-Last activity: 2026-01-15 - Completed 05-05-PLAN.md (Phase 5 complete!)
+Last activity: 2026-01-15 - Completed 06-05-PLAN.md (Phase 6 complete!)
 
-Progress: ██████░░░░ 42% (25 of ~60 plans)
+Progress: ███████░░░ 50% (30 of ~60 plans)
+
+### Phase 6 Plans (COMPLETE)
+
+| Plan | Name | Files | Status |
+|------|------|-------|--------|
+| 06-01 | Scheduling Data Foundation | Types, constants, validations | **Complete** |
+| 06-02 | Inspector Availability Hooks | useInspectors, useInspectorWorkload | **Complete** |
+| 06-03 | Inspection CRUD Hooks | useCalendarInspections, mutations | **Complete** |
+| 06-04 | Calendar UI Components | CalendarView, Grid, Header, Card | **Complete** |
+| 06-05 | Calendar Page & Integration | Calendar page, dialogs, sheets | **Complete** |
+
+**Wave Structure:**
+- Wave 1: 06-01, 06-02 (parallel - no dependencies)
+- Wave 2: 06-03, 06-04 (parallel - both depend on 06-01)
+- Wave 3: 06-05 (depends on 06-02, 06-03, 06-04 - integration with checkpoint)
 
 ### Phase 5 Plans (COMPLETE)
 
@@ -142,14 +157,13 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 5 (Templates & Checklists)
+Stopped at: Completed Phase 6 (Smart Scheduling)
 Resume file: None
 
 ## Next Action
 
-Ready to execute Phase 6: Scheduling & Calendar
-Run: `/gsd:execute-phase 6`
-Reference: ~/Downloads/home-care-os-docs/phase-06-scheduling.md
+Ready to plan Phase 7: Work Orders & Tasks
+Run: `/gsd:plan-phase 7`
 
 ## Phase 1 Summary
 
@@ -246,4 +260,23 @@ Reference: ~/Downloads/home-care-os-docs/phase-06-scheduling.md
 - apps/admin/src/lib/checklist-generator.ts - Engine for building checklists from data
 - apps/admin/src/components/inspections/checklist-preview.tsx - Preview component
 - apps/admin/src/pages/settings/templates.tsx - Template management page
+
+## Phase 6 Summary
+
+**Smart Scheduling Complete:**
+- Scheduling data foundation with types, constants, and validation schemas
+- Inspector availability hooks for workload tracking
+- Inspection CRUD hooks with React Query mutations
+- Full calendar UI component suite (grid, header, cards)
+- Calendar page with scheduling dialog and inspection detail sheet
+- Month navigation with date range-based data fetching
+
+**Key Files Created:**
+- apps/admin/src/lib/constants/scheduling.ts - Time slots, inspection types, colors
+- apps/admin/src/lib/types/scheduling.ts - CalendarInspection, CalendarDay, InspectorWorkload
+- apps/admin/src/lib/validations/inspection.ts - Zod schemas for scheduling
+- apps/admin/src/hooks/use-inspectors.ts - Inspector availability hooks
+- apps/admin/src/hooks/use-inspections.ts - Inspection CRUD hooks
+- apps/admin/src/components/calendar/* - Calendar UI components
+- apps/admin/src/pages/calendar/index.tsx - Calendar page
 
