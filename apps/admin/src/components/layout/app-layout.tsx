@@ -29,6 +29,14 @@ export function AppLayout() {
 
   return (
     <div className="flex h-screen bg-background">
+      {/* Skip to main content link for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-md"
+      >
+        Skip to main content
+      </a>
+
       {/* Sidebar */}
       <Sidebar />
 
@@ -38,12 +46,17 @@ export function AppLayout() {
         <Header />
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main
+          id="main-content"
+          className="flex-1 overflow-y-auto p-4 lg:p-6"
+          role="main"
+          aria-label="Main content"
+        >
           <Outlet />
         </main>
       </div>
 
-      {/* Toast notifications */}
+      {/* Toast notifications - live region for screen readers */}
       <Toaster />
     </div>
   )

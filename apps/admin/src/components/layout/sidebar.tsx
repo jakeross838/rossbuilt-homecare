@@ -103,8 +103,8 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 overflow-y-auto">
-        <ul className="space-y-1">
+      <nav className="flex-1 px-2 py-4 overflow-y-auto" aria-label="Main navigation">
+        <ul className="space-y-1" role="list">
           {navItems.map((item) => (
             <li key={item.href}>
               <NavLink
