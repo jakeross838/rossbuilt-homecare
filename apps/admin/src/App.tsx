@@ -5,6 +5,10 @@ import { AuthProvider } from '@/components/providers/auth-provider'
 import { AppLayout } from '@/components/layout/app-layout'
 import LoginPage from '@/pages/auth/login'
 import DashboardPage from '@/pages/dashboard'
+import ClientsPage from '@/pages/clients'
+import NewClientPage from '@/pages/clients/new'
+import ClientDetailPage from '@/pages/clients/[id]'
+import EditClientPage from '@/pages/clients/[id]/edit'
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -44,8 +48,10 @@ function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
 
               {/* Clients */}
-              <Route path="/clients" element={<PlaceholderPage title="Clients" />} />
-              <Route path="/clients/:id" element={<PlaceholderPage title="Client Details" />} />
+              <Route path="/clients" element={<ClientsPage />} />
+              <Route path="/clients/new" element={<NewClientPage />} />
+              <Route path="/clients/:id" element={<ClientDetailPage />} />
+              <Route path="/clients/:id/edit" element={<EditClientPage />} />
 
               {/* Properties */}
               <Route path="/properties" element={<PlaceholderPage title="Properties" />} />
