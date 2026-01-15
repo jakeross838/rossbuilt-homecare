@@ -5,42 +5,52 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 2 — Core Inspection Workflow
+**Current focus:** Phase 2 — Core Entities
 
 ## Current Position
 
 Phase: 2 of 14 (Core Entities)
-Plan: 0 of 6 in current phase
-Status: Ready for Phase 2 execution
-Last activity: 2026-01-14 - Planned Phase 2 (6 plans created)
+Plan: 1 of 6 in current phase
+Status: In progress
+Last activity: 2026-01-15 - Completed 02-01-PLAN.md
 
-Progress: ██░░░░░░░░ 10% (4 of ~46 plans)
+Progress: ██░░░░░░░░ 11% (5 of ~46 plans)
 
-### Phase 1 Plans (COMPLETE)
+### Phase 2 Plans (IN PROGRESS)
 
-| Plan | Name | Migrations | Status |
-|------|------|------------|--------|
-| 01-01 | Supabase Setup & Core Schema | 001-004 | **Complete** |
-| 01-02 | Domain Schema | 005-011 | **Complete** |
-| 01-03 | Billing & Supporting | 012-017 | **Complete** |
-| 01-04 | RLS, Auth & Types | 018-019 | **Complete** |
+| Plan | Name | Files | Status |
+|------|------|-------|--------|
+| 02-01 | Project Setup & Core Infrastructure | Vite app, Tailwind, Supabase client | **Complete** |
+| 02-02 | shadcn/ui Components | 18 UI + 5 shared components | Pending |
+| 02-03 | Authentication & Layout | Auth store, login, sidebar, header | Pending |
+| 02-04 | Client Management | Validation, hooks, CRUD pages | Pending |
+| 02-05 | Property Management | Validation, hooks, CRUD pages | Pending |
+| 02-06 | Polish & Testing | Toasts, errors, manual testing | Pending |
+
+**Wave Structure:**
+- Wave 1: 02-01 (must complete first - project setup) - DONE
+- Wave 2: 02-02 (depends on 02-01 - UI components)
+- Wave 3: 02-03 (depends on 02-02 - auth & layout)
+- Wave 4: 02-04, 02-05 (can run in parallel - client & property CRUD)
+- Wave 5: 02-06 (final polish after all features complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 5 min
-- Total execution time: 21 min
+- Total execution time: 29 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 4/4 | 21 min | 5 min |
+| 2 | 1/6 | 8 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3 min), 01-02 (3 min), 01-03 (3 min), 01-04 (12 min)
-- Trend: stable (01-04 longer due to RLS complexity)
+- Last 5 plans: 01-02 (3 min), 01-03 (3 min), 01-04 (12 min), 02-01 (8 min)
+- Trend: stable
 
 ## Accumulated Context
 
@@ -59,6 +69,9 @@ Recent decisions affecting current work:
 - **01-03**: Home manuals have UNIQUE constraint on property_id (one per property)
 - **01-04**: Used SECURITY DEFINER functions for RLS helpers to ensure consistent org-based access
 - **01-04**: Fixed UUID for Ross Built org (00000000-0000-0000-0000-000000000001) for consistent references
+- **02-01**: Used Tailwind CSS v4 with @theme directive for CSS-first configuration
+- **02-01**: Configured Ross Built brand colors (rb-green, rb-sand) as extended theme colors
+- **02-01**: Created helper types (Tables, InsertTables, UpdateTables, Enums) for typed Supabase queries
 
 ### Pending Todos
 
@@ -67,7 +80,7 @@ None.
 ### Blockers/Concerns
 
 **Resolved:**
-- ~~Need Supabase project credentials~~ → Using existing rossbuilt-homecare project
+- ~~Need Supabase project credentials~~ -> Using existing rossbuilt-homecare project
 
 **Remaining:**
 - Need SUPABASE_SERVICE_ROLE_KEY from dashboard (placeholder in .env.local)
@@ -75,31 +88,13 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-14
-Stopped at: Completed Phase 1 (Database & Auth) — All 19 migrations applied, RLS enabled, TypeScript types generated
+Last session: 2026-01-15
+Stopped at: Completed 02-01-PLAN.md (Project Setup & Core Infrastructure)
 Resume file: None
 
 ## Next Action
 
-Execute Phase 2 (Core Entities). Run `/gsd:execute-phase 2` to begin.
-
-### Phase 2 Plans (READY)
-
-| Plan | Name | Files | Status |
-|------|------|-------|--------|
-| 02-01 | Project Setup & Core Infrastructure | Vite app, Tailwind, Supabase client | Pending |
-| 02-02 | shadcn/ui Components | 18 UI + 5 shared components | Pending |
-| 02-03 | Authentication & Layout | Auth store, login, sidebar, header | Pending |
-| 02-04 | Client Management | Validation, hooks, CRUD pages | Pending |
-| 02-05 | Property Management | Validation, hooks, CRUD pages | Pending |
-| 02-06 | Polish & Testing | Toasts, errors, manual testing | Pending |
-
-**Wave Structure:**
-- Wave 1: 02-01 (must complete first - project setup)
-- Wave 2: 02-02 (depends on 02-01 - UI components)
-- Wave 3: 02-03 (depends on 02-02 - auth & layout)
-- Wave 4: 02-04, 02-05 (can run in parallel - client & property CRUD)
-- Wave 5: 02-06 (final polish after all features complete)
+Continue Phase 2 execution. Run next plan: 02-02 (shadcn/ui Components)
 
 ## Phase 1 Summary
 
@@ -112,5 +107,5 @@ Execute Phase 2 (Core Entities). Run `/gsd:execute-phase 2` to begin.
 - TypeScript types (6,123 lines) for full type safety
 
 **Key Files Created:**
-- `supabase/migrations/001-019` - Complete database schema
-- `src/types/database.types.ts` - Auto-generated TypeScript types
+- \`supabase/migrations/001-019\` - Complete database schema
+- \`src/types/database.types.ts\` - Auto-generated TypeScript types
