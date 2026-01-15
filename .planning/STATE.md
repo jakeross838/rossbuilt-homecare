@@ -5,41 +5,37 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 2 — Core Entities (COMPLETE)
+**Current focus:** Phase 3 — Equipment & AI (IN PROGRESS)
 
 ## Current Position
 
-Phase: 2 of 14 (Core Entities) - COMPLETE
-Plan: 6 of 6 in current phase - DONE
-Status: Phase complete
-Last activity: 2026-01-15 - Completed 02-06-PLAN.md (Polish & Testing)
+Phase: 3 of 14 (Equipment & AI) - IN PROGRESS
+Plan: 2 of 4 in current phase (03-02 complete)
+Status: In progress (Wave 1 parallel execution)
+Last activity: 2026-01-15 - Completed 03-02-PLAN.md (AI Edge Function)
 
-Progress: ███░░░░░░░ 21% (10 of ~46 plans)
+Progress: ███░░░░░░░ 24% (12 of ~50 plans)
 
-### Phase 2 Plans (COMPLETE)
+### Phase 3 Plans (IN PROGRESS)
 
 | Plan | Name | Files | Status |
 |------|------|-------|--------|
-| 02-01 | Project Setup & Core Infrastructure | Vite app, Tailwind, Supabase client | **Complete** |
-| 02-02 | shadcn/ui Components | 18 UI + 5 shared components | **Complete** |
-| 02-03 | Authentication & Layout | Auth store, login, sidebar, header | **Complete** |
-| 02-04 | Client Management | Validation, hooks, CRUD pages | **Complete** |
-| 02-05 | Property Management | Validation, hooks, CRUD pages | **Complete** |
-| 02-06 | Polish & Testing | Toasts, errors, responsive, a11y | **Complete** |
+| 03-01 | Equipment Constants & Validation | Constants, Zod schema | **In Progress** (Wave 1) |
+| 03-02 | AI Edge Function | Edge function, Claude API | **Complete** |
+| 03-03 | Equipment Hooks & UI Components | React Query hooks, components | Pending |
+| 03-04 | Equipment Pages & Integration | CRUD pages, AI button | Pending |
 
 **Wave Structure:**
-- Wave 1: 02-01 (must complete first - project setup) - DONE
-- Wave 2: 02-02 (depends on 02-01 - UI components) - DONE
-- Wave 3: 02-03 (depends on 02-02 - auth & layout) - DONE
-- Wave 4: 02-04, 02-05 (can run in parallel - client & property CRUD) - DONE
-- Wave 5: 02-06 (final polish after all features complete) - DONE
+- Wave 1: 03-01, 03-02 (parallel - no dependencies) - IN PROGRESS
+- Wave 2: 03-03 (depends on 03-01, 03-02)
+- Wave 3: 03-04 (depends on 03-03 - integration)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 12
 - Average duration: 7 min
-- Total execution time: 74 min
+- Total execution time: 78 min
 
 **By Phase:**
 
@@ -47,10 +43,11 @@ Progress: ███░░░░░░░ 21% (10 of ~46 plans)
 |-------|-------|-------|----------|
 | 1 | 4/4 | 21 min | 5 min |
 | 2 | 6/6 | 78 min | 13 min |
+| 3 | 1/4 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (8 min), 02-03 (12 min), 02-04 (15 min), 02-05 (18 min), 02-06 (25 min)
-- Trend: increasing complexity as features mature
+- Last 5 plans: 02-04 (15 min), 02-05 (18 min), 02-06 (25 min), 03-01 (in progress), 03-02 (4 min)
+- Trend: Wave 1 parallel execution
 
 ## Accumulated Context
 
@@ -81,10 +78,12 @@ Recent decisions affecting current work:
 - **02-06**: React class-based ErrorBoundary for catching render errors
 - **02-06**: Mobile sidebar as drawer with lg breakpoint (1024px)
 - **02-06**: Skip link and ARIA landmarks for accessibility
+- **03-02**: Used --no-verify-jwt for browser access (function validates via Supabase client)
+- **03-02**: JSON extraction with regex to handle potential markdown wrapping from Claude
 
 ### Pending Todos
 
-None.
+- ANTHROPIC_API_KEY needs to be set in Supabase Edge Function secrets (see .planning/phases/03-equipment-ai/03-USER-SETUP.md)
 
 ### Blockers/Concerns
 
@@ -93,17 +92,18 @@ None.
 
 **Remaining:**
 - Need SUPABASE_SERVICE_ROLE_KEY from dashboard (placeholder in .env.local)
+- Need ANTHROPIC_API_KEY for AI edge function
 - See ~/Downloads/home-care-os-docs/QUESTIONS_FOR_JAKE.md for full list
 
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 02-06-PLAN.md (Polish & Testing)
+Stopped at: Completed 03-02-PLAN.md (AI Edge Function)
 Resume file: None
 
 ## Next Action
 
-Phase 2 complete. Ready for Phase 3 (Equipment Management)
+Continue Phase 3 Wave 1 (03-01 may still be in progress). After Wave 1 completes, proceed to 03-03.
 
 ## Phase 1 Summary
 
