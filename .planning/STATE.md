@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 8 of 14 (Findings & Reports) - IN PROGRESS
-Plan: 3 of 6 in current phase
+Plan: 4 of 6 in current phase
 Status: Executing
-Last activity: 2026-01-15 - Completed 08-03 (AI Report Summary Edge Function)
+Last activity: 2026-01-15 - Completed 08-04 (PDF Report Generation)
 
-Progress: █████████░ 68% (41 of ~60 plans)
+Progress: █████████░ 70% (42 of ~60 plans)
 
 ### Phase 8 Plans (IN PROGRESS)
 
@@ -23,7 +23,7 @@ Progress: █████████░ 68% (41 of ~60 plans)
 | 08-01 | Report Data Foundation | Types, constants | **Complete** |
 | 08-02 | Findings & Recommendations Hooks | Validations, React Query hooks | **Complete** |
 | 08-03 | AI Report Summary Edge Function | Supabase Edge Function | **Complete** |
-| 08-04 | PDF Report Generation | @react-pdf/renderer components | **Ready** |
+| 08-04 | PDF Report Generation | @react-pdf/renderer components | **Complete** |
 | 08-05 | Report UI Components | Preview, dialog, badges | **Ready** |
 | 08-06 | Report Page & Integration | Pages, routes, sidebar | **Ready** |
 
@@ -200,6 +200,11 @@ Recent decisions affecting current work:
 - **08-03**: Direct fetch to Claude API for consistency with generate-equipment-ai edge function pattern
 - **08-03**: Professional tone prompt for luxury home care audience with reassuring but honest messaging
 - **08-03**: Fallback response handling returns generic professional message if JSON parsing fails
+- **08-04**: Built-in Helvetica fonts for PDF rendering (no custom font registration needed)
+- **08-04**: Photo gallery limited to 12 photos per report with overflow indicator
+- **08-04**: Section filtering shows detailed findings only for sections with issues; passed sections get summary row
+- **08-04**: AI summary graceful fallback continues with inspector summary if generation fails
+- **08-04**: Storage bucket `inspection-reports` for PDF storage
 
 ### Pending Todos
 
@@ -218,16 +223,16 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 08-03-PLAN.md (AI Report Summary Edge Function)
+Stopped at: Completed 08-04-PLAN.md (PDF Report Generation)
 Resume file: None
 
 ## Next Action
 
 Continue Phase 8 execution:
 - Wave 1 complete (08-01, 08-02)
-- Wave 2 in progress: 08-03 complete, 08-04 ready
-- Ready for: 08-04 (PDF Report Generation)
-Run: `/gsd:execute-plan 8 4` for PDF report generation components
+- Wave 2 complete (08-03, 08-04)
+- Ready for Wave 3: 08-05 (Report UI Components)
+Run: `/gsd:execute-plan 8 5` for report UI components
 
 ## Phase 1 Summary
 
