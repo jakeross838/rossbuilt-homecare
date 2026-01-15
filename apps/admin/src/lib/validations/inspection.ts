@@ -27,7 +27,7 @@ export const scheduleInspectionSchema = z.object({
 
   // Inspection type
   inspection_type: z.enum(inspectionTypeValues, {
-    required_error: 'Please select an inspection type',
+    message: 'Please select an inspection type',
   }),
 
   // Scheduling

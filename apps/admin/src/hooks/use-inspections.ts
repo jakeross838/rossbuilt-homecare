@@ -187,6 +187,7 @@ export function useScheduleInspection() {
         .single()
 
       if (userError) throw userError
+      if (!userData.organization_id) throw new Error('User has no organization')
 
       const insertData: InsertTables<'inspections'> = {
         organization_id: userData.organization_id,

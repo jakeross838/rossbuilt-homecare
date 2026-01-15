@@ -92,11 +92,11 @@ export function useInspectorDaySchedule(date: string) {
           estimated_duration_minutes: row.estimated_duration_minutes,
           actual_start_at: row.actual_start_at,
           actual_end_at: row.actual_end_at,
-          checklist: row.checklist as InspectorInspection['checklist'],
-          findings: row.findings as InspectorInspection['findings'],
+          checklist: row.checklist as unknown as InspectorInspection['checklist'],
+          findings: row.findings as unknown as InspectorInspection['findings'],
           overall_condition: row.overall_condition,
           summary: row.summary,
-          weather_conditions: row.weather_conditions as InspectorInspection['weather_conditions'],
+          weather_conditions: row.weather_conditions as unknown as InspectorInspection['weather_conditions'],
           property: property
             ? {
                 id: property.id,
@@ -210,11 +210,11 @@ export function useInspectorInspection(inspectionId: string | undefined) {
         estimated_duration_minutes: data.estimated_duration_minutes,
         actual_start_at: data.actual_start_at,
         actual_end_at: data.actual_end_at,
-        checklist: data.checklist as InspectorInspection['checklist'],
-        findings: data.findings as InspectorInspection['findings'],
+        checklist: data.checklist as unknown as InspectorInspection['checklist'],
+        findings: data.findings as unknown as InspectorInspection['findings'],
         overall_condition: data.overall_condition,
         summary: data.summary,
-        weather_conditions: data.weather_conditions as InspectorInspection['weather_conditions'],
+        weather_conditions: data.weather_conditions as unknown as InspectorInspection['weather_conditions'],
         property: property
           ? {
               id: property.id,
