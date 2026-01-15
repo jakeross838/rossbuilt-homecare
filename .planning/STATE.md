@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 5 of 14 (Templates & Checklists)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-15 - Completed 05-03-PLAN.md
+Last activity: 2026-01-15 - Completed 05-04-PLAN.md
 
-Progress: ██████░░░░ 38% (22 of ~60 plans)
+Progress: ██████░░░░ 40% (24 of ~60 plans)
 
 ### Phase 5 Plans (IN PROGRESS)
 
@@ -23,7 +23,7 @@ Progress: ██████░░░░ 38% (22 of ~60 plans)
 | 05-01 | Template Data Foundation | Types, constants | **Complete** |
 | 05-02 | Template Validation & Hooks | Zod schemas, React Query CRUD | **Complete** |
 | 05-03 | Checklist Generation Engine | Dynamic checklist builder | **Complete** |
-| 05-04 | Template Management UI | Settings page, editor | Pending |
+| 05-04 | Template Management UI | Settings page, editor | **Complete** |
 | 05-05 | Checklist Preview & Integration | Property page integration | Pending |
 
 **Wave Structure:**
@@ -121,6 +121,8 @@ Recent decisions affecting current work:
 - **04-05**: Program section positioned after Equipment on property detail page
 - **05-02**: Used InspectionTier enum type from database for type-safe filtering
 - **05-02**: Soft delete pattern with is_active = false (consistent with equipment hooks)
+- **05-04**: Used Sheet instead of Dialog for template editor (more space for complex form)
+- **05-04**: Templates link added to sidebar bottom nav alongside Pricing and Settings
 
 ### Pending Todos
 
