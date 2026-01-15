@@ -23,7 +23,7 @@ Detailed phase specifications available in `~/Downloads/home-care-os-docs/`:
 - [x] **Phase 1: Database & Auth** - Supabase schema, RLS, authentication ✅
 - [x] **Phase 2: Core Entities** - Clients, properties, users CRUD ✅
 - [x] **Phase 3: Equipment & AI** - Equipment registry, AI maintenance generation ✅
-- [ ] **Phase 4: Programs & Pricing** - Program builder, pricing engine
+- [x] **Phase 4: Programs & Pricing** - Program builder, pricing engine
 - [ ] **Phase 5: Templates & Checklists** - Inspection templates, dynamic checklists
 - [ ] **Phase 6: Smart Scheduling** - Calendar, route optimization, assignments
 - [ ] **Phase 7: Inspector Mobile** - PWA, offline mode, photo capture
@@ -174,7 +174,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 1. Database & Auth | 4/4 | ✅ Complete | 2026-01-14 |
 | 2. Core Entities | 6/6 | ✅ Complete | 2026-01-15 |
 | 3. Equipment & AI | 4/4 | ✅ Complete | 2026-01-15 |
-| 4. Programs & Pricing | 2/5 | In progress | - |
+| 4. Programs & Pricing | 5/5 | Complete | 2026-01-15 |
 | 5. Templates & Checklists | 0/TBD | Not started | - |
 | 6. Smart Scheduling | 0/TBD | Not started | - |
 | 7. Inspector Mobile | 0/TBD | Not started | - |

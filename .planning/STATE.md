@@ -5,18 +5,18 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 4 — Programs & Pricing (IN PROGRESS)
+**Current focus:** Phase 5 — Templates & Checklists (NEXT)
 
 ## Current Position
 
-Phase: 4 of 14 (Programs & Pricing)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-01-15 - Completed 04-03-PLAN.md
+Phase: 5 of 14 (Templates & Checklists)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-01-15 - Completed Phase 4 (Programs & Pricing)
 
-Progress: ██████░░░░ 33% (18 of ~55 plans)
+Progress: ██████░░░░ 35% (19 of ~55 plans)
 
-### Phase 4 Plans (IN PROGRESS)
+### Phase 4 Plans (COMPLETE)
 
 | Plan | Name | Files | Status |
 |------|------|-------|--------|
@@ -24,7 +24,7 @@ Progress: ██████░░░░ 33% (18 of ~55 plans)
 | 04-02 | Program & Pricing Hooks | React Query hooks for CRUD | **Complete** |
 | 04-03 | Program Builder UI | 4-step wizard component | **Complete** |
 | 04-04 | Program Status Card | View/manage programs | **Complete** |
-| 04-05 | Settings & Integration | Pricing page, property integration | **Pending** |
+| 04-05 | Settings & Integration | Pricing page, property integration | **Complete** |
 
 **Wave Structure:**
 - Wave 1: 04-01 (no dependencies)
@@ -44,9 +44,9 @@ Progress: ██████░░░░ 33% (18 of ~55 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 6 min
-- Total execution time: 106 min
+- Total execution time: 112 min
 
 **By Phase:**
 
@@ -55,10 +55,11 @@ Progress: ██████░░░░ 33% (18 of ~55 plans)
 | 1 | 4/4 | 21 min | 5 min |
 | 2 | 6/6 | 78 min | 13 min |
 | 3 | 4/4 | 21 min | 5 min |
+| 4 | 5/5 | 25 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-04 (4 min), 04-01 (3 min), 04-02 (4 min), 04-04 (5 min), 04-03 (7 min)
-- Trend: Phase 4 progressing efficiently, Wave 3 complete
+- Last 5 plans: 04-02 (4 min), 04-03 (7 min), 04-04 (5 min), 04-05 (6 min)
+- Trend: Phase 4 completed efficiently, ready for Phase 5
 
 ## Accumulated Context
 
@@ -100,6 +101,8 @@ Recent decisions affecting current work:
 - **04-04**: Status badge color mapping pattern for program status display
 - **04-03**: Used Resolver type cast for zod v4 compatibility with react-hook-form
 - **04-03**: RadioGroup with sr-only items for card-based visual selection pattern
+- **04-05**: Pricing link in sidebar bottom nav alongside Settings
+- **04-05**: Program section positioned after Equipment on property detail page
 
 ### Pending Todos
 
@@ -118,12 +121,13 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 04-03-PLAN.md (Program Builder UI)
+Stopped at: Completed Phase 4 (Programs & Pricing)
 Resume file: None
 
 ## Next Action
 
-Ready for next plan: 04-05 (Settings & Integration) - Wave 4 integration
+Ready for Phase 5 planning: Templates & Checklists
+Reference: ~/Downloads/home-care-os-docs/phase-05-templates-checklists.md
 
 ## Phase 1 Summary
 
@@ -179,3 +183,26 @@ Ready for next plan: 04-05 (Settings & Integration) - Wave 4 integration
 - apps/admin/src/pages/properties/components/equipment-list.tsx - Grouped equipment list
 - apps/admin/src/pages/properties/components/equipment-detail-sheet.tsx - 4-tab detail sheet
 - supabase/functions/generate-equipment-maintenance/ - AI edge function
+
+## Phase 4 Summary
+
+**Programs & Pricing Complete:**
+- Pricing foundation with constants and validation schemas
+- Program and pricing React Query hooks for CRUD operations
+- 4-step Program Builder wizard with real-time pricing calculation
+- Program Status Card for viewing and managing programs (pause/resume/cancel)
+- Pricing Settings page for admin configuration
+- Full integration into property detail page
+
+**Key Files Created:**
+- apps/admin/src/lib/constants/pricing.ts - Pricing tiers, frequencies, add-ons
+- apps/admin/src/lib/validations/pricing.ts - Pricing config schema
+- apps/admin/src/lib/validations/program.ts - Program form schema
+- apps/admin/src/hooks/use-pricing.ts - Pricing config hooks with calculateProgramPrice
+- apps/admin/src/hooks/use-programs.ts - Program CRUD and lifecycle hooks
+- apps/admin/src/components/ui/radio-group.tsx - RadioGroup component
+- apps/admin/src/components/ui/alert-dialog.tsx - AlertDialog component
+- apps/admin/src/components/programs/program-builder.tsx - 4-step wizard
+- apps/admin/src/components/programs/program-status-card.tsx - Status card with actions
+- apps/admin/src/pages/settings/pricing.tsx - Pricing configuration page
+
