@@ -119,6 +119,8 @@ Recent decisions affecting current work:
 - **04-03**: RadioGroup with sr-only items for card-based visual selection pattern
 - **04-05**: Pricing link in sidebar bottom nav alongside Settings
 - **04-05**: Program section positioned after Equipment on property detail page
+- **05-02**: Used InspectionTier enum type from database for type-safe filtering
+- **05-02**: Soft delete pattern with is_active = false (consistent with equipment hooks)
 
 ### Pending Todos
 
