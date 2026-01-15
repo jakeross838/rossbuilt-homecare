@@ -26,7 +26,7 @@ Detailed phase specifications available in `~/Downloads/home-care-os-docs/`:
 - [x] **Phase 4: Programs & Pricing** - Program builder, pricing engine
 - [x] **Phase 5: Templates & Checklists** - Inspection templates, dynamic checklists ✅
 - [x] **Phase 6: Smart Scheduling** - Calendar, route optimization, assignments ✅
-- [ ] **Phase 7: Inspector Mobile** - PWA, offline mode, photo capture (5/8 plans complete)
+- [x] **Phase 7: Inspector Mobile** - PWA, offline mode, photo capture ✅
 - [ ] **Phase 8: Findings & Reports** - Report generation, PDF, AI summaries
 - [ ] **Phase 9: Work Orders & Vendors** - Work order workflow, vendor management
 - [ ] **Phase 10: Billing & Invoicing** - Stripe integration, subscriptions
@@ -182,7 +182,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 4. Programs & Pricing | 5/5 | Complete | 2026-01-15 |
 | 5. Templates & Checklists | 5/5 | ✅ Complete | 2026-01-15 |
 | 6. Smart Scheduling | 5/5 | Complete | 2026-01-15 |
-| 7. Inspector Mobile | 7/8 | In progress | - |
+| 7. Inspector Mobile | 8/8 | ✅ Complete | 2026-01-15 |
 | 8. Findings & Reports | 0/TBD | Not started | - |
 | 9. Work Orders & Vendors | 0/TBD | Not started | - |
 | 10. Billing & Invoicing | 0/TBD | Not started | - |
