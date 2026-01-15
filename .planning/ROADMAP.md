@@ -21,7 +21,7 @@ Detailed phase specifications available in `~/Downloads/home-care-os-docs/`:
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Database & Auth** - Supabase schema, RLS, authentication ✅
-- [ ] **Phase 2: Core Entities** - Clients, properties, users CRUD
+- [x] **Phase 2: Core Entities** - Clients, properties, users CRUD ✅
 - [ ] **Phase 3: Equipment & AI** - Equipment registry, AI photo recognition
 - [ ] **Phase 4: Programs & Pricing** - Program builder, pricing engine
 - [ ] **Phase 5: Templates & Checklists** - Inspection templates, dynamic checklists
@@ -49,17 +49,17 @@ Detailed phase specifications available in `~/Downloads/home-care-os-docs/`:
 
 Reference: `~/Downloads/home-care-os-docs/phase-01-database.md`
 
-### Phase 2: Core Entities
+### Phase 2: Core Entities ✅
 **Goal**: CRUD for clients, properties, and users with proper permissions
 **Depends on**: Phase 1
-**Status**: IN PROGRESS (3/6 plans complete)
-**Plans**: 6 plans created
+**Status**: COMPLETE (2026-01-15)
+**Plans**: 6 plans executed
 - 02-01: Project setup & core infrastructure (Vite, Tailwind, Supabase client) ✅
 - 02-02: shadcn/ui components (18 UI components + 5 shared components) ✅
 - 02-03: Authentication & layout (auth store, login, sidebar, header) ✅
-- 02-04: Client management (validation, hooks, CRUD pages)
-- 02-05: Property management (validation, hooks, CRUD pages)
-- 02-06: Polish & testing (toasts, error handling, manual testing)
+- 02-04: Client management (validation, hooks, CRUD pages) ✅
+- 02-05: Property management (validation, hooks, CRUD pages) ✅
+- 02-06: Polish & testing (toasts, error handling, manual testing) ✅
 
 Reference: `~/Downloads/home-care-os-docs/phase-02-core-entities.md`
 
@@ -165,7 +165,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Database & Auth | 4/4 | ✅ Complete | 2026-01-14 |
-| 2. Core Entities | 3/6 | In Progress | - |
+| 2. Core Entities | 6/6 | ✅ Complete | 2026-01-15 |
 | 3. Equipment & AI | 0/TBD | Not started | - |
 | 4. Programs & Pricing | 0/TBD | Not started | - |
 | 5. Templates & Checklists | 0/TBD | Not started | - |
