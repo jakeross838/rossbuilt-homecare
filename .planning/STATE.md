@@ -158,6 +158,8 @@ Recent decisions affecting current work:
 - **05-04**: Used Sheet instead of Dialog for template editor (more space for complex form)
 - **05-04**: Templates link added to sidebar bottom nav alongside Pricing and Settings
 - **05-05**: ChecklistPreview component with TooltipProvider wrapper for self-contained tooltip functionality
+- **07-01**: registerType: 'prompt' for user-controlled PWA updates
+- **07-01**: NetworkFirst caching strategy for Supabase API (1 hour expiry)
 - **07-02**: Nested join pattern for clients through properties foreign key
 - **07-02**: Type assertion via unknown for JSONB fields (checklist, findings, weather_conditions)
 
@@ -178,13 +180,13 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 07-02-PLAN.md (Inspector Types & Schedule)
+Stopped at: Completed 07-01-PLAN.md (PWA Setup & Foundation)
 Resume file: None
 
 ## Next Action
 
-Continue Phase 7: Inspector Mobile PWA
-Run: `/gsd:execute-plan 07-03`
+Continue Phase 7: Inspector Mobile PWA - Wave 2
+Run: `/gsd:execute-plan 07-03` (or run Wave 2 plans in parallel: 07-03, 07-04, 07-05)
 
 ## Phase 1 Summary
 
