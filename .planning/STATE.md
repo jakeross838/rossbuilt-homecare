@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 4 of 14 (Programs & Pricing)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-15 - Completed 04-01-PLAN.md
+Last activity: 2026-01-15 - Completed 04-02-PLAN.md
 
-Progress: █████░░░░░ 27% (15 of ~55 plans)
+Progress: █████░░░░░ 29% (16 of ~55 plans)
 
 ### Phase 4 Plans (IN PROGRESS)
 
 | Plan | Name | Files | Status |
 |------|------|-------|--------|
 | 04-01 | Pricing Foundation | Constants, validation schemas | **Complete** |
-| 04-02 | Program & Pricing Hooks | React Query hooks for CRUD | **Pending** |
+| 04-02 | Program & Pricing Hooks | React Query hooks for CRUD | **Complete** |
 | 04-03 | Program Builder UI | 4-step wizard component | **Pending** |
 | 04-04 | Program Status Card | View/manage programs | **Pending** |
 | 04-05 | Settings & Integration | Pricing page, property integration | **Pending** |
@@ -44,9 +44,9 @@ Progress: █████░░░░░ 27% (15 of ~55 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 6 min
-- Total execution time: 90 min
+- Total execution time: 94 min
 
 **By Phase:**
 
@@ -57,7 +57,7 @@ Progress: █████░░░░░ 27% (15 of ~55 plans)
 | 3 | 4/4 | 21 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-06 (25 min), 03-01 (5 min), 03-02 (4 min), 03-03 (8 min), 03-04 (4 min)
+- Last 5 plans: 03-01 (5 min), 03-02 (4 min), 03-03 (8 min), 03-04 (4 min), 04-01 (3 min)
 - Trend: Equipment phase completed efficiently
 
 ## Accumulated Context
@@ -94,6 +94,8 @@ Recent decisions affecting current work:
 - **03-03**: Added Sheet UI component following shadcn/ui patterns
 - **03-03**: Type assertion via unknown for JSON fields from database
 - **03-04**: Equipment section as full-width section below property detail grid
+- **04-02**: Used InsertTables type helper for type-safe Supabase inserts
+- **04-02**: Handle PGRST116 (no rows) gracefully in usePropertyProgram
 
 ### Pending Todos
 
@@ -112,12 +114,12 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 04-01-PLAN.md (Pricing Foundation)
+Stopped at: Completed 04-02-PLAN.md (Program & Pricing Hooks)
 Resume file: None
 
 ## Next Action
 
-Ready for next plan: 04-02 (Program & Pricing Hooks)
+Ready for next plan: 04-03 (Program Builder UI) or 04-04 (Program Status Card) - Wave 3 can run in parallel
 
 ## Phase 1 Summary
 
