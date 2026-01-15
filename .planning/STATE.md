@@ -5,16 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 4 — Inspections (NEXT)
+**Current focus:** Phase 4 — Programs & Pricing (PLANNED)
 
 ## Current Position
 
-Phase: 3 of 14 (Equipment & AI) - COMPLETE
-Plan: 4 of 4 in current phase (03-04 complete)
-Status: Phase 3 complete
-Last activity: 2026-01-15 - Completed 03-04-PLAN.md (Equipment Pages & Integration)
+Phase: 4 of 14 (Programs & Pricing) - PLANNED
+Plan: 0 of 5 in current phase (ready to execute)
+Status: Phase 4 planned, ready for execution
+Last activity: 2026-01-15 - Created 5 plans for Phase 4
 
-Progress: ████░░░░░░ 28% (14 of ~50 plans)
+Progress: ████░░░░░░ 28% (14 of ~55 plans)
+
+### Phase 4 Plans (PLANNED)
+
+| Plan | Name | Files | Status |
+|------|------|-------|--------|
+| 04-01 | Pricing Foundation | Constants, validation schemas | **Pending** |
+| 04-02 | Program & Pricing Hooks | React Query hooks for CRUD | **Pending** |
+| 04-03 | Program Builder UI | 4-step wizard component | **Pending** |
+| 04-04 | Program Status Card | View/manage programs | **Pending** |
+| 04-05 | Settings & Integration | Pricing page, property integration | **Pending** |
+
+**Wave Structure:**
+- Wave 1: 04-01 (no dependencies)
+- Wave 2: 04-02 (depends on 04-01)
+- Wave 3: 04-03, 04-04 (parallel - both depend on 04-02)
+- Wave 4: 04-05 (depends on 04-03, 04-04 - integration)
 
 ### Phase 3 Plans (COMPLETE)
 
@@ -24,11 +40,6 @@ Progress: ████░░░░░░ 28% (14 of ~50 plans)
 | 03-02 | AI Edge Function | Edge function, Claude API | **Complete** |
 | 03-03 | Equipment UI Components | Form, List, Detail Sheet | **Complete** |
 | 03-04 | Equipment Pages & Integration | Property detail integration | **Complete** |
-
-**Wave Structure:**
-- Wave 1: 03-01, 03-02 (parallel - no dependencies) - DONE
-- Wave 2: 03-03 (depends on 03-01, 03-02) - DONE
-- Wave 3: 03-04 (depends on 03-03 - integration) - DONE
 
 ## Performance Metrics
 
@@ -106,7 +117,7 @@ Resume file: None
 
 ## Next Action
 
-Phase 3 complete. Ready for Phase 4 (Inspections).
+Run `/gsd:execute-phase 4` to execute Phase 4 (Programs & Pricing).
 
 ## Phase 1 Summary
 

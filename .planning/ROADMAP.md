@@ -78,7 +78,12 @@ Reference: `~/Downloads/home-care-os-docs/phase-03-equipment-ai.md`
 **Goal**: Program builder with tier-based pricing engine
 **Depends on**: Phase 2
 **Research**: Unlikely (internal business logic)
-**Plans**: TBD
+**Plans**: 5 plans in 4 waves
+- 04-01: Pricing Foundation (constants, validation schemas)
+- 04-02: Program & Pricing Hooks (React Query CRUD)
+- 04-03: Program Builder UI (4-step wizard)
+- 04-04: Program Status Card (view/manage programs)
+- 04-05: Settings & Integration (pricing page, property integration)
 
 Reference: `~/Downloads/home-care-os-docs/phase-04-programs-pricing.md`
 
@@ -169,7 +174,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 1. Database & Auth | 4/4 | ✅ Complete | 2026-01-14 |
 | 2. Core Entities | 6/6 | ✅ Complete | 2026-01-15 |
 | 3. Equipment & AI | 4/4 | ✅ Complete | 2026-01-15 |
-| 4. Programs & Pricing | 0/TBD | Not started | - |
+| 4. Programs & Pricing | 0/5 | Planned | - |
 | 5. Templates & Checklists | 0/TBD | Not started | - |
 | 6. Smart Scheduling | 0/TBD | Not started | - |
 | 7. Inspector Mobile | 0/TBD | Not started | - |
