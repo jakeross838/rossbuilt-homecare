@@ -5,37 +5,37 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 3 — Equipment & AI (IN PROGRESS)
+**Current focus:** Phase 4 — Inspections (NEXT)
 
 ## Current Position
 
-Phase: 3 of 14 (Equipment & AI) - IN PROGRESS
-Plan: 3 of 4 in current phase (03-03 complete)
-Status: In progress (Wave 2 complete)
-Last activity: 2026-01-15 - Completed 03-03-PLAN.md (Equipment UI Components)
+Phase: 3 of 14 (Equipment & AI) - COMPLETE
+Plan: 4 of 4 in current phase (03-04 complete)
+Status: Phase 3 complete
+Last activity: 2026-01-15 - Completed 03-04-PLAN.md (Equipment Pages & Integration)
 
-Progress: ████░░░░░░ 26% (13 of ~50 plans)
+Progress: ████░░░░░░ 28% (14 of ~50 plans)
 
-### Phase 3 Plans (IN PROGRESS)
+### Phase 3 Plans (COMPLETE)
 
 | Plan | Name | Files | Status |
 |------|------|-------|--------|
 | 03-01 | Equipment Data Foundation | Constants, validation, hooks | **Complete** |
 | 03-02 | AI Edge Function | Edge function, Claude API | **Complete** |
 | 03-03 | Equipment UI Components | Form, List, Detail Sheet | **Complete** |
-| 03-04 | Equipment Pages & Integration | CRUD pages, AI button | Pending |
+| 03-04 | Equipment Pages & Integration | Property detail integration | **Complete** |
 
 **Wave Structure:**
 - Wave 1: 03-01, 03-02 (parallel - no dependencies) - DONE
 - Wave 2: 03-03 (depends on 03-01, 03-02) - DONE
-- Wave 3: 03-04 (depends on 03-03 - integration)
+- Wave 3: 03-04 (depends on 03-03 - integration) - DONE
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
-- Average duration: 7 min
-- Total execution time: 86 min
+- Total plans completed: 14
+- Average duration: 6 min
+- Total execution time: 90 min
 
 **By Phase:**
 
@@ -43,11 +43,11 @@ Progress: ████░░░░░░ 26% (13 of ~50 plans)
 |-------|-------|-------|----------|
 | 1 | 4/4 | 21 min | 5 min |
 | 2 | 6/6 | 78 min | 13 min |
-| 3 | 3/4 | 17 min | 6 min |
+| 3 | 4/4 | 21 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-05 (18 min), 02-06 (25 min), 03-01 (5 min), 03-02 (4 min), 03-03 (8 min)
-- Trend: Equipment phase progressing well
+- Last 5 plans: 02-06 (25 min), 03-01 (5 min), 03-02 (4 min), 03-03 (8 min), 03-04 (4 min)
+- Trend: Equipment phase completed efficiently
 
 ## Accumulated Context
 
@@ -82,6 +82,7 @@ Recent decisions affecting current work:
 - **03-02**: JSON extraction with regex to handle potential markdown wrapping from Claude
 - **03-03**: Added Sheet UI component following shadcn/ui patterns
 - **03-03**: Type assertion via unknown for JSON fields from database
+- **03-04**: Equipment section as full-width section below property detail grid
 
 ### Pending Todos
 
@@ -100,12 +101,12 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 03-03-PLAN.md (Equipment UI Components)
+Stopped at: Completed 03-04-PLAN.md (Equipment Pages & Integration)
 Resume file: None
 
 ## Next Action
 
-Wave 2 complete (03-03). Ready for Wave 3 (03-04 - Equipment Pages & Integration).
+Phase 3 complete. Ready for Phase 4 (Inspections).
 
 ## Phase 1 Summary
 
@@ -142,3 +143,22 @@ Wave 2 complete (03-03). Ready for Wave 3 (03-04 - Equipment Pages & Integration
 - Hooks: hooks/use-clients.ts, hooks/use-properties.ts, hooks/use-toast.ts
 - Stores: stores/auth-store.ts, stores/ui-store.ts
 - Validations: lib/validations/client.ts, lib/validations/property.ts
+
+## Phase 3 Summary
+
+**Equipment & AI Complete:**
+- Equipment data foundation with 9 categories and types
+- AI Edge Function for generating maintenance schedules via Claude API
+- Equipment UI components (form, list, detail sheet)
+- Full integration into property detail page
+- 4-tab detail view (Details, Maintenance, Checklist, Troubleshooting)
+
+**Key Files Created:**
+- apps/admin/src/lib/constants/equipment.ts - Equipment categories and types
+- apps/admin/src/lib/validations/equipment.ts - Zod schema for equipment
+- apps/admin/src/hooks/use-equipment.ts - React Query hooks for CRUD + AI
+- apps/admin/src/components/ui/sheet.tsx - Sheet UI component
+- apps/admin/src/pages/properties/components/equipment-form.tsx - Equipment form dialog
+- apps/admin/src/pages/properties/components/equipment-list.tsx - Grouped equipment list
+- apps/admin/src/pages/properties/components/equipment-detail-sheet.tsx - 4-tab detail sheet
+- supabase/functions/generate-equipment-maintenance/ - AI edge function
