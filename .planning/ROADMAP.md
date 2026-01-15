@@ -182,7 +182,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 4. Programs & Pricing | 5/5 | Complete | 2026-01-15 |
 | 5. Templates & Checklists | 5/5 | ✅ Complete | 2026-01-15 |
 | 6. Smart Scheduling | 5/5 | Complete | 2026-01-15 |
-| 7. Inspector Mobile | 3/8 | In progress | - |
+| 7. Inspector Mobile | 7/8 | In progress | - |
 | 8. Findings & Reports | 0/TBD | Not started | - |
 | 9. Work Orders & Vendors | 0/TBD | Not started | - |
 | 10. Billing & Invoicing | 0/TBD | Not started | - |
