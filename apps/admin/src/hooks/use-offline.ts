@@ -10,6 +10,11 @@ export interface OfflineState {
   syncNow: () => Promise<SyncResult>
 }
 
+// Alias for components that prefer shorter hook name
+export function useOfflineStatus(): OfflineState {
+  return useOffline()
+}
+
 export function useOffline(): OfflineState {
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [isSyncing, setIsSyncing] = useState(false)
