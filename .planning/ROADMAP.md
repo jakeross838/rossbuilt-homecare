@@ -24,9 +24,9 @@ Detailed phase specifications available in `~/Downloads/home-care-os-docs/`:
 - [x] **Phase 2: Core Entities** - Clients, properties, users CRUD ✅
 - [x] **Phase 3: Equipment & AI** - Equipment registry, AI maintenance generation ✅
 - [x] **Phase 4: Programs & Pricing** - Program builder, pricing engine
-- [ ] **Phase 5: Templates & Checklists** - Inspection templates, dynamic checklists
-- [ ] **Phase 6: Smart Scheduling** - Calendar, route optimization, assignments
-- [ ] **Phase 7: Inspector Mobile** - PWA, offline mode, photo capture
+- [x] **Phase 5: Templates & Checklists** - Inspection templates, dynamic checklists ✅
+- [x] **Phase 6: Smart Scheduling** - Calendar, route optimization, assignments ✅
+- [ ] **Phase 7: Inspector Mobile** - PWA, offline mode, photo capture (5/8 plans complete)
 - [ ] **Phase 8: Findings & Reports** - Report generation, PDF, AI summaries
 - [ ] **Phase 9: Work Orders & Vendors** - Work order workflow, vendor management
 - [ ] **Phase 10: Billing & Invoicing** - Stripe integration, subscriptions
