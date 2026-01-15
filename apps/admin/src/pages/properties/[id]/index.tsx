@@ -4,13 +4,11 @@ import {
   ArrowLeft,
   Pencil,
   MapPin,
-
   Home,
   Key,
   Wifi,
   Shield,
   FileText,
-  Wrench,
   ClipboardCheck,
   Eye,
   EyeOff,
@@ -37,6 +35,7 @@ import {
   foundationTypes,
   type PropertyFeatures,
 } from '@/lib/validations/property'
+import { EquipmentList } from '../components/equipment-list'
 
 export function PropertyDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -100,7 +99,7 @@ export function PropertyDetailPage() {
     .join('\n')
 
   return (
-    <div>
+    <div className="space-y-8">
       <PageHeader
         title={property.name}
         description={
@@ -417,54 +416,6 @@ export function PropertyDetailPage() {
           </CardContent>
         </Card>
 
-        {/* Equipment (Placeholder) */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Wrench className="h-5 w-5" />
-              Equipment
-            </CardTitle>
-            <CardDescription>
-              Equipment registered at this property
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {property.equipment && property.equipment.length > 0 ? (
-              <div className="space-y-2">
-                {property.equipment.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-2 rounded border"
-                    >
-                      <div>
-                        <p className="font-medium">
-                          {item.custom_name || item.equipment_type}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {item.category}
-                          {item.manufacturer && ` - ${item.manufacturer}`}
-                        </p>
-                      </div>
-                      <Badge
-                        variant={item.is_active ? 'success' : 'secondary'}
-                      >
-                        {item.is_active ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </div>
-                  )
-                )}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">
-                No equipment registered yet
-              </p>
-            )}
-            <p className="text-sm text-muted-foreground mt-4">
-              Equipment management coming in Phase 3
-            </p>
-          </CardContent>
-        </Card>
-
         {/* Recent Inspections (Placeholder) */}
         <Card>
           <CardHeader>
@@ -498,7 +449,7 @@ export function PropertyDetailPage() {
               <p className="text-muted-foreground">No inspections yet</p>
             )}
             <p className="text-sm text-muted-foreground mt-4">
-              Inspections module coming in Phase 4
+              Inspections module coming in Phase 5
             </p>
           </CardContent>
         </Card>
@@ -536,6 +487,13 @@ export function PropertyDetailPage() {
           </Card>
         )}
       </div>
+
+      {/* Equipment Section - Full Width */}
+      {id && (
+        <section>
+          <EquipmentList propertyId={id} />
+        </section>
+      )}
     </div>
   )
 }
