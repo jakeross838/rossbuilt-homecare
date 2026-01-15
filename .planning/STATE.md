@@ -5,18 +5,18 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 5 — Templates & Checklists (IN PROGRESS)
+**Current focus:** Phase 6 — Scheduling & Calendar (NEXT)
 
 ## Current Position
 
-Phase: 5 of 14 (Templates & Checklists)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-01-15 - Completed 05-04-PLAN.md
+Phase: 5 of 14 (Templates & Checklists) - COMPLETE
+Plan: 5 of 5 in current phase
+Status: Complete
+Last activity: 2026-01-15 - Completed 05-05-PLAN.md (Phase 5 complete!)
 
-Progress: ██████░░░░ 40% (24 of ~60 plans)
+Progress: ██████░░░░ 42% (25 of ~60 plans)
 
-### Phase 5 Plans (IN PROGRESS)
+### Phase 5 Plans (COMPLETE)
 
 | Plan | Name | Files | Status |
 |------|------|-------|--------|
@@ -24,7 +24,7 @@ Progress: ██████░░░░ 40% (24 of ~60 plans)
 | 05-02 | Template Validation & Hooks | Zod schemas, React Query CRUD | **Complete** |
 | 05-03 | Checklist Generation Engine | Dynamic checklist builder | **Complete** |
 | 05-04 | Template Management UI | Settings page, editor | **Complete** |
-| 05-05 | Checklist Preview & Integration | Property page integration | Pending |
+| 05-05 | Checklist Preview & Integration | Property page integration | **Complete** |
 
 **Wave Structure:**
 - Wave 1: 05-01 (no dependencies)
@@ -123,6 +123,7 @@ Recent decisions affecting current work:
 - **05-02**: Soft delete pattern with is_active = false (consistent with equipment hooks)
 - **05-04**: Used Sheet instead of Dialog for template editor (more space for complex form)
 - **05-04**: Templates link added to sidebar bottom nav alongside Pricing and Settings
+- **05-05**: ChecklistPreview component with TooltipProvider wrapper for self-contained tooltip functionality
 
 ### Pending Todos
 
@@ -141,14 +142,14 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 4 (Programs & Pricing)
+Stopped at: Completed Phase 5 (Templates & Checklists)
 Resume file: None
 
 ## Next Action
 
-Ready to execute Phase 5: Templates & Checklists
-Run: `/gsd:execute-phase 5`
-Reference: ~/Downloads/home-care-os-docs/phase-05-templates-checklists.md
+Ready to execute Phase 6: Scheduling & Calendar
+Run: `/gsd:execute-phase 6`
+Reference: ~/Downloads/home-care-os-docs/phase-06-scheduling.md
 
 ## Phase 1 Summary
 
@@ -226,4 +227,23 @@ Reference: ~/Downloads/home-care-os-docs/phase-05-templates-checklists.md
 - apps/admin/src/components/programs/program-builder.tsx - 4-step wizard
 - apps/admin/src/components/programs/program-status-card.tsx - Status card with actions
 - apps/admin/src/pages/settings/pricing.tsx - Pricing configuration page
+
+## Phase 5 Summary
+
+**Templates & Checklists Complete:**
+- Template data foundation with TypeScript types for inspection templates
+- Template validation schemas and React Query hooks for CRUD operations
+- Checklist generation engine that builds dynamic checklists from property features, equipment, and tier
+- Template Management UI with Sheet-based editor for creating/editing templates
+- ChecklistPreview component integrated into property detail page
+- Conditional display: checklist appears only when program is active
+
+**Key Files Created:**
+- apps/admin/src/lib/types/inspection.ts - Template and checklist TypeScript types
+- apps/admin/src/lib/validations/template.ts - Zod schemas for template validation
+- apps/admin/src/hooks/use-templates.ts - React Query hooks for template CRUD
+- apps/admin/src/hooks/use-checklist.ts - Hook for generating checklists
+- apps/admin/src/lib/checklist-generator.ts - Engine for building checklists from data
+- apps/admin/src/components/inspections/checklist-preview.tsx - Preview component
+- apps/admin/src/pages/settings/templates.tsx - Template management page
 
