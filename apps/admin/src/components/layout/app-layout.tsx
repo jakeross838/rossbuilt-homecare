@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Outlet, Navigate, useLocation } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 
@@ -9,16 +8,10 @@ import { useAuthStore } from '@/stores/auth-store'
 
 export function AppLayout() {
   const location = useLocation()
-  const { user, isLoading, isInitialized, initialize } = useAuthStore()
+  const { user, isLoading } = useAuthStore()
 
-  useEffect(() => {
-    if (!isInitialized) {
-      initialize()
-    }
-  }, [isInitialized, initialize])
-
-  // Show loading state while initializing
-  if (!isInitialized || isLoading) {
+  // Show loading state during auth operations (sign in/out)
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">

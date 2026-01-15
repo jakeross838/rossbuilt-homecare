@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+import { AuthProvider } from '@/components/providers/auth-provider'
 import { AppLayout } from '@/components/layout/app-layout'
 import LoginPage from '@/pages/auth/login'
 import DashboardPage from '@/pages/dashboard'
@@ -28,57 +29,59 @@ function PlaceholderPage({ title }: { title: string }) {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<LoginPage />} />
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected routes with AppLayout */}
-          <Route element={<AppLayout />}>
-            {/* Redirect root to dashboard */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            {/* Protected routes with AppLayout */}
+            <Route element={<AppLayout />}>
+              {/* Redirect root to dashboard */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-            {/* Dashboard */}
-            <Route path="/dashboard" element={<DashboardPage />} />
+              {/* Dashboard */}
+              <Route path="/dashboard" element={<DashboardPage />} />
 
-            {/* Clients */}
-            <Route path="/clients" element={<PlaceholderPage title="Clients" />} />
-            <Route path="/clients/:id" element={<PlaceholderPage title="Client Details" />} />
+              {/* Clients */}
+              <Route path="/clients" element={<PlaceholderPage title="Clients" />} />
+              <Route path="/clients/:id" element={<PlaceholderPage title="Client Details" />} />
 
-            {/* Properties */}
-            <Route path="/properties" element={<PlaceholderPage title="Properties" />} />
-            <Route path="/properties/:id" element={<PlaceholderPage title="Property Details" />} />
+              {/* Properties */}
+              <Route path="/properties" element={<PlaceholderPage title="Properties" />} />
+              <Route path="/properties/:id" element={<PlaceholderPage title="Property Details" />} />
 
-            {/* Calendar */}
-            <Route path="/calendar" element={<PlaceholderPage title="Calendar" />} />
+              {/* Calendar */}
+              <Route path="/calendar" element={<PlaceholderPage title="Calendar" />} />
 
-            {/* Inspections */}
-            <Route path="/inspections" element={<PlaceholderPage title="Inspections" />} />
-            <Route path="/inspections/:id" element={<PlaceholderPage title="Inspection Details" />} />
+              {/* Inspections */}
+              <Route path="/inspections" element={<PlaceholderPage title="Inspections" />} />
+              <Route path="/inspections/:id" element={<PlaceholderPage title="Inspection Details" />} />
 
-            {/* Work Orders */}
-            <Route path="/work-orders" element={<PlaceholderPage title="Work Orders" />} />
-            <Route path="/work-orders/:id" element={<PlaceholderPage title="Work Order Details" />} />
+              {/* Work Orders */}
+              <Route path="/work-orders" element={<PlaceholderPage title="Work Orders" />} />
+              <Route path="/work-orders/:id" element={<PlaceholderPage title="Work Order Details" />} />
 
-            {/* Billing */}
-            <Route path="/billing" element={<PlaceholderPage title="Billing" />} />
+              {/* Billing */}
+              <Route path="/billing" element={<PlaceholderPage title="Billing" />} />
 
-            {/* Vendors */}
-            <Route path="/vendors" element={<PlaceholderPage title="Vendors" />} />
-            <Route path="/vendors/:id" element={<PlaceholderPage title="Vendor Details" />} />
+              {/* Vendors */}
+              <Route path="/vendors" element={<PlaceholderPage title="Vendors" />} />
+              <Route path="/vendors/:id" element={<PlaceholderPage title="Vendor Details" />} />
 
-            {/* Reports */}
-            <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+              {/* Reports */}
+              <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
 
-            {/* Settings */}
-            <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
-            <Route path="/settings/profile" element={<PlaceholderPage title="Profile Settings" />} />
-          </Route>
+              {/* Settings */}
+              <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+              <Route path="/settings/profile" element={<PlaceholderPage title="Profile Settings" />} />
+            </Route>
 
-          {/* Catch all - redirect to dashboard */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </BrowserRouter>
+            {/* Catch all - redirect to dashboard */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </QueryClientProvider>
   )
 }

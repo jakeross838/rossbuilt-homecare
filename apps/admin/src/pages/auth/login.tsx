@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -27,8 +27,16 @@ type LoginFormData = z.infer<typeof loginSchema>
 export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const signIn = useAuthStore((state) => state.signIn)
+  const { user, signIn } = useAuthStore()
   const [error, setError] = useState<string | null>(null)
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (user) {
+      const from = (location.state as { from?: Location })?.from?.pathname || '/dashboard'
+      navigate(from, { replace: true })
+    }
+  }, [user, navigate, location.state])
 
   const {
     register,
