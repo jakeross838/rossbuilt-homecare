@@ -38,12 +38,24 @@ import {
 import { EquipmentList } from '../components/equipment-list'
 import { ProgramBuilder, ProgramStatusCard } from '@/components/programs'
 import { usePropertyProgram } from '@/hooks/use-programs'
+import { useGenerateChecklist } from '@/hooks/use-checklist'
+import { ChecklistPreview } from '@/components/inspections'
 
 export function PropertyDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data: property, isLoading, error } = useProperty(id)
   const { data: program, isLoading: programLoading } = usePropertyProgram(id || '')
+
+  // Generate checklist when program is active
+  const isProgramActive = program && ['active', 'pending', 'paused'].includes(program.status || '')
+  const {
+    data: checklist,
+    isLoading: checklistLoading,
+  } = useGenerateChecklist(
+    isProgramActive ? id : undefined,
+    isProgramActive ? program?.id : undefined
+  )
 
   // State for showing/hiding sensitive codes
   const [showCodes, setShowCodes] = useState(false)
@@ -452,7 +464,7 @@ export function PropertyDetailPage() {
               <p className="text-muted-foreground">No inspections yet</p>
             )}
             <p className="text-sm text-muted-foreground mt-4">
-              Inspections module coming in Phase 5
+              Inspections module coming in Phase 6
             </p>
           </CardContent>
         </Card>
@@ -515,6 +527,28 @@ export function PropertyDetailPage() {
           )}
         </section>
       )}
+
+      {/* Inspection Checklist Section - Full Width */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">Inspection Checklist</h2>
+        {!isProgramActive ? (
+          <Card>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              Activate a program to view inspection checklist
+            </CardContent>
+          </Card>
+        ) : checklistLoading ? (
+          <Skeleton className="h-64" />
+        ) : checklist ? (
+          <ChecklistPreview checklist={checklist} />
+        ) : (
+          <Card>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              Unable to generate checklist
+            </CardContent>
+          </Card>
+        )}
+      </section>
     </div>
   )
 }
