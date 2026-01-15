@@ -5,16 +5,35 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 7 — Work Orders & Tasks (NEXT)
+**Current focus:** Phase 7 — Inspector Mobile PWA
 
 ## Current Position
 
-Phase: 6 of 14 (Smart Scheduling) - COMPLETE
-Plan: 5 of 5 in current phase
-Status: Complete
-Last activity: 2026-01-15 - Completed 06-05-PLAN.md (Phase 6 complete!)
+Phase: 7 of 14 (Inspector Mobile) - PLANNED
+Plan: 0 of 8 in current phase
+Status: Ready to execute
+Last activity: 2026-01-15 - Created 8 plans for Phase 7
 
 Progress: ███████░░░ 50% (30 of ~60 plans)
+
+### Phase 7 Plans (PLANNED)
+
+| Plan | Name | Files | Status |
+|------|------|-------|--------|
+| 07-01 | PWA Setup & Foundation | manifest, service worker, pwa.ts | Pending |
+| 07-02 | Inspector Types & Schedule | Types, constants, schedule hooks | Pending |
+| 07-03 | Offline Storage | IndexedDB, sync queue | Pending |
+| 07-04 | Inspection Execution Hooks | Mutations with offline support | Pending |
+| 07-05 | Photo Capture | Camera access, local storage | Pending |
+| 07-06 | Inspector UI Components | Schedule list, checklist, forms | Pending |
+| 07-07 | Completion & Sync Status | Completion form, sync indicators | Pending |
+| 07-08 | Inspector Pages | Dashboard, inspection execution | Pending |
+
+**Wave Structure:**
+- Wave 1: 07-01, 07-02 (parallel - no dependencies)
+- Wave 2: 07-03, 07-04, 07-05 (parallel - depend on Wave 1)
+- Wave 3: 07-06, 07-07 (parallel - depend on Wave 2)
+- Wave 4: 07-08 (integration with checkpoint - depends on 07-06, 07-07)
 
 ### Phase 6 Plans (COMPLETE)
 
@@ -162,8 +181,8 @@ Resume file: None
 
 ## Next Action
 
-Ready to plan Phase 7: Work Orders & Tasks
-Run: `/gsd:plan-phase 7`
+Ready to execute Phase 7: Inspector Mobile PWA
+Run: `/gsd:execute-phase 7`
 
 ## Phase 1 Summary
 
