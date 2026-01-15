@@ -1,4 +1,5 @@
 import { useForm, Controller } from 'react-hook-form'
+import type { Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 
@@ -64,7 +65,7 @@ export function PropertyForm({
     control,
     formState: { errors },
   } = useForm<PropertyFormData>({
-    resolver: zodResolver(propertyFormSchema),
+    resolver: zodResolver(propertyFormSchema) as Resolver<PropertyFormData>,
     defaultValues: {
       client_id: preselectedClientId || '',
       name: '',

@@ -4,7 +4,7 @@ import {
   ArrowLeft,
   Pencil,
   MapPin,
-  User,
+
   Home,
   Key,
   Wifi,
@@ -27,7 +27,6 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Separator } from '@/components/ui/separator'
 import { PageHeader } from '@/components/layout/page-header'
 import { useProperty } from '@/hooks/use-properties'
 import {
@@ -432,15 +431,7 @@ export function PropertyDetailPage() {
           <CardContent>
             {property.equipment && property.equipment.length > 0 ? (
               <div className="space-y-2">
-                {property.equipment.map(
-                  (item: {
-                    id: string
-                    custom_name?: string
-                    equipment_type: string
-                    category: string
-                    manufacturer?: string
-                    is_active?: boolean
-                  }) => (
+                {property.equipment.map((item) => (
                     <div
                       key={item.id}
                       className="flex items-center justify-between p-2 rounded border"
@@ -488,13 +479,7 @@ export function PropertyDetailPage() {
           <CardContent>
             {property.inspections && property.inspections.length > 0 ? (
               <div className="space-y-2">
-                {property.inspections.slice(0, 5).map(
-                  (inspection: {
-                    id: string
-                    status: string
-                    scheduled_date?: string
-                    completed_at?: string
-                  }) => (
+                {property.inspections.slice(0, 5).map((inspection) => (
                     <div
                       key={inspection.id}
                       className="flex items-center justify-between p-2 rounded border"
