@@ -5,16 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 7 — Inspector Mobile PWA
+**Current focus:** Phase 8 — Findings & Reports
 
 ## Current Position
 
-Phase: 7 of 14 (Inspector Mobile) - COMPLETE
-Plan: 8 of 8 in current phase
-Status: Phase complete
-Last activity: 2026-01-15 - Completed 07-08-PLAN.md
+Phase: 8 of 14 (Findings & Reports) - IN PROGRESS
+Plan: 1 of 6 in current phase
+Status: Executing
+Last activity: 2026-01-15 - Completed 08-01 (Report Data Foundation)
 
-Progress: █████████░ 64% (38 of ~60 plans)
+Progress: █████████░ 65% (39 of ~60 plans)
+
+### Phase 8 Plans (IN PROGRESS)
+
+| Plan | Name | Files | Status |
+|------|------|-------|--------|
+| 08-01 | Report Data Foundation | Types, constants | **Complete** |
+| 08-02 | Findings & Recommendations Hooks | Validations, React Query hooks | **Ready** |
+| 08-03 | AI Report Summary Edge Function | Supabase Edge Function | **Ready** |
+| 08-04 | PDF Report Generation | @react-pdf/renderer components | **Ready** |
+| 08-05 | Report UI Components | Preview, dialog, badges | **Ready** |
+| 08-06 | Report Page & Integration | Pages, routes, sidebar | **Ready** |
+
+**Wave Structure:**
+- Wave 1: 08-01, 08-02 (parallel - no dependencies)
+- Wave 2: 08-03, 08-04 (parallel - depend on 08-01)
+- Wave 3: 08-05 (depends on 08-02, 08-04)
+- Wave 4: 08-06 (checkpoint - depends on 08-05)
 
 ### Phase 7 Plans (COMPLETE)
 
@@ -174,6 +191,8 @@ Recent decisions affecting current work:
 - **07-06**: Bottom sheet at 85% viewport height for finding form on mobile
 - **07-06**: Horizontal scrolling tabs for checklist sections
 - **07-06**: Status icons with color-coded borders for finding status
+- **08-01**: Report types integrate with existing ChecklistItemFinding and WeatherConditions from inspector.ts
+- **08-01**: Email templates use placeholder syntax ({property_name}, {client_name}, etc.) for dynamic substitution
 
 ### Pending Todos
 
@@ -192,13 +211,15 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 07-08-PLAN.md (Inspector Pages) - Phase 7 COMPLETE
+Stopped at: Completed 08-01-PLAN.md (Report Data Foundation)
 Resume file: None
 
 ## Next Action
 
-Phase 7 complete! Ready for Phase 8: Findings & Reports
-Run: `/gsd:plan-phase 8` to create plans for report generation
+Continue Phase 8 execution:
+- 08-02 ready to execute (Wave 1 parallel with 08-01)
+- After 08-02: 08-03 and 08-04 (Wave 2)
+Run: `/gsd:execute-plan 8 2` for findings/recommendations hooks
 
 ## Phase 1 Summary
 

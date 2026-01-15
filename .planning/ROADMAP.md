@@ -121,9 +121,14 @@ Reference: `~/Downloads/home-care-os-docs/phase-07-mobile-app.md`
 ### Phase 8: Findings & Reports
 **Goal**: Professional PDF reports with AI-generated summaries
 **Depends on**: Phase 7
-**Research**: Likely (PDF generation)
-**Research topics**: React-PDF vs Puppeteer, PDF styling, report templates
-**Plans**: TBD
+**Research**: Complete (chose @react-pdf/renderer for React component-based PDFs)
+**Plans**: 6 plans in 4 waves
+- 08-01: Report Data Foundation (types, constants)
+- 08-02: Findings & Recommendations Hooks (validations, React Query)
+- 08-03: AI Report Summary Edge Function (Claude API)
+- 08-04: PDF Report Generation (@react-pdf/renderer components)
+- 08-05: Report UI Components (preview, dialog, badges)
+- 08-06: Report Page & Integration (pages, routes, sidebar)
 
 Reference: `~/Downloads/home-care-os-docs/phase-08-findings-recommendations.md`
 
@@ -183,7 +188,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 5. Templates & Checklists | 5/5 | ✅ Complete | 2026-01-15 |
 | 6. Smart Scheduling | 5/5 | Complete | 2026-01-15 |
 | 7. Inspector Mobile | 8/8 | ✅ Complete | 2026-01-15 |
-| 8. Findings & Reports | 0/TBD | Not started | - |
+| 8. Findings & Reports | 0/6 | Planned | - |
 | 9. Work Orders & Vendors | 0/TBD | Not started | - |
 | 10. Billing & Invoicing | 0/TBD | Not started | - |
 | 11. Client Portal | 0/TBD | Not started | - |
