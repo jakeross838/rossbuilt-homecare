@@ -29,7 +29,7 @@ export function EditClientPage() {
 
       // Navigate back to the client detail page
       navigate(`/clients/${id}`)
-    } catch (err) {
+    } catch (_) {
       toast({
         title: 'Error',
         description: 'Failed to update client. Please try again.',

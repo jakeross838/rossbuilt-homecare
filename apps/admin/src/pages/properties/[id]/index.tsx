@@ -78,7 +78,7 @@ export function PropertyDetailPage() {
   // Get enabled features
   const features = (property.features || {}) as PropertyFeatures
   const enabledFeatures = Object.entries(features)
-    .filter(([_, enabled]) => enabled)
+    .filter(([, enabled]) => enabled)
     .map(([key]) => key as keyof PropertyFeatures)
 
   // Helper to get display label for select values

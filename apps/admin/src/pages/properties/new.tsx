@@ -26,7 +26,7 @@ export function NewPropertyPage() {
 
       // Navigate to the new property's detail page
       navigate(`/properties/${property.id}`)
-    } catch (err) {
+    } catch (_) {
       toast({
         title: 'Error',
         description: 'Failed to create property. Please try again.',

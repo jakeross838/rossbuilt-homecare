@@ -75,7 +75,7 @@ export function ClientsPage() {
       })
       setDeleteDialogOpen(false)
       setClientToDelete(null)
-    } catch (err) {
+    } catch (_) {
       toast({
         title: 'Error',
         description: 'Failed to archive client. Please try again.',
