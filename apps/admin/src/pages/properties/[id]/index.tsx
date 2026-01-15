@@ -36,11 +36,14 @@ import {
   type PropertyFeatures,
 } from '@/lib/validations/property'
 import { EquipmentList } from '../components/equipment-list'
+import { ProgramBuilder, ProgramStatusCard } from '@/components/programs'
+import { usePropertyProgram } from '@/hooks/use-programs'
 
 export function PropertyDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data: property, isLoading, error } = useProperty(id)
+  const { data: program, isLoading: programLoading } = usePropertyProgram(id || '')
 
   // State for showing/hiding sensitive codes
   const [showCodes, setShowCodes] = useState(false)
@@ -492,6 +495,24 @@ export function PropertyDetailPage() {
       {id && (
         <section>
           <EquipmentList propertyId={id} />
+        </section>
+      )}
+
+      {/* Home Care Program Section - Full Width */}
+      {id && property && (
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Home Care Program</h2>
+          {programLoading ? (
+            <Skeleton className="h-48" />
+          ) : program && ['active', 'pending', 'paused'].includes(program.status || '') ? (
+            <ProgramStatusCard propertyId={id} />
+          ) : (
+            <ProgramBuilder
+              propertyId={id}
+              clientId={property.client_id}
+              propertyName={property.name || property.address_line1 || 'Property'}
+            />
+          )}
         </section>
       )}
     </div>
