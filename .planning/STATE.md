@@ -10,19 +10,19 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 5 of 14 (Templates & Checklists)
-Plan: 1 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-15 - Completed 05-01-PLAN.md
+Last activity: 2026-01-15 - Completed 05-03-PLAN.md
 
-Progress: ██████░░░░ 37% (20 of ~60 plans)
+Progress: ██████░░░░ 38% (22 of ~60 plans)
 
 ### Phase 5 Plans (IN PROGRESS)
 
 | Plan | Name | Files | Status |
 |------|------|-------|--------|
 | 05-01 | Template Data Foundation | Types, constants | **Complete** |
-| 05-02 | Template Validation & Hooks | Zod schemas, React Query CRUD | Pending |
-| 05-03 | Checklist Generation Engine | Dynamic checklist builder | Pending |
+| 05-02 | Template Validation & Hooks | Zod schemas, React Query CRUD | **Complete** |
+| 05-03 | Checklist Generation Engine | Dynamic checklist builder | **Complete** |
 | 05-04 | Template Management UI | Settings page, editor | Pending |
 | 05-05 | Checklist Preview & Integration | Property page integration | Pending |
 
