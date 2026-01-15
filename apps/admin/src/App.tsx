@@ -17,6 +17,8 @@ import EditPropertyPage from '@/pages/properties/[id]/edit'
 import PricingSettingsPage from '@/pages/settings/pricing'
 import TemplatesPage from '@/pages/settings/templates'
 import CalendarPage from '@/pages/calendar'
+import InspectorDashboard from '@/pages/inspector'
+import InspectionPage from '@/pages/inspector/inspection'
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -47,6 +49,10 @@ function App() {
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<LoginPage />} />
+
+            {/* Inspector routes (standalone mobile PWA - no AppLayout) */}
+            <Route path="/inspector" element={<InspectorDashboard />} />
+            <Route path="/inspector/inspection/:id" element={<InspectionPage />} />
 
             {/* Protected routes with AppLayout */}
             <Route element={<AppLayout />}>
