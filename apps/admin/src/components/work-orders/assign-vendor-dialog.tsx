@@ -41,7 +41,6 @@ interface AssignVendorDialogProps {
 export function AssignVendorDialog({
   open,
   onOpenChange,
-  workOrderId: _,
   category,
   onAssign,
   isLoading,

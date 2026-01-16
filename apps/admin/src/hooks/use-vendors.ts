@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase, type Tables, type InsertTables, type UpdateTables } from '@/lib/supabase'
+import { supabase, type InsertTables, type UpdateTables } from '@/lib/supabase'
 import type {
   Vendor,
   VendorListItem,
@@ -443,7 +443,6 @@ export function useRateVendor() {
     mutationFn: async ({
       vendorId,
       rating,
-      workOrderId: _,
     }: {
       vendorId: string
       rating: number

@@ -21,8 +21,9 @@ interface UploadedPhoto {
   isLocal: false
 }
 
-// Photo union type for local and uploaded photos
-type _Photo = LocalPhoto | UploadedPhoto
+// Photo union type for local and uploaded photos (used in return type inference)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type Photo = LocalPhoto | UploadedPhoto
 
 // Hook for capturing and managing photos for a checklist item
 export function usePhotoCapture(inspectionId: string, itemId: string) {

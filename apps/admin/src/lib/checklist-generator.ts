@@ -54,8 +54,7 @@ function getCategoryLabel(category: string): string {
  */
 function calculateDuration(
   property: GenerateChecklistParams['property'],
-  tier: string,
-  _itemCount: number
+  tier: string
 ): number {
   const baseTimes: Record<string, number> = {
     visual: 30,
@@ -279,7 +278,7 @@ export function generateChecklist(params: GenerateChecklistParams): GeneratedChe
 
   // Calculate totals
   const totalItems = sections.reduce((sum, s) => sum + s.items.length, 0)
-  const estimatedDuration = calculateDuration(property, tier, totalItems)
+  const estimatedDuration = calculateDuration(property, tier)
 
   return {
     sections: sections.sort((a, b) => a.order - b.order),
