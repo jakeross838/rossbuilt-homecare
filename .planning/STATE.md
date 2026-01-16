@@ -5,16 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 11 Complete — Ready for Phase 12
+**Current focus:** Phase 12 In Progress — Wave 2 Complete (Hooks + Charts)
 
 ## Current Position
 
-Phase: 11 of 14 (Client Portal) - COMPLETE
-Plan: 5 of 5 in current phase
-Status: Phase 11 Complete - All plans executed
-Last activity: 2026-01-15 - Completed 11-05 (Client Portal Pages & Routes)
+Phase: 12 of 14 (Analytics & Dashboards) - IN PROGRESS
+Plan: 3 of 4 in current phase
+Status: Wave 2 Complete - 12-04 (Dashboard Integration) ready
+Last activity: 2026-01-15 - Completed 12-03 Chart Components
 
-Progress: ██████████ 100% (69 of ~69 plans)
+Progress: ██████████ 100% (72 of ~73 plans)
+
+### Phase 12 Plans (IN PROGRESS)
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 12-01 | Analytics Data Foundation | 1 | **Complete** |
+| 12-02 | Dashboard Hooks | 2 | **Complete** |
+| 12-03 | Chart Components | 2 | **Complete** |
+| 12-04 | Dashboard Pages & Integration (Checkpoint) | 3 | Pending |
+
+**Wave Structure:**
+- Wave 1: 12-01 (no dependencies) - Complete
+- Wave 2: 12-02, 12-03 (parallel - depend on 12-01) - Complete
+- Wave 3: 12-04 (checkpoint - depends on 12-02, 12-03)
 
 ### Phase 11 Plans (COMPLETE)
 
@@ -162,9 +176,9 @@ Progress: ██████████ 100% (69 of ~69 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 68
+- Total plans completed: 72
 - Average duration: 6 min
-- Total execution time: ~408 min
+- Total execution time: ~427 min
 
 **By Phase:**
 
@@ -181,10 +195,11 @@ Progress: ██████████ 100% (69 of ~69 plans)
 | 9 | 7/7 | 42 min | 6 min |
 | 10 | 6/6 | 36 min | 6 min |
 | 11 | 5/5 | 35 min | 7 min |
+| 12 | 3/4 | 15 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 11-02 (8 min), 11-03 (6 min), 11-04 (8 min), 11-05 (7 min)
-- Trend: Phase 11 complete, ready for Phase 12 (Notifications & Alerts)
+- Last 5 plans: 11-05 (7 min), 12-01 (4 min), 12-02 (5 min), 12-03 (6 min)
+- Trend: Phase 12 Wave 2 complete, 12-04 (Dashboard Integration) ready
 
 ## Accumulated Context
 
@@ -349,6 +364,17 @@ Recent decisions affecting current work:
 - **11-05**: PortalAuthGuard pattern for client-only route protection
 - **11-05**: Portal routes separate from admin routes (/portal/* vs /*)
 - **11-05**: Placeholder routes for inspections pages (future phase)
+- **12-01**: Analytics types use generic MetricWithTrend pattern for dashboard cards
+- **12-01**: Chart colors aligned with Ross Built brand palette (rb-green as primary)
+- **12-01**: Used existing `lib/helpers/` directory pattern (established in 10-01)
+- **12-01**: Time series helpers support both daily and monthly aggregation
+- **12-01**: Trend calculation handles zero-value edge cases (100% if previous is 0)
+- **12-01**: `takeTopCategories()` groups small categories into "Other" for cleaner charts
+- **12-02**: `dashboardKeys` factory pattern for dashboard cache invalidation (consistent with other hooks)
+- **12-02**: Type assertions via `unknown` for nested vendor/property/client relations in queries
+- **12-02**: Promise.all for batched parallel queries in dashboard overview hook
+- **12-02**: 5-minute staleTime for analytics data, 1-minute for activity feed
+- **12-02**: Vendor performance aggregated from work orders with top 10 limit
 
 ### Pending Todos
 
@@ -369,14 +395,15 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 11-05-PLAN.md (Client Portal Pages & Routes)
+Stopped at: Completed 12-02-PLAN.md (Dashboard Hooks)
 Resume file: None
 
 ## Next Action
 
-Phase 11 Complete! Ready for Phase 12 (Notifications & Alerts):
-- Create plans for Phase 12 (email notifications, in-app alerts, push notifications)
-- Or run `/gsd:progress` to check overall project status
+Continue Phase 12 Wave 2:
+- Run `/gsd:execute-plan 12-03` for Chart Components
+- Then `/gsd:execute-plan 12-04` for Dashboard Pages & Integration
+- Or run `/gsd:execute-phase 12` to complete remaining plans
 
 ## Phase 11 Summary
 
