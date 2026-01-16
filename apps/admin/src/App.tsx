@@ -17,6 +17,8 @@ import EditPropertyPage from '@/pages/properties/[id]/edit'
 import PricingSettingsPage from '@/pages/settings/pricing'
 import TemplatesPage from '@/pages/settings/templates'
 import CalendarPage from '@/pages/calendar'
+import InspectionsPage from '@/pages/inspections'
+import InspectionReportPage from '@/pages/inspections/report'
 import InspectorDashboard from '@/pages/inspector'
 import InspectionPage from '@/pages/inspector/inspection'
 
@@ -78,8 +80,8 @@ function App() {
               <Route path="/calendar" element={<CalendarPage />} />
 
               {/* Inspections */}
-              <Route path="/inspections" element={<PlaceholderPage title="Inspections" />} />
-              <Route path="/inspections/:id" element={<PlaceholderPage title="Inspection Details" />} />
+              <Route path="/inspections" element={<InspectionsPage />} />
+              <Route path="/inspections/:id/report" element={<InspectionReportPage />} />
 
               {/* Work Orders */}
               <Route path="/work-orders" element={<PlaceholderPage title="Work Orders" />} />
