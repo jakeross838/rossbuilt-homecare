@@ -153,14 +153,23 @@ Reference: `~/Downloads/home-care-os-docs/phase-08-findings-recommendations.md`
 
 Reference: `~/Downloads/home-care-os-docs/phase-09-14-remaining.md`
 
-### Phase 10: Billing & Invoicing
+### Phase 10: Billing & Invoicing ✅
 **Goal**: Stripe integration for subscriptions and invoicing
 **Depends on**: Phase 9
-**Research**: Likely (Stripe API)
-**Research topics**: Stripe subscriptions, webhooks, invoice generation, payment links
-**Plans**: TBD
+**Status**: COMPLETE (2026-01-15)
+**Plans**: 6 plans executed in 4 waves
+- 10-01: Billing Data Foundation (types, constants, validations, helpers) ✅
+- 10-02: Invoice Hooks (React Query CRUD, send, void, summary) ✅
+- 10-03: Payment Hooks (record, delete, summary) ✅
+- 10-04: Stripe Integration Edge Function (payment links, webhooks) ✅
+- 10-05: Invoice UI Components (badges, cards, dialogs) ✅
+- 10-06: Billing Pages & Integration (dashboard, list, detail, routes) ✅
 
-Reference: `~/Downloads/home-care-os-docs/phase-15-invoice-draw.md`
+**Wave Structure:**
+- Wave 1: 10-01 (no dependencies) - Complete
+- Wave 2: 10-02, 10-03, 10-04 (parallel - depend on 10-01) - Complete
+- Wave 3: 10-05 (depends on Wave 2) - Complete
+- Wave 4: 10-06 (checkpoint - depends on 10-05) - Complete
 
 ### Phase 11: Client Portal
 **Goal**: Client-facing portal for property status and approvals
@@ -203,7 +212,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 7. Inspector Mobile | 8/8 | ✅ Complete | 2026-01-15 |
 | 8. Findings & Reports | 6/6 | ✅ Complete | 2026-01-15 |
 | 9. Work Orders & Vendors | 7/7 | ✅ Complete | 2026-01-15 |
-| 10. Billing & Invoicing | 0/TBD | Not started | - |
+| 10. Billing & Invoicing | 6/6 | ✅ Complete | 2026-01-15 |
 | 11. Client Portal | 0/TBD | Not started | - |
 | 12. Analytics & Dashboards | 0/TBD | Not started | - |
 | 13. Notifications & Automation | 0/TBD | Not started | - |
