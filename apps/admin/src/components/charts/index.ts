@@ -14,3 +14,6 @@ export {
   PercentageStatCard,
   SimpleStatCard,
 } from './stat-card'
+
+// Period selector
+export { PeriodSelector } from './period-selector'
