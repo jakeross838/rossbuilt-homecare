@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 8 of 14 (Findings & Reports) - IN PROGRESS
-Plan: 4 of 6 in current phase
+Plan: 5 of 6 in current phase
 Status: Executing
-Last activity: 2026-01-15 - Completed 08-04 (PDF Report Generation)
+Last activity: 2026-01-15 - Completed 08-05 (Report UI Components)
 
-Progress: █████████░ 70% (42 of ~60 plans)
+Progress: █████████░ 72% (43 of ~60 plans)
 
 ### Phase 8 Plans (IN PROGRESS)
 
@@ -24,7 +24,7 @@ Progress: █████████░ 70% (42 of ~60 plans)
 | 08-02 | Findings & Recommendations Hooks | Validations, React Query hooks | **Complete** |
 | 08-03 | AI Report Summary Edge Function | Supabase Edge Function | **Complete** |
 | 08-04 | PDF Report Generation | @react-pdf/renderer components | **Complete** |
-| 08-05 | Report UI Components | Preview, dialog, badges | **Ready** |
+| 08-05 | Report UI Components | Preview, dialog, badges | **Complete** |
 | 08-06 | Report Page & Integration | Pages, routes, sidebar | **Ready** |
 
 **Wave Structure:**
@@ -205,6 +205,10 @@ Recent decisions affecting current work:
 - **08-04**: Section filtering shows detailed findings only for sections with issues; passed sections get summary row
 - **08-04**: AI summary graceful fallback continues with inspector summary if generation fails
 - **08-04**: Storage bucket `inspection-reports` for PDF storage
+- **08-05**: Switch UI component added using @radix-ui/react-switch
+- **08-05**: Multi-step dialog pattern for options -> generating -> complete flow
+- **08-05**: Progress bar with status messages during report generation
+- **08-05**: FindingsSummaryCard composed into ReportPreview component
 
 ### Pending Todos
 
@@ -223,7 +227,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 08-04-PLAN.md (PDF Report Generation)
+Stopped at: Completed 08-05-PLAN.md (Report UI Components)
 Resume file: None
 
 ## Next Action
@@ -231,8 +235,9 @@ Resume file: None
 Continue Phase 8 execution:
 - Wave 1 complete (08-01, 08-02)
 - Wave 2 complete (08-03, 08-04)
-- Ready for Wave 3: 08-05 (Report UI Components)
-Run: `/gsd:execute-plan 8 5` for report UI components
+- Wave 3 complete (08-05)
+- Ready for Wave 4: 08-06 (Report Page & Integration - checkpoint)
+Run: `/gsd:execute-plan 8 6` for report page integration
 
 ## Phase 1 Summary
 
