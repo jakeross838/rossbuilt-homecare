@@ -10,26 +10,26 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 10 of 14 (Billing & Invoicing) - IN PROGRESS
-Plan: 1 of 6 in current phase
-Status: Plan 10-01 Complete - Ready for Wave 2
-Last activity: 2026-01-15 - Completed 10-01 (Billing Data Foundation)
+Plan: 3 of 6 in current phase
+Status: Plan 10-03 Complete - Wave 2 in progress
+Last activity: 2026-01-15 - Completed 10-03 (Payment Hooks)
 
-Progress: █████████░ 89% (59 of ~64 plans)
+Progress: █████████░ 91% (61 of ~64 plans)
 
 ### Phase 10 Plans (IN PROGRESS)
 
 | Plan | Name | Wave | Status |
 |------|------|------|--------|
 | 10-01 | Billing Data Foundation | 1 | **Complete** |
-| 10-02 | Invoice Hooks | 2 | Pending |
-| 10-03 | Payment Hooks | 2 | Pending |
+| 10-02 | Invoice Hooks | 2 | **Complete** |
+| 10-03 | Payment Hooks | 2 | **Complete** |
 | 10-04 | Stripe Integration Edge Function | 2 | Pending |
 | 10-05 | Invoice UI Components | 3 | Pending |
 | 10-06 | Billing Pages & Integration (Checkpoint) | 4 | Pending |
 
 **Wave Structure:**
 - Wave 1: 10-01 (no dependencies) - Complete
-- Wave 2: 10-02, 10-03, 10-04 (parallel - depend on 10-01)
+- Wave 2: 10-02, 10-03, 10-04 (parallel - depend on 10-01) - 2/3 Complete
 - Wave 3: 10-05 (depends on 10-02, 10-03, 10-04)
 - Wave 4: 10-06 (checkpoint - depends on 10-05)
 
@@ -146,9 +146,9 @@ Progress: █████████░ 89% (59 of ~64 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 59
+- Total plans completed: 61
 - Average duration: 6 min
-- Total execution time: ~356 min
+- Total execution time: ~368 min
 
 **By Phase:**
 
@@ -163,11 +163,11 @@ Progress: █████████░ 89% (59 of ~64 plans)
 | 7 | 8/8 | 48 min | 6 min |
 | 8 | 6/6 | 36 min | 6 min |
 | 9 | 7/7 | 42 min | 6 min |
-| 10 | 1/6 | 6 min | 6 min |
+| 10 | 3/6 | 18 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 09-06 (6 min), 09-07 (15 min), 10-01 (6 min)
-- Trend: Phase 10 started, billing data foundation complete
+- Last 5 plans: 09-07 (15 min), 10-01 (6 min), 10-02 (6 min), 10-03 (4 min)
+- Trend: Wave 2 in progress, payment hooks complete
 
 ## Accumulated Context
 
@@ -289,6 +289,14 @@ Recent decisions affecting current work:
 - **10-01**: Currency precision via `Math.round(x * 100) / 100` for 2 decimal places
 - **10-01**: Created `lib/helpers/` directory for centralized helper functions (new pattern)
 - **10-01**: Default 30-day payment terms with Net 15/30/45/60 options
+- **10-02**: Invoice hooks use `invoiceKeys` factory pattern for hierarchical cache invalidation (consistent with work orders/vendors)
+- **10-02**: Invoice number generation uses `nextval` RPC with timestamp fallback for sequence failures
+- **10-02**: Draft-only editing/deletion enforced via `.eq('status', 'draft')` filter on update/delete mutations
+- **10-02**: Type assertions via `unknown` for database relations (client, line_items, payments)
+- **10-03**: Import invoiceKeys from use-invoices.ts for cache invalidation (parallel plan coordination)
+- **10-03**: Payment recording automatically updates invoice status (paid/partial) and balance_due
+- **10-03**: Delete payment recalculates invoice balance and may revert status from paid to sent
+- **10-03**: Payment summary aggregates by payment method for dashboard reporting
 
 ### Pending Todos
 
@@ -307,14 +315,14 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 10-01-PLAN.md (Billing Data Foundation)
+Stopped at: Completed 10-03-PLAN.md (Payment Hooks)
 Resume file: None
 
 ## Next Action
 
-Phase 10 Wave 1 Complete! Ready for Wave 2:
-- Run Wave 2 plans in parallel: 10-02 (Invoice Hooks), 10-03 (Payment Hooks), 10-04 (Stripe Integration)
-- Or run `/gsd:execute-plan .planning/phases/10-billing-invoicing/10-02-PLAN.md` to continue sequentially
+Phase 10 Wave 2 nearly complete (2/3):
+- Run 10-04 (Stripe Integration Edge Function) to complete Wave 2
+- Or run `/gsd:execute-plan .planning/phases/10-billing-invoicing/10-04-PLAN.md` to continue
 
 ## Phase 9 Summary
 
