@@ -35,7 +35,7 @@ import {
   useInvoicesByStatus,
 } from '@/hooks/use-revenue-metrics'
 import type { TimePeriod } from '@/lib/types/analytics'
-import { formatCurrency, getComparisonLabel } from '@/lib/helpers/analytics'
+import { formatCurrency } from '@/lib/helpers/analytics'
 
 export function ReportsPage() {
   const [period, setPeriod] = useState<TimePeriod>('month')
@@ -87,8 +87,6 @@ function InspectionReports({ period }: { period: TimePeriod }) {
   const { data: timeline, isLoading: timelineLoading } = useInspectionTimeline({ period })
   const { data: byStatus, isLoading: statusLoading } = useInspectionsByStatus({ period })
   const { data: byTier, isLoading: tierLoading } = useInspectionsByTier({ period })
-
-  const comparisonLabel = getComparisonLabel(period)
 
   return (
     <div className="space-y-6">

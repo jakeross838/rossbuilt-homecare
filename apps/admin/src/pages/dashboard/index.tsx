@@ -123,7 +123,7 @@ export function DashboardPage() {
   const { data: inspectionsByStatus, isLoading: statusLoading } = useInspectionsByStatus({ period })
   const { data: recentActivity, isLoading: activityLoading } = useRecentActivity(8)
   const { data: upcomingInspections, isLoading: upcomingLoading } = useUpcomingInspections(7, 5)
-  const { data: overdueItems, isLoading: overdueLoading } = useOverdueItems()
+  const { data: overdueItems } = useOverdueItems()
 
   const greeting = () => {
     const hour = new Date().getHours()
