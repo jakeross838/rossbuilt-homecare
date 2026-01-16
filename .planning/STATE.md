@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 11 of 14 (Client Portal) - IN PROGRESS
-Plan: 3 of 5 in current phase
-Status: Phase 11 Wave 2 Complete - Ready for Wave 3
-Last activity: 2026-01-15 - Completed 11-03 (Service Request & Recommendation Hooks)
+Plan: 4 of 5 in current phase
+Status: Phase 11 Wave 3 Complete - Ready for Wave 4
+Last activity: 2026-01-15 - Completed 11-04 (Client Portal UI Components)
 
-Progress: █████████░ 97% (67 of ~69 plans)
+Progress: █████████░ 98% (68 of ~69 plans)
 
 ### Phase 11 Plans (IN PROGRESS)
 
@@ -23,13 +23,13 @@ Progress: █████████░ 97% (67 of ~69 plans)
 | 11-01 | Client Portal Data Foundation | 1 | **Complete** |
 | 11-02 | Client Portal Hooks | 1 | **Complete** |
 | 11-03 | Service Request & Recommendation Hooks | 2 | **Complete** |
-| 11-04 | Client Portal UI Components | 3 | Ready |
+| 11-04 | Client Portal UI Components | 3 | **Complete** |
 | 11-05 | Client Portal Pages & Routes (Checkpoint) | 4 | Ready |
 
 **Wave Structure:**
 - Wave 1: 11-01, 11-02 (parallel - no dependencies) - Complete
 - Wave 2: 11-03 (depends on 11-01, 11-02) - Complete
-- Wave 3: 11-04 (depends on 11-01, 11-02, 11-03)
+- Wave 3: 11-04 (depends on 11-01, 11-02, 11-03) - Complete
 - Wave 4: 11-05 (checkpoint - depends on all previous)
 
 ### Phase 10 Plans (COMPLETE)
@@ -162,9 +162,9 @@ Progress: █████████░ 97% (67 of ~69 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 66
+- Total plans completed: 68
 - Average duration: 6 min
-- Total execution time: ~400 min
+- Total execution time: ~408 min
 
 **By Phase:**
 
@@ -180,11 +180,11 @@ Progress: █████████░ 97% (67 of ~69 plans)
 | 8 | 6/6 | 36 min | 6 min |
 | 9 | 7/7 | 42 min | 6 min |
 | 10 | 6/6 | 36 min | 6 min |
-| 11 | 3/5 | 20 min | 7 min |
+| 11 | 4/5 | 28 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 10-06 (4 min), 11-01 (6 min), 11-02 (8 min), 11-03 (6 min)
-- Trend: Phase 11 Wave 2 complete, ready for Wave 3
+- Last 5 plans: 11-01 (6 min), 11-02 (8 min), 11-03 (6 min), 11-04 (8 min)
+- Trend: Phase 11 Wave 3 complete, ready for Wave 4 (checkpoint)
 
 ## Accumulated Context
 
@@ -338,6 +338,13 @@ Recent decisions affecting current work:
 - **11-03**: Clients can only post non-internal comments (is_internal: false enforced)
 - **11-03**: Recommendation response requires status='pending' filter for idempotent updates
 - **11-03**: Created `lib/storage/` directory for storage configuration documentation
+- **11-04**: Portal components directory created at `components/portal/`
+- **11-04**: PortalLayout uses dedicated nav items array (not shared with admin sidebar)
+- **11-04**: Mobile menu uses hamburger toggle pattern (different from admin drawer)
+- **11-04**: Resolver type cast for zod v4 compatibility in ServiceRequestForm (consistent with 04-03, 09-06, 10-05)
+- **11-04**: Invoice status badge color mapping via variant property from INVOICE_STATUS_CONFIG
+- **11-04**: RecommendationCard uses AlertDialog for decline confirmation with optional notes
+- **11-04**: PropertyCard health status derived from getPropertyHealth helper function
 
 ### Pending Todos
 
@@ -358,15 +365,15 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 11-03-PLAN.md (Service Request & Recommendation Hooks)
+Stopped at: Completed 11-04-PLAN.md (Client Portal UI Components)
 Resume file: None
 
 ## Next Action
 
-Phase 11 Wave 2 Complete! Continue with Wave 3:
-- Run 11-04 (Client Portal UI Components) to continue Phase 11
-- Then run 11-05 (Client Portal Pages & Routes) for Wave 4
-- Or run `/gsd:execute-plan .planning/phases/11-client-portal/11-04-PLAN.md`
+Phase 11 Wave 3 Complete! Continue with Wave 4:
+- Run 11-05 (Client Portal Pages & Routes) to complete Phase 11
+- This is the checkpoint plan that integrates all portal components
+- Or run `/gsd:execute-plan .planning/phases/11-client-portal/11-05-PLAN.md`
 
 ## Phase 9 Summary
 
