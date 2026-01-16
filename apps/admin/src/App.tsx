@@ -29,6 +29,16 @@ import BillingDashboard from '@/pages/billing/index'
 import InvoicesPage from '@/pages/billing/invoices/index'
 import InvoiceDetailPage from '@/pages/billing/invoices/[id]'
 
+// Client Portal imports
+import { PortalLayout } from '@/components/portal/portal-layout'
+import { PortalAuthGuard } from '@/components/portal/portal-auth-guard'
+import PortalLoginPage from '@/pages/portal/login'
+import PortalDashboardPage from '@/pages/portal'
+import PortalPropertiesPage from '@/pages/portal/properties'
+import PortalPropertyDetailPage from '@/pages/portal/properties/[id]'
+import PortalRequestsPage from '@/pages/portal/requests'
+import PortalInvoicesPage from '@/pages/portal/invoices'
+
 // Create a query client instance
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,6 +72,25 @@ function App() {
             {/* Inspector routes (standalone mobile PWA - no AppLayout) */}
             <Route path="/inspector" element={<InspectorDashboard />} />
             <Route path="/inspector/inspection/:id" element={<InspectionPage />} />
+
+            {/* Client Portal Routes */}
+            <Route path="/portal/login" element={<PortalLoginPage />} />
+            <Route
+              path="/portal"
+              element={
+                <PortalAuthGuard>
+                  <PortalLayout />
+                </PortalAuthGuard>
+              }
+            >
+              <Route index element={<PortalDashboardPage />} />
+              <Route path="properties" element={<PortalPropertiesPage />} />
+              <Route path="properties/:id" element={<PortalPropertyDetailPage />} />
+              <Route path="requests" element={<PortalRequestsPage />} />
+              <Route path="invoices" element={<PortalInvoicesPage />} />
+              <Route path="inspections" element={<PlaceholderPage title="Inspections" />} />
+              <Route path="inspections/:id" element={<PlaceholderPage title="Inspection Detail" />} />
+            </Route>
 
             {/* Protected routes with AppLayout */}
             <Route element={<AppLayout />}>
