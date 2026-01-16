@@ -5,18 +5,18 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 11 Planning Complete — Ready to Execute
+**Current focus:** Phase 11 Complete — Ready for Phase 12
 
 ## Current Position
 
-Phase: 11 of 14 (Client Portal) - IN PROGRESS
-Plan: 4 of 5 in current phase
-Status: Phase 11 Wave 3 Complete - Ready for Wave 4
-Last activity: 2026-01-15 - Completed 11-04 (Client Portal UI Components)
+Phase: 11 of 14 (Client Portal) - COMPLETE
+Plan: 5 of 5 in current phase
+Status: Phase 11 Complete - All plans executed
+Last activity: 2026-01-15 - Completed 11-05 (Client Portal Pages & Routes)
 
-Progress: █████████░ 98% (68 of ~69 plans)
+Progress: ██████████ 100% (69 of ~69 plans)
 
-### Phase 11 Plans (IN PROGRESS)
+### Phase 11 Plans (COMPLETE)
 
 | Plan | Name | Wave | Status |
 |------|------|------|--------|
@@ -24,13 +24,13 @@ Progress: █████████░ 98% (68 of ~69 plans)
 | 11-02 | Client Portal Hooks | 1 | **Complete** |
 | 11-03 | Service Request & Recommendation Hooks | 2 | **Complete** |
 | 11-04 | Client Portal UI Components | 3 | **Complete** |
-| 11-05 | Client Portal Pages & Routes (Checkpoint) | 4 | Ready |
+| 11-05 | Client Portal Pages & Routes (Checkpoint) | 4 | **Complete** |
 
 **Wave Structure:**
 - Wave 1: 11-01, 11-02 (parallel - no dependencies) - Complete
 - Wave 2: 11-03 (depends on 11-01, 11-02) - Complete
 - Wave 3: 11-04 (depends on 11-01, 11-02, 11-03) - Complete
-- Wave 4: 11-05 (checkpoint - depends on all previous)
+- Wave 4: 11-05 (checkpoint - depends on all previous) - Complete
 
 ### Phase 10 Plans (COMPLETE)
 
@@ -180,11 +180,11 @@ Progress: █████████░ 98% (68 of ~69 plans)
 | 8 | 6/6 | 36 min | 6 min |
 | 9 | 7/7 | 42 min | 6 min |
 | 10 | 6/6 | 36 min | 6 min |
-| 11 | 4/5 | 28 min | 7 min |
+| 11 | 5/5 | 35 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 11-01 (6 min), 11-02 (8 min), 11-03 (6 min), 11-04 (8 min)
-- Trend: Phase 11 Wave 3 complete, ready for Wave 4 (checkpoint)
+- Last 5 plans: 11-02 (8 min), 11-03 (6 min), 11-04 (8 min), 11-05 (7 min)
+- Trend: Phase 11 complete, ready for Phase 12 (Notifications & Alerts)
 
 ## Accumulated Context
 
@@ -345,6 +345,10 @@ Recent decisions affecting current work:
 - **11-04**: Invoice status badge color mapping via variant property from INVOICE_STATUS_CONFIG
 - **11-04**: RecommendationCard uses AlertDialog for decline confirmation with optional notes
 - **11-04**: PropertyCard health status derived from getPropertyHealth helper function
+- **11-05**: Portal pages directory structure created at `pages/portal/`
+- **11-05**: PortalAuthGuard pattern for client-only route protection
+- **11-05**: Portal routes separate from admin routes (/portal/* vs /*)
+- **11-05**: Placeholder routes for inspections pages (future phase)
 
 ### Pending Todos
 
@@ -365,15 +369,56 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 11-04-PLAN.md (Client Portal UI Components)
+Stopped at: Completed 11-05-PLAN.md (Client Portal Pages & Routes)
 Resume file: None
 
 ## Next Action
 
-Phase 11 Wave 3 Complete! Continue with Wave 4:
-- Run 11-05 (Client Portal Pages & Routes) to complete Phase 11
-- This is the checkpoint plan that integrates all portal components
-- Or run `/gsd:execute-plan .planning/phases/11-client-portal/11-05-PLAN.md`
+Phase 11 Complete! Ready for Phase 12 (Notifications & Alerts):
+- Create plans for Phase 12 (email notifications, in-app alerts, push notifications)
+- Or run `/gsd:progress` to check overall project status
+
+## Phase 11 Summary
+
+**Client Portal Complete:**
+- Portal types, constants, and helper functions
+- Portal React Query hooks (dashboard, properties, inspections, invoices)
+- Service request hooks (CRUD, comments, photo upload)
+- Recommendation response hooks (approve/decline)
+- Portal UI components (layout, cards, forms)
+- Portal pages (login, dashboard, properties, requests, invoices)
+- Portal auth guard for route protection
+- Full route integration in App.tsx
+
+**Key Files Created:**
+- apps/admin/src/lib/types/portal.ts - Portal TypeScript types
+- apps/admin/src/lib/constants/portal.ts - Portal status, categories
+- apps/admin/src/lib/helpers/portal.ts - Portal formatting helpers
+- apps/admin/src/hooks/use-portal-*.ts - Portal React Query hooks
+- apps/admin/src/hooks/use-service-requests.ts - Service request hooks
+- apps/admin/src/components/portal/* - Portal UI components
+- apps/admin/src/pages/portal/* - Portal pages
+
+## Phase 10 Summary
+
+**Billing & Invoicing Complete:**
+- Invoice types, constants, and validation schemas
+- Invoice React Query hooks (CRUD, status, payments)
+- Payment hooks (record, delete, summary)
+- Stripe integration edge function
+- Invoice UI components (forms, dialogs, badges)
+- Billing dashboard and invoice pages
+- Full route integration in App.tsx
+
+**Key Files Created:**
+- apps/admin/src/lib/types/billing.ts - Billing TypeScript types
+- apps/admin/src/lib/constants/billing.ts - Invoice status, payment methods
+- apps/admin/src/lib/helpers/billing.ts - Billing calculation helpers
+- apps/admin/src/hooks/use-invoices.ts - Invoice React Query hooks
+- apps/admin/src/hooks/use-payments.ts - Payment React Query hooks
+- supabase/functions/stripe-checkout/ - Stripe edge function
+- apps/admin/src/components/billing/* - Billing UI components
+- apps/admin/src/pages/billing/* - Billing pages
 
 ## Phase 9 Summary
 
