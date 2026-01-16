@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { Search, LogOut, User, ChevronDown, Menu } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { NotificationDropdown } from '@/components/notifications'
 import { Input } from '@/components/ui/input'
 import {
   DropdownMenu,
@@ -71,6 +72,7 @@ export function Header() {
 
       {/* User dropdown */}
       <div className="flex items-center gap-4">
+        <NotificationDropdown />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2 px-2">
