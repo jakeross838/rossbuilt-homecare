@@ -43,7 +43,7 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
         title: 'Recommendation approved',
         description: 'We\'ll schedule this work and keep you updated.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to approve recommendation.',
@@ -60,7 +60,7 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
         description: 'We\'ve noted your decision.',
       })
       setShowDeclineDialog(false)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to decline recommendation.',

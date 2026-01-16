@@ -126,7 +126,7 @@ export function EquipmentForm({
       reset(equipmentDefaults(propertyId))
       setCategory('')
       onOpenChange(false)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: isEditMode

@@ -2,10 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { savePendingFinding, cacheInspection, getCachedInspection } from '@/lib/offline/db'
 import { syncPendingData } from '@/lib/offline/sync'
+import { generateChecklist } from '@/lib/checklist-generator'
 import type { ChecklistItemFinding, InspectorInspection } from '@/lib/types/inspector'
 import type { ChecklistItemFindingInput, CompleteInspectionInput } from '@/lib/validations/inspection-execution'
+import type { PropertyFeatures } from '@/lib/validations/property'
 
 // Start an inspection (set status to in_progress)
+// Also generates checklist if one doesn't exist
 export function useStartInspection() {
   const queryClient = useQueryClient()
 
@@ -15,12 +18,83 @@ export function useStartInspection() {
 
       // Try online first
       if (navigator.onLine) {
+        // First, get the inspection to check if it has a checklist
+        const { data: inspection, error: fetchError } = await supabase
+          .from('inspections')
+          .select(`
+            id,
+            property_id,
+            program_id,
+            checklist
+          `)
+          .eq('id', inspectionId)
+          .single()
+
+        if (fetchError) throw fetchError
+
+        let checklist = inspection.checklist
+
+        // Generate checklist if empty or missing sections
+        const hasChecklist = checklist &&
+          typeof checklist === 'object' &&
+          'sections' in checklist &&
+          Array.isArray((checklist as { sections?: unknown[] }).sections) &&
+          (checklist as { sections: unknown[] }).sections.length > 0
+
+        if (!hasChecklist && inspection.property_id) {
+          // Fetch property with features
+          const { data: property } = await supabase
+            .from('properties')
+            .select('id, square_footage, features')
+            .eq('id', inspection.property_id)
+            .single()
+
+          // Fetch equipment for the property
+          const { data: equipment } = await supabase
+            .from('equipment')
+            .select('*')
+            .eq('property_id', inspection.property_id)
+            .eq('is_active', true)
+
+          // Get program tier (default to 'functional' if no program)
+          let inspectionTier = 'functional'
+          if (inspection.program_id) {
+            const { data: program } = await supabase
+              .from('programs')
+              .select('id, inspection_tier')
+              .eq('id', inspection.program_id)
+              .single()
+
+            if (program?.inspection_tier) {
+              inspectionTier = program.inspection_tier
+            }
+          }
+
+          // Generate the checklist
+          if (property) {
+            checklist = generateChecklist({
+              property: {
+                id: property.id,
+                square_footage: property.square_footage,
+                features: property.features as PropertyFeatures | null,
+              },
+              program: {
+                id: inspection.program_id || 'default',
+                inspection_tier: inspectionTier,
+              },
+              equipment: equipment || [],
+            })
+          }
+        }
+
+        // Update inspection with status and checklist
         const { data, error } = await supabase
           .from('inspections')
           .update({
             status: 'in_progress',
             actual_start_at: now,
             updated_at: now,
+            checklist: checklist || {},
           })
           .eq('id', inspectionId)
           .select()
@@ -46,6 +120,7 @@ export function useStartInspection() {
     onSuccess: (_, inspectionId) => {
       queryClient.invalidateQueries({ queryKey: ['inspector-inspection', inspectionId] })
       queryClient.invalidateQueries({ queryKey: ['inspector-schedule'] })
+      queryClient.invalidateQueries({ queryKey: ['calendar-inspections'] })
     },
   })
 }

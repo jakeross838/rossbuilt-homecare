@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   supabase,
-  type Tables,
   type InsertTables,
   type UpdateTables,
 } from '@/lib/supabase'
@@ -167,7 +166,6 @@ export function useInvoiceSummary() {
   return useQuery({
     queryKey: invoiceKeys.summary(),
     queryFn: async () => {
-      const today = new Date().toISOString().split('T')[0]
       const startOfMonth = new Date()
       startOfMonth.setDate(1)
       const monthStart = startOfMonth.toISOString().split('T')[0]
@@ -501,6 +499,87 @@ export function useDeleteInvoice() {
       queryClient.invalidateQueries({ queryKey: invoiceKeys.lists() })
       queryClient.invalidateQueries({ queryKey: invoiceKeys.summary() })
     },
+  })
+}
+
+/**
+ * Hook to fetch unbilled items for a client (work orders + programs)
+ * Used to auto-populate invoice line items
+ */
+export function useClientBillableItems(clientId: string | undefined) {
+  return useQuery({
+    queryKey: ['client-billable-items', clientId],
+    queryFn: async () => {
+      if (!clientId) return { workOrders: [], programs: [] }
+
+      // Fetch completed work orders that haven't been invoiced
+      const { data: workOrders, error: woError } = await supabase
+        .from('work_orders')
+        .select(`
+          id,
+          work_order_number,
+          title,
+          description,
+          total_client_cost,
+          actual_cost,
+          markup_amount,
+          completed_at,
+          property:properties(id, name)
+        `)
+        .eq('client_id', clientId)
+        .eq('status', 'completed')
+        .is('invoice_id', null)
+        .order('completed_at', { ascending: false })
+
+      if (woError) throw woError
+
+      // Fetch active programs for client's properties
+      const { data: programs, error: progError } = await supabase
+        .from('programs')
+        .select(`
+          id,
+          inspection_frequency,
+          inspection_tier,
+          monthly_total,
+          addon_digital_manual,
+          addon_warranty_tracking,
+          addon_emergency_response,
+          addon_hurricane_monitoring,
+          property:properties(id, name)
+        `)
+        .eq('client_id', clientId)
+        .eq('status', 'active')
+
+      if (progError) throw progError
+
+      return {
+        workOrders: (workOrders || []).map((wo) => ({
+          id: wo.id,
+          work_order_number: wo.work_order_number,
+          title: wo.title,
+          description: wo.description,
+          amount: wo.total_client_cost || wo.actual_cost || 0,
+          property_id: (wo.property as { id: string } | null)?.id,
+          property_name: (wo.property as { name: string } | null)?.name || 'Unknown',
+          completed_at: wo.completed_at,
+        })),
+        programs: (programs || []).map((prog) => ({
+          id: prog.id,
+          inspection_frequency: prog.inspection_frequency,
+          inspection_tier: prog.inspection_tier,
+          monthly_total: prog.monthly_total || 0,
+          property_id: (prog.property as { id: string } | null)?.id,
+          property_name: (prog.property as { name: string } | null)?.name || 'Unknown',
+          addons: {
+            digital_manual: prog.addon_digital_manual,
+            warranty_tracking: prog.addon_warranty_tracking,
+            emergency_response: prog.addon_emergency_response,
+            hurricane_monitoring: prog.addon_hurricane_monitoring,
+          },
+        })),
+      }
+    },
+    enabled: !!clientId,
   })
 }
 

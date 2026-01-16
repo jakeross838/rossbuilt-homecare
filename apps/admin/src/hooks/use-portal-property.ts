@@ -89,7 +89,7 @@ export function usePortalProperty(propertyId: string | undefined) {
           overall_condition,
           summary,
           report_url,
-          inspector:users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             first_name,
             last_name
           ),

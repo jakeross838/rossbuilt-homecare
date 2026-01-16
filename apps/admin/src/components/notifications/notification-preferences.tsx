@@ -51,7 +51,7 @@ export function NotificationPreferences() {
         title: 'Preferences saved',
         description: 'Your notification preferences have been updated.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to save preferences. Please try again.',

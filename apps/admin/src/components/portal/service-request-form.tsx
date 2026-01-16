@@ -83,7 +83,7 @@ export function ServiceRequestForm({
       const newPhotos = [...photos, ...urls]
       setPhotos(newPhotos)
       setValue('photos', newPhotos)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Upload failed',
         description: 'Failed to upload photos. Please try again.',
@@ -113,7 +113,7 @@ export function ServiceRequestForm({
       reset()
       setPhotos([])
       onOpenChange(false)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to submit request. Please try again.',

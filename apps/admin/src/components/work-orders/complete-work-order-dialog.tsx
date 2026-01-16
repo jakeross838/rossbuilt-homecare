@@ -38,7 +38,7 @@ interface CompleteWorkOrderDialogProps {
 export function CompleteWorkOrderDialog({
   open,
   onOpenChange,
-  workOrderId: _workOrderId,
+  workOrderId: _,
   estimatedCost,
   onComplete,
   isLoading,

@@ -50,7 +50,7 @@ export function useCalendarInspections(startDate: string, endDate: string) {
             address_line1,
             city
           ),
-          inspector:users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             id,
             first_name,
             last_name,
@@ -108,7 +108,7 @@ export function useInspection(id: string | undefined) {
             state,
             zip
           ),
-          inspector:users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             id,
             first_name,
             last_name,
@@ -153,7 +153,7 @@ export function usePropertyInspections(propertyId: string | undefined) {
           scheduled_date,
           scheduled_time_start,
           actual_end_at,
-          inspector:users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             id,
             first_name,
             last_name

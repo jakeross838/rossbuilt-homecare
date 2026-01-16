@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { useNavigate } from 'react-router-dom'
 import {
   Sheet,
   SheetContent,
@@ -26,7 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Calendar, Clock, MapPin } from 'lucide-react'
+import { Calendar, Clock, MapPin, Play, ClipboardList, CheckCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { useInspectors } from '@/hooks/use-inspectors'
 import { useAssignInspector, useCancelInspection } from '@/hooks/use-inspections'
@@ -62,6 +63,7 @@ export function InspectionDetailSheet({
   open,
   onOpenChange,
 }: InspectionDetailSheetProps) {
+  const navigate = useNavigate()
   const { toast } = useToast()
   const { data: inspectors } = useInspectors()
   const assignInspector = useAssignInspector()
@@ -84,7 +86,7 @@ export function InspectionDetailSheet({
           ? 'Inspector has been assigned to this inspection.'
           : 'Inspector has been unassigned.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to assign inspector. Please try again.',
@@ -101,7 +103,7 @@ export function InspectionDetailSheet({
         description: 'The inspection has been cancelled.',
       })
       onOpenChange(false)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to cancel inspection. Please try again.',
@@ -191,9 +193,53 @@ export function InspectionDetailSheet({
             </Select>
           </div>
 
-          {/* Actions */}
+          {/* Start/Continue Inspection */}
           <div className="space-y-3 pt-4 border-t">
-            <h3 className="font-medium">Actions</h3>
+            {inspection.status === 'scheduled' && (
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={() => {
+                  onOpenChange(false)
+                  navigate(`/inspector/inspection/${inspection.id}`)
+                }}
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Start Inspection
+              </Button>
+            )}
+            {inspection.status === 'in_progress' && (
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={() => {
+                  onOpenChange(false)
+                  navigate(`/inspector/inspection/${inspection.id}`)
+                }}
+              >
+                <ClipboardList className="h-4 w-4 mr-2" />
+                Continue Inspection
+              </Button>
+            )}
+            {inspection.status === 'completed' && (
+              <Button
+                className="w-full"
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  onOpenChange(false)
+                  navigate(`/inspections/${inspection.id}/report`)
+                }}
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                View Report
+              </Button>
+            )}
+          </div>
+
+          {/* Other Actions */}
+          <div className="space-y-3 pt-4 border-t">
+            <h3 className="font-medium">Other Actions</h3>
             <div className="flex gap-2">
               <Button
                 variant="outline"

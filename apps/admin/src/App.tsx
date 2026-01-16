@@ -14,6 +14,9 @@ import PropertiesPage from '@/pages/properties'
 import NewPropertyPage from '@/pages/properties/new'
 import PropertyDetailPage from '@/pages/properties/[id]'
 import EditPropertyPage from '@/pages/properties/[id]/edit'
+import SettingsPage from '@/pages/settings'
+import OrganizationSettingsPage from '@/pages/settings/organization'
+import ProfileSettingsPage from '@/pages/settings/profile'
 import PricingSettingsPage from '@/pages/settings/pricing'
 import TemplatesPage from '@/pages/settings/templates'
 import CalendarPage from '@/pages/calendar'
@@ -150,8 +153,9 @@ function App() {
               <Route path="/activity" element={<ActivityPage />} />
 
               {/* Settings */}
-              <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
-              <Route path="/settings/profile" element={<PlaceholderPage title="Profile Settings" />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings/organization" element={<OrganizationSettingsPage />} />
+              <Route path="/settings/profile" element={<ProfileSettingsPage />} />
               <Route path="/settings/pricing" element={<PricingSettingsPage />} />
               <Route path="/settings/templates" element={<TemplatesPage />} />
               <Route path="/settings/notifications" element={<NotificationSettingsPage />} />

@@ -28,7 +28,7 @@ export function useRecentActivity(limit: number = 10) {
           status,
           updated_at,
           property:properties(name),
-          inspector:users!inspections_inspector_id_fkey(first_name, last_name)
+          inspector:users!inspector_id(first_name, last_name)
         `)
         .eq('organization_id', orgId)
         .order('updated_at', { ascending: false })
@@ -138,7 +138,7 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
           inspection_type,
           property:properties(name),
           client:properties(client:clients(first_name, last_name, company_name)),
-          inspector:users!inspections_inspector_id_fkey(first_name, last_name)
+          inspector:users!inspector_id(first_name, last_name)
         `)
         .eq('organization_id', orgId)
         .in('status', ['scheduled', 'rescheduled'])

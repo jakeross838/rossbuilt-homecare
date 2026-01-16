@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -14,9 +14,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
 import { InvoiceLineItemRow } from './invoice-line-item-row'
 import { useClients } from '@/hooks/use-clients'
-import { useCreateInvoice } from '@/hooks/use-invoices'
+import { useCreateInvoice, useClientBillableItems } from '@/hooks/use-invoices'
 import { useToast } from '@/hooks/use-toast'
 import { createInvoiceSchema, type CreateInvoiceFormData } from '@/lib/validations/billing'
 import {
@@ -30,7 +31,7 @@ import {
   getDueDate,
   formatCurrency,
 } from '@/lib/helpers/billing'
-import { Plus, Loader2 } from 'lucide-react'
+import { Plus, Loader2, Download, Wrench, Calendar } from 'lucide-react'
 import type { Resolver } from 'react-hook-form'
 
 interface CreateInvoiceDialogProps {
@@ -83,6 +84,67 @@ export function CreateInvoiceDialog({
   })
 
   const invoiceDate = watch('invoice_date')
+  const selectedClientId = watch('client_id')
+
+  // Fetch unbilled items when client is selected
+  const { data: billableItems, isLoading: loadingBillable } = useClientBillableItems(
+    selectedClientId || undefined
+  )
+
+  // Import all unbilled items for the selected client
+  const handleImportBillableItems = () => {
+    if (!billableItems) return
+
+    const newLineItems: LineItemData[] = []
+
+    // Add work orders
+    billableItems.workOrders.forEach((wo) => {
+      newLineItems.push({
+        description: `Work Order #${wo.work_order_number}: ${wo.title} (${wo.property_name})`,
+        quantity: 1,
+        unit_price: wo.amount,
+        line_type: 'work_order',
+      })
+    })
+
+    // Add subscription/program fees
+    billableItems.programs.forEach((prog) => {
+      const tierLabel = prog.inspection_tier.charAt(0).toUpperCase() + prog.inspection_tier.slice(1)
+      const freqLabel = prog.inspection_frequency.replace('_', ' ')
+      newLineItems.push({
+        description: `${tierLabel} Inspection Program - ${freqLabel} (${prog.property_name})`,
+        quantity: 1,
+        unit_price: prog.monthly_total,
+        line_type: 'subscription',
+      })
+    })
+
+    if (newLineItems.length === 0) {
+      toast({
+        title: 'No billable items',
+        description: 'This client has no unbilled work orders or active subscriptions.',
+      })
+      return
+    }
+
+    setLineItems(newLineItems)
+
+    // Auto-set invoice type based on items
+    const hasWorkOrders = billableItems.workOrders.length > 0
+    const hasPrograms = billableItems.programs.length > 0
+    if (hasWorkOrders && hasPrograms) {
+      setValue('invoice_type', 'mixed')
+    } else if (hasPrograms) {
+      setValue('invoice_type', 'subscription')
+    } else {
+      setValue('invoice_type', 'service')
+    }
+
+    toast({
+      title: 'Items imported',
+      description: `Added ${newLineItems.length} line items from work orders and subscriptions.`,
+    })
+  }
 
   // Calculate totals
   const subtotal = calculateSubtotal(lineItems)
@@ -143,7 +205,7 @@ export function CreateInvoiceDialog({
       setTaxRate(0)
       setDiscountAmount(0)
       onOpenChange(false)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create invoice',
@@ -209,6 +271,41 @@ export function CreateInvoiceDialog({
               </Select>
             </div>
           </div>
+
+          {/* Unbilled Items Alert */}
+          {selectedClientId && billableItems && (billableItems.workOrders.length > 0 || billableItems.programs.length > 0) && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-blue-900">Unbilled Items Available</p>
+                  <div className="flex gap-3 mt-1 text-sm text-blue-700">
+                    {billableItems.workOrders.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        <Wrench className="h-4 w-4" />
+                        {billableItems.workOrders.length} work order{billableItems.workOrders.length !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                    {billableItems.programs.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        {billableItems.programs.length} subscription{billableItems.programs.length !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="default"
+                  size="sm"
+                  onClick={handleImportBillableItems}
+                  disabled={loadingBillable}
+                >
+                  <Download className="h-4 w-4 mr-1" />
+                  Import All
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Dates */}
           <div className="grid grid-cols-2 gap-4">

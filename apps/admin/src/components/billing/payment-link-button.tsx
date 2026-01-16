@@ -24,7 +24,7 @@ export function PaymentLinkButton({
       const result = await createPaymentLink.mutateAsync({ invoiceId })
       setPaymentUrl(result.url)
       openPaymentLink(result.url)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create payment link',

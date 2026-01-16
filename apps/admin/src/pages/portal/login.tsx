@@ -47,7 +47,7 @@ export default function PortalLoginPage() {
       }
 
       navigate('/portal')
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'An unexpected error occurred. Please try again.',

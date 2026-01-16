@@ -12,7 +12,6 @@ import {
   checkVendorCompliance,
 } from '@/lib/constants/vendor'
 
-type VendorRow = Tables<'vendors'>
 type VendorInsert = InsertTables<'vendors'>
 type VendorUpdate = UpdateTables<'vendors'>
 
@@ -444,7 +443,7 @@ export function useRateVendor() {
     mutationFn: async ({
       vendorId,
       rating,
-      workOrderId,
+      workOrderId: _,
     }: {
       vendorId: string
       rating: number

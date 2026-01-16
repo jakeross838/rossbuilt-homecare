@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WorkOrderCard } from '@/components/work-orders'
 import { useWorkOrders, useWorkOrderCounts } from '@/hooks/use-work-orders'
 import { PRIORITY_LEVELS } from '@/lib/constants/work-order'
-import type { WorkOrderStatus, WorkOrderFilters } from '@/lib/types/work-order'
+import type { WorkOrderStatus, WorkOrderFilters, PriorityLevel } from '@/lib/types/work-order'
 import { Plus, Search, Filter, Loader2 } from 'lucide-react'
 
 export default function WorkOrdersPage() {
@@ -44,7 +44,7 @@ export default function WorkOrdersPage() {
   const handlePriorityFilter = (priority: string) => {
     setFilters((prev) => ({
       ...prev,
-      priority: priority && priority !== 'all' ? [priority as any] : undefined,
+      priority: priority && priority !== 'all' ? [priority as PriorityLevel] : undefined,
     }))
   }
 

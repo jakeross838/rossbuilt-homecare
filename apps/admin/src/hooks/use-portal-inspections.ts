@@ -29,7 +29,7 @@ export function usePortalInspections(options: UsePortalInspectionsOptions = {}) 
           overall_condition,
           summary,
           report_url,
-          inspector:users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             first_name,
             last_name
           ),
@@ -99,7 +99,7 @@ export function usePortalInspection(inspectionId: string | undefined) {
           report_url,
           actual_start_at,
           actual_end_at,
-          inspector:users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             first_name,
             last_name
           ),

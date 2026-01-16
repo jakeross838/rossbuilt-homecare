@@ -21,7 +21,8 @@ interface UploadedPhoto {
   isLocal: false
 }
 
-type Photo = LocalPhoto | UploadedPhoto
+// Photo union type for local and uploaded photos
+type _Photo = LocalPhoto | UploadedPhoto
 
 // Hook for capturing and managing photos for a checklist item
 export function usePhotoCapture(inspectionId: string, itemId: string) {

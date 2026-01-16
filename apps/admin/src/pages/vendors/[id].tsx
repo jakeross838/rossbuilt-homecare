@@ -48,6 +48,25 @@ import {
   FileCheck,
   Loader2,
 } from 'lucide-react'
+import type {
+  UpdateVendorFormData,
+  VendorComplianceFormData,
+} from '@/lib/validations/vendor'
+
+// Type for work orders returned by useVendorWorkOrders
+interface VendorWorkOrder {
+  id: string
+  work_order_number: string
+  title: string
+  status: string
+  priority: string | null
+  scheduled_date: string | null
+  property: {
+    name: string
+    address_line1: string | null
+    city: string | null
+  } | null
+}
 
 export default function VendorDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -87,7 +106,7 @@ export default function VendorDetailPage() {
     w9_on_file: vendor.w9_on_file,
   })
 
-  const handleUpdate = async (data: any) => {
+  const handleUpdate = async (data: UpdateVendorFormData) => {
     try {
       await updateVendor.mutateAsync({ id: vendor.id, data })
       setShowEditSheet(false)
@@ -104,7 +123,7 @@ export default function VendorDetailPage() {
     }
   }
 
-  const handleComplianceUpdate = async (data: any) => {
+  const handleComplianceUpdate = async (data: VendorComplianceFormData) => {
     try {
       await updateCompliance.mutateAsync({ id: vendor.id, data })
       setShowComplianceSheet(false)
@@ -447,7 +466,7 @@ export default function VendorDetailPage() {
             </div>
           ) : (
             <div className="grid gap-4">
-              {workOrders.map((wo: any) => (
+              {workOrders.map((wo: VendorWorkOrder) => (
                 <Card
                   key={wo.id}
                   className="cursor-pointer hover:bg-accent/50"
@@ -495,7 +514,7 @@ export default function VendorDetailPage() {
                 address_line1: vendor.address_line1,
                 address_line2: vendor.address_line2,
                 city: vendor.city,
-                state: vendor.state as any,
+                state: vendor.state as UpdateVendorFormData['state'],
                 zip: vendor.zip,
                 trade_categories: vendor.trade_categories || [],
                 is_preferred: vendor.is_preferred || false,

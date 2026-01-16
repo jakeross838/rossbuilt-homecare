@@ -41,6 +41,10 @@ import {
   XCircle,
   UserPlus,
 } from 'lucide-react'
+import type {
+  AssignVendorFormData,
+  CompleteWorkOrderFormData,
+} from '@/lib/validations/work-order'
 
 export default function WorkOrderDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -101,7 +105,7 @@ export default function WorkOrderDetailPage() {
     }
   }
 
-  const handleAssignVendor = async (data: any) => {
+  const handleAssignVendor = async (data: AssignVendorFormData) => {
     try {
       await assignVendor.mutateAsync({
         workOrderId: workOrder.id,
@@ -121,7 +125,7 @@ export default function WorkOrderDetailPage() {
     }
   }
 
-  const handleComplete = async (data: any) => {
+  const handleComplete = async (data: CompleteWorkOrderFormData) => {
     try {
       await completeWorkOrder.mutateAsync({
         id: workOrder.id,

@@ -3,13 +3,11 @@ import { useSendEmail } from './use-email'
 import { useNotificationPreferences } from './use-notification-preferences'
 import { useAuthStore } from '@/stores/auth-store'
 import {
-  createInspectionReminderPayload,
   createWorkOrderNotificationPayload,
   createInvoiceNotificationPayload,
   getActiveChannels,
 } from '@/lib/helpers/notifications'
 import type {
-  NotificationType,
   PriorityLevel,
   CreateNotificationPayload,
 } from '@/lib/types/notification'
@@ -21,7 +19,7 @@ export function useSendNotificationWithPreferences() {
   const createNotification = useCreateNotification()
   const sendEmail = useSendEmail()
   const { data: preferences } = useNotificationPreferences()
-  const { profile } = useAuthStore()
+  useAuthStore()
 
   const send = async (
     payload: CreateNotificationPayload,

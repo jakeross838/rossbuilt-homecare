@@ -71,7 +71,7 @@ export function RecordPaymentDialog({
 
       reset()
       onOpenChange(false)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to record payment',

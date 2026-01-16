@@ -15,7 +15,7 @@ interface VendorComplianceBadgeProps {
 
 export function VendorComplianceBadge({
   compliance,
-  showDetails: _showDetails = false,
+  showDetails: _showDetails,
 }: VendorComplianceBadgeProps) {
   const { is_compliant, issues, license_expires_soon, insurance_expires_soon } =
     compliance

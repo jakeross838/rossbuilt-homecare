@@ -63,7 +63,7 @@ export function useInspectorWorkload(startDate: string, endDate: string) {
           inspector_id,
           scheduled_date,
           estimated_duration_minutes,
-          users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             id,
             first_name,
             last_name

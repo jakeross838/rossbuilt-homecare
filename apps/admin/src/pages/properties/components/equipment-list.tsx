@@ -40,7 +40,7 @@ export function EquipmentList({ propertyId }: EquipmentListProps) {
         title: 'Success',
         description: 'Maintenance schedule generated successfully!',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to generate maintenance schedule',

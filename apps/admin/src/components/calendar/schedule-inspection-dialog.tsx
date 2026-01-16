@@ -91,7 +91,7 @@ export function ScheduleInspectionDialog({
       })
       onSuccess?.()
       onOpenChange(false)
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to schedule inspection. Please try again.',

@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 
 // Helper to bypass auth for testing
-async function mockAuth(page: any) {
+async function mockAuth(page: Page) {
   // Set up localStorage to simulate logged-in state
   await page.addInitScript(() => {
     localStorage.setItem('home-care-os-auth', JSON.stringify({
