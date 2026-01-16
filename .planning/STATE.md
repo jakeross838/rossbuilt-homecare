@@ -5,18 +5,18 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 8 — Findings & Reports
+**Current focus:** Phase 8 Complete — Ready for Phase 9
 
 ## Current Position
 
-Phase: 8 of 14 (Findings & Reports) - IN PROGRESS
-Plan: 5 of 6 in current phase
-Status: Executing
-Last activity: 2026-01-15 - Completed 08-05 (Report UI Components)
+Phase: 8 of 14 (Findings & Reports) - COMPLETE
+Plan: 6 of 6 in current phase
+Status: Phase 8 Checkpoint Complete
+Last activity: 2026-01-15 - Completed 08-06 (Report Page & Integration)
 
-Progress: █████████░ 72% (43 of ~60 plans)
+Progress: █████████░ 73% (44 of ~60 plans)
 
-### Phase 8 Plans (IN PROGRESS)
+### Phase 8 Plans (COMPLETE)
 
 | Plan | Name | Files | Status |
 |------|------|-------|--------|
@@ -25,13 +25,13 @@ Progress: █████████░ 72% (43 of ~60 plans)
 | 08-03 | AI Report Summary Edge Function | Supabase Edge Function | **Complete** |
 | 08-04 | PDF Report Generation | @react-pdf/renderer components | **Complete** |
 | 08-05 | Report UI Components | Preview, dialog, badges | **Complete** |
-| 08-06 | Report Page & Integration | Pages, routes, sidebar | **Ready** |
+| 08-06 | Report Page & Integration | Pages, routes, sidebar | **Complete** |
 
 **Wave Structure:**
-- Wave 1: 08-01, 08-02 (parallel - no dependencies)
-- Wave 2: 08-03, 08-04 (parallel - depend on 08-01)
-- Wave 3: 08-05 (depends on 08-02, 08-04)
-- Wave 4: 08-06 (checkpoint - depends on 08-05)
+- Wave 1: 08-01, 08-02 (parallel - no dependencies) - Complete
+- Wave 2: 08-03, 08-04 (parallel - depend on 08-01) - Complete
+- Wave 3: 08-05 (depends on 08-02, 08-04) - Complete
+- Wave 4: 08-06 (checkpoint - depends on 08-05) - Complete
 
 ### Phase 7 Plans (COMPLETE)
 
@@ -209,6 +209,10 @@ Recent decisions affecting current work:
 - **08-05**: Multi-step dialog pattern for options -> generating -> complete flow
 - **08-05**: Progress bar with status messages during report generation
 - **08-05**: FindingsSummaryCard composed into ReportPreview component
+- **08-06**: Custom `useInspectionsList` hook for list page with report-specific fields
+- **08-06**: Date range filter: 30 days past to 7 days ahead for list view
+- **08-06**: Kept existing ClipboardCheck icon for Inspections in sidebar (already correct)
+- **08-06**: Report page shows recommendations in tabbed interface with priority badges
 
 ### Pending Todos
 
@@ -227,17 +231,15 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 08-05-PLAN.md (Report UI Components)
+Stopped at: Completed 08-06-PLAN.md (Report Page & Integration - Checkpoint)
 Resume file: None
 
 ## Next Action
 
-Continue Phase 8 execution:
-- Wave 1 complete (08-01, 08-02)
-- Wave 2 complete (08-03, 08-04)
-- Wave 3 complete (08-05)
-- Ready for Wave 4: 08-06 (Report Page & Integration - checkpoint)
-Run: `/gsd:execute-plan 8 6` for report page integration
+Phase 8 Complete - Ready for verification:
+- All 6 plans in Phase 8 completed
+- Checkpoint reached - awaiting human verification
+- Next: Begin Phase 9 or verify Phase 8 deliverables
 
 ## Phase 1 Summary
 
@@ -354,3 +356,46 @@ Run: `/gsd:execute-plan 8 6` for report page integration
 - apps/admin/src/components/calendar/* - Calendar UI components
 - apps/admin/src/pages/calendar/index.tsx - Calendar page
 
+## Phase 7 Summary
+
+**Inspector Mobile PWA Complete:**
+- PWA configuration with Workbox for offline support
+- Inspector types and schedule hooks for daily workflow
+- IndexedDB-based offline storage with sync queue
+- Offline-first inspection execution mutations
+- Camera-based photo capture with compression
+- Mobile-optimized UI components (schedule list, checklist, forms)
+- Completion flow with sync status indicators
+- Inspector dashboard and inspection execution pages
+
+**Key Files Created:**
+- apps/admin/vite.config.ts - PWA configuration with VitePWA plugin
+- apps/admin/src/lib/types/inspector.ts - Inspector and checklist types
+- apps/admin/src/lib/offline/* - IndexedDB storage and sync queue
+- apps/admin/src/hooks/use-offline.ts - Offline status and sync hooks
+- apps/admin/src/hooks/use-inspection-execution.ts - Offline-first mutations
+- apps/admin/src/components/inspector/* - Mobile UI components
+- apps/admin/src/pages/inspector/index.tsx - Inspector dashboard
+- apps/admin/src/pages/inspector/inspection.tsx - Inspection execution page
+
+## Phase 8 Summary
+
+**Findings & Reports Complete:**
+- Report data foundation with TypeScript types and constants
+- Findings and recommendations React Query hooks
+- AI-powered report summary generation via Supabase Edge Function
+- PDF report generation with @react-pdf/renderer
+- Report UI components (preview, dialog, badges, summary cards)
+- Inspections list page with report status tracking
+- Dedicated report viewing page with full details
+
+**Key Files Created:**
+- apps/admin/src/lib/types/report.ts - Report TypeScript types
+- apps/admin/src/lib/constants/report.ts - Report colors, fonts, dimensions
+- apps/admin/src/hooks/use-reports.ts - Report data fetching and transformation
+- supabase/functions/generate-report-summary/ - AI summary edge function
+- apps/admin/src/lib/pdf/report-document.tsx - PDF document components
+- apps/admin/src/lib/pdf/generate-pdf.ts - PDF generation and upload
+- apps/admin/src/components/reports/* - Report UI components
+- apps/admin/src/pages/inspections/index.tsx - Inspections list page
+- apps/admin/src/pages/inspections/report.tsx - Report detail page
