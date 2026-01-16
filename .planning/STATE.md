@@ -5,16 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 10 Complete — Ready for Phase 11
+**Current focus:** Phase 11 Planning Complete — Ready to Execute
 
 ## Current Position
 
-Phase: 10 of 14 (Billing & Invoicing) - COMPLETE
-Plan: 6 of 6 in current phase
-Status: Phase 10 Complete - All Waves Done
-Last activity: 2026-01-15 - Completed 10-06 (Billing Pages & Integration)
+Phase: 11 of 14 (Client Portal) - PLANNING COMPLETE
+Plan: 0 of 5 in current phase
+Status: Ready to Execute Phase 11
+Last activity: 2026-01-15 - Created Phase 11 plans
 
-Progress: █████████░ 95% (64 of ~68 plans)
+Progress: █████████░ 95% (64 of ~69 plans)
+
+### Phase 11 Plans (READY)
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 11-01 | Client Portal Data Foundation | 1 | Ready |
+| 11-02 | Client Portal Hooks | 1 | Ready |
+| 11-03 | Service Request & Recommendation Hooks | 2 | Ready |
+| 11-04 | Client Portal UI Components | 3 | Ready |
+| 11-05 | Client Portal Pages & Routes (Checkpoint) | 4 | Ready |
+
+**Wave Structure:**
+- Wave 1: 11-01, 11-02 (parallel - no dependencies)
+- Wave 2: 11-03 (depends on 11-01, 11-02)
+- Wave 3: 11-04 (depends on 11-01, 11-02, 11-03)
+- Wave 4: 11-05 (checkpoint - depends on all previous)
 
 ### Phase 10 Plans (COMPLETE)
 

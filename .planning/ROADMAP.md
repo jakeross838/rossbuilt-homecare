@@ -175,7 +175,14 @@ Reference: `~/Downloads/home-care-os-docs/phase-09-14-remaining.md`
 **Goal**: Client-facing portal for property status and approvals
 **Depends on**: Phase 10
 **Research**: Unlikely (internal React patterns)
-**Plans**: TBD
+**Plans**: 5 plans in 4 waves
+- 11-01: Client Portal Data Foundation (types, constants, validations, helpers)
+- 11-02: Client Portal Hooks (dashboard, properties, inspections, invoices)
+- 11-03: Service Request & Recommendation Hooks (CRUD, photo upload, responses)
+- 11-04: Client Portal UI Components (layout, cards, forms)
+- 11-05: Client Portal Pages & Routes (Checkpoint)
+
+Reference: `~/Downloads/home-care-os-docs/phase-09-14-remaining.md`
 
 ### Phase 12: Analytics & Dashboards
 **Goal**: Admin dashboards with operational metrics
@@ -213,7 +220,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 8. Findings & Reports | 6/6 | ✅ Complete | 2026-01-15 |
 | 9. Work Orders & Vendors | 7/7 | ✅ Complete | 2026-01-15 |
 | 10. Billing & Invoicing | 6/6 | ✅ Complete | 2026-01-15 |
-| 11. Client Portal | 0/TBD | Not started | - |
+| 11. Client Portal | 0/5 | Ready | - |
 | 12. Analytics & Dashboards | 0/TBD | Not started | - |
 | 13. Notifications & Automation | 0/TBD | Not started | - |
 | 14. Testing & Launch | 0/TBD | Not started | - |
