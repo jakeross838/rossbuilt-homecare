@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 10 of 14 (Billing & Invoicing) - IN PROGRESS
-Plan: 3 of 6 in current phase
-Status: Plan 10-03 Complete - Wave 2 in progress
-Last activity: 2026-01-15 - Completed 10-03 (Payment Hooks)
+Plan: 4 of 6 in current phase
+Status: Plan 10-04 Complete - Wave 2 Complete
+Last activity: 2026-01-15 - Completed 10-04 (Stripe Integration Edge Function)
 
-Progress: █████████░ 91% (61 of ~64 plans)
+Progress: █████████░ 92% (62 of ~64 plans)
 
 ### Phase 10 Plans (IN PROGRESS)
 
@@ -23,13 +23,13 @@ Progress: █████████░ 91% (61 of ~64 plans)
 | 10-01 | Billing Data Foundation | 1 | **Complete** |
 | 10-02 | Invoice Hooks | 2 | **Complete** |
 | 10-03 | Payment Hooks | 2 | **Complete** |
-| 10-04 | Stripe Integration Edge Function | 2 | Pending |
+| 10-04 | Stripe Integration Edge Function | 2 | **Complete** |
 | 10-05 | Invoice UI Components | 3 | Pending |
 | 10-06 | Billing Pages & Integration (Checkpoint) | 4 | Pending |
 
 **Wave Structure:**
 - Wave 1: 10-01 (no dependencies) - Complete
-- Wave 2: 10-02, 10-03, 10-04 (parallel - depend on 10-01) - 2/3 Complete
+- Wave 2: 10-02, 10-03, 10-04 (parallel - depend on 10-01) - Complete
 - Wave 3: 10-05 (depends on 10-02, 10-03, 10-04)
 - Wave 4: 10-06 (checkpoint - depends on 10-05)
 
@@ -146,9 +146,9 @@ Progress: █████████░ 91% (61 of ~64 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 61
+- Total plans completed: 62
 - Average duration: 6 min
-- Total execution time: ~368 min
+- Total execution time: ~374 min
 
 **By Phase:**
 
@@ -163,11 +163,11 @@ Progress: █████████░ 91% (61 of ~64 plans)
 | 7 | 8/8 | 48 min | 6 min |
 | 8 | 6/6 | 36 min | 6 min |
 | 9 | 7/7 | 42 min | 6 min |
-| 10 | 3/6 | 18 min | 6 min |
+| 10 | 4/6 | 24 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 09-07 (15 min), 10-01 (6 min), 10-02 (6 min), 10-03 (4 min)
-- Trend: Wave 2 in progress, payment hooks complete
+- Last 5 plans: 10-01 (6 min), 10-02 (6 min), 10-03 (4 min), 10-04 (6 min)
+- Trend: Wave 2 complete, ready for Wave 3
 
 ## Accumulated Context
 
@@ -297,10 +297,16 @@ Recent decisions affecting current work:
 - **10-03**: Payment recording automatically updates invoice status (paid/partial) and balance_due
 - **10-03**: Delete payment recalculates invoice balance and may revert status from paid to sent
 - **10-03**: Payment summary aggregates by payment method for dashboard reporting
+- **10-04**: No migration needed for stripe_customer_id (already exists in clients table from initial schema)
+- **10-04**: Stripe Checkout for PCI compliance (hosted payment pages, no card handling in app)
+- **10-04**: Stripe customer ID cached on client record for repeat payments
+- **10-04**: Invoice metadata links Stripe to Supabase via payment intent metadata
+- **10-04**: Discount handling uses Stripe coupons for one-time discounts
 
 ### Pending Todos
 
 - ANTHROPIC_API_KEY needs to be set in Supabase Edge Function secrets (see .planning/phases/03-equipment-ai/03-USER-SETUP.md)
+- STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET need to be set in Supabase Edge Function secrets (see apps/admin/src/lib/stripe/STRIPE_SETUP.md)
 
 ### Blockers/Concerns
 
@@ -310,19 +316,20 @@ Recent decisions affecting current work:
 **Remaining:**
 - Need SUPABASE_SERVICE_ROLE_KEY from dashboard (placeholder in .env.local)
 - Need ANTHROPIC_API_KEY for AI edge function
+- Need STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET for Stripe integration
 - See ~/Downloads/home-care-os-docs/QUESTIONS_FOR_JAKE.md for full list
 
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 10-03-PLAN.md (Payment Hooks)
+Stopped at: Completed 10-04-PLAN.md (Stripe Integration Edge Function)
 Resume file: None
 
 ## Next Action
 
-Phase 10 Wave 2 nearly complete (2/3):
-- Run 10-04 (Stripe Integration Edge Function) to complete Wave 2
-- Or run `/gsd:execute-plan .planning/phases/10-billing-invoicing/10-04-PLAN.md` to continue
+Phase 10 Wave 2 Complete! Ready for Wave 3:
+- Run 10-05 (Invoice UI Components) to continue
+- Or run `/gsd:execute-plan .planning/phases/10-billing-invoicing/10-05-PLAN.md`
 
 ## Phase 9 Summary
 
