@@ -10,24 +10,24 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 11 of 14 (Client Portal) - IN PROGRESS
-Plan: 1 of 5 in current phase
-Status: Executing Phase 11 Wave 1
-Last activity: 2026-01-15 - Completed 11-01 (Client Portal Data Foundation)
+Plan: 2 of 5 in current phase
+Status: Phase 11 Wave 1 Complete - Ready for Wave 2
+Last activity: 2026-01-15 - Completed 11-02 (Client Portal Hooks)
 
-Progress: █████████░ 96% (65 of ~69 plans)
+Progress: █████████░ 96% (66 of ~69 plans)
 
 ### Phase 11 Plans (IN PROGRESS)
 
 | Plan | Name | Wave | Status |
 |------|------|------|--------|
 | 11-01 | Client Portal Data Foundation | 1 | **Complete** |
-| 11-02 | Client Portal Hooks | 1 | Ready |
+| 11-02 | Client Portal Hooks | 1 | **Complete** |
 | 11-03 | Service Request & Recommendation Hooks | 2 | Ready |
 | 11-04 | Client Portal UI Components | 3 | Ready |
 | 11-05 | Client Portal Pages & Routes (Checkpoint) | 4 | Ready |
 
 **Wave Structure:**
-- Wave 1: 11-01, 11-02 (parallel - no dependencies)
+- Wave 1: 11-01, 11-02 (parallel - no dependencies) - Complete
 - Wave 2: 11-03 (depends on 11-01, 11-02)
 - Wave 3: 11-04 (depends on 11-01, 11-02, 11-03)
 - Wave 4: 11-05 (checkpoint - depends on all previous)
@@ -162,9 +162,9 @@ Progress: █████████░ 96% (65 of ~69 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 65
+- Total plans completed: 66
 - Average duration: 6 min
-- Total execution time: ~392 min
+- Total execution time: ~400 min
 
 **By Phase:**
 
@@ -180,11 +180,11 @@ Progress: █████████░ 96% (65 of ~69 plans)
 | 8 | 6/6 | 36 min | 6 min |
 | 9 | 7/7 | 42 min | 6 min |
 | 10 | 6/6 | 36 min | 6 min |
-| 11 | 1/5 | 6 min | 6 min |
+| 11 | 2/5 | 14 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 10-04 (6 min), 10-05 (8 min), 10-06 (4 min), 11-01 (6 min)
-- Trend: Phase 11 Wave 1 in progress (11-02 ready to execute)
+- Last 5 plans: 10-05 (8 min), 10-06 (4 min), 11-01 (6 min), 11-02 (8 min)
+- Trend: Phase 11 Wave 1 complete, ready for Wave 2
 
 ## Accumulated Context
 
@@ -329,6 +329,10 @@ Recent decisions affecting current work:
 - **11-01**: Service request types aligned with Ross Built service offerings
 - **11-01**: Condition display uses reassuring but honest client-friendly language
 - **11-01**: Property health summary categorizes as good/attention/urgent
+- **11-02**: portalKeys factory pattern for hierarchical cache invalidation (consistent with other hooks)
+- **11-02**: Type assertions via unknown for JSONB fields (findings, line_items) for portal hooks
+- **11-02**: All portal hooks enabled only when profile?.role === 'client'
+- **11-02**: RLS policies handle data filtering automatically for client role users
 
 ### Pending Todos
 
@@ -349,15 +353,15 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 11-01-PLAN.md (Client Portal Data Foundation)
+Stopped at: Completed 11-02-PLAN.md (Client Portal Hooks)
 Resume file: None
 
 ## Next Action
 
-Phase 11 Wave 1 in progress! Continue with:
-- Run 11-02 (Client Portal Hooks) to complete Wave 1
-- Then run 11-03 (Service Request & Recommendation Hooks) for Wave 2
-- Or run `/gsd:execute-plan .planning/phases/11-client-portal/11-02-PLAN.md`
+Phase 11 Wave 1 Complete! Continue with Wave 2:
+- Run 11-03 (Service Request & Recommendation Hooks) to continue Phase 11
+- Then run 11-04 (Client Portal UI Components) for Wave 3
+- Or run `/gsd:execute-plan .planning/phases/11-client-portal/11-03-PLAN.md`
 
 ## Phase 9 Summary
 
