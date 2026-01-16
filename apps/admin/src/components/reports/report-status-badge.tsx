@@ -1,4 +1,4 @@
-import { FileText, Clock, CheckCircle, Send, Eye, Loader2 } from 'lucide-react'
+import { FileText, CheckCircle, Send, Eye, Loader2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { ReportStatus } from '@/lib/types/report'

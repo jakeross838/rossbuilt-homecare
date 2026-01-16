@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { FindingForm } from './finding-form'
-import type { InspectorInspection, ChecklistSection, ChecklistItem } from '@/lib/types/inspector'
+import type { InspectorInspection, ChecklistItem } from '@/lib/types/inspector'
 import { cn } from '@/lib/utils'
 import { ITEM_STATUS_OPTIONS } from '@/lib/constants/inspector'
 

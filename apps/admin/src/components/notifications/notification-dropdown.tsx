@@ -18,7 +18,6 @@ import {
   useNotificationSubscription,
 } from '@/hooks/use-notifications'
 import { groupNotificationsByDate } from '@/lib/helpers/notifications'
-import type { Notification } from '@/lib/types/notification'
 import { useToast } from '@/hooks/use-toast'
 
 export function NotificationDropdown() {

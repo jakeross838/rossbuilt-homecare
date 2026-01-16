@@ -146,7 +146,6 @@ export function ActivityFeed({
  * Compact activity feed for cards/sidebars
  */
 export function CompactActivityFeed({ limit = 5 }: { limit?: number }) {
-  const navigate = useNavigate()
   const { data: entries = [], isLoading } = useRecentActivity(limit)
 
   if (isLoading) {

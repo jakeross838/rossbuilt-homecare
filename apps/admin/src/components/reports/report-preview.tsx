@@ -18,7 +18,6 @@ import { useBuildReportData } from '@/hooks/use-reports'
 import { downloadPDF } from '@/lib/pdf/generate-pdf'
 import { CONDITION_LABELS, INSPECTION_TYPE_LABELS } from '@/lib/constants/report'
 import type { ReportStatus } from '@/lib/types/report'
-import { cn } from '@/lib/utils'
 
 interface ReportPreviewProps {
   inspectionId: string
