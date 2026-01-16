@@ -92,7 +92,7 @@ export function PropertiesPage() {
       })
       setDeleteDialogOpen(false)
       setPropertyToDelete(null)
-    } catch (_) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to archive property. Please try again.',

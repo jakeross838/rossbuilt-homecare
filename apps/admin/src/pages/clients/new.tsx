@@ -24,7 +24,7 @@ export function NewClientPage() {
 
       // Navigate to the new client's detail page
       navigate(`/clients/${client.id}`)
-    } catch (_) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create client. Please try again.',

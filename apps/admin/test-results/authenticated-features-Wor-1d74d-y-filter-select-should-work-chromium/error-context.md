@@ -1,0 +1,146 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - generic:
+    - generic:
+      - link:
+        - /url: "#main-content"
+        - text: Skip to main content
+      - complementary:
+        - generic:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - generic: Ross Built
+              - generic: Home Care OS
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /dashboard
+                - img
+                - generic: Dashboard
+            - listitem:
+              - link:
+                - /url: /calendar
+                - img
+                - generic: Calendar
+            - listitem:
+              - link:
+                - /url: /clients
+                - img
+                - generic: Clients
+            - listitem:
+              - link:
+                - /url: /properties
+                - img
+                - generic: Properties
+            - listitem:
+              - link:
+                - /url: /inspections
+                - img
+                - generic: Inspections
+            - listitem:
+              - link:
+                - /url: /work-orders
+                - img
+                - generic: Work Orders
+            - listitem:
+              - link:
+                - /url: /billing
+                - img
+                - generic: Billing
+            - listitem:
+              - link:
+                - /url: /vendors
+                - img
+                - generic: Vendors
+            - listitem:
+              - link:
+                - /url: /reports
+                - img
+                - generic: Reports
+            - listitem:
+              - link:
+                - /url: /activity
+                - img
+                - generic: Activity
+        - generic:
+          - list:
+            - listitem:
+              - link:
+                - /url: /settings/templates
+                - img
+                - generic: Templates
+            - listitem:
+              - link:
+                - /url: /settings/pricing
+                - img
+                - generic: Pricing
+            - listitem:
+              - link:
+                - /url: /settings
+                - img
+                - generic: Settings
+          - button:
+            - img
+            - generic: Collapse
+      - generic:
+        - banner:
+          - generic:
+            - generic:
+              - img
+              - searchbox
+          - generic:
+            - button:
+              - generic:
+                - img
+            - button:
+              - generic:
+                - generic: TU
+              - generic:
+                - generic: Test User
+                - generic: admin
+              - img
+        - main:
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=1]: Work Orders
+                - paragraph: Manage maintenance and repair work orders
+              - button:
+                - img
+                - text: New Work Order
+            - generic:
+              - tablist:
+                - tab [selected]: All (0)
+                - tab: Active (0)
+                - tab: Completed (0)
+                - tab: On Hold (0)
+            - generic:
+              - generic:
+                - img
+                - textbox:
+                  - /placeholder: Search work orders...
+              - combobox [expanded]:
+                - img
+                - generic: All Priorities
+                - img
+            - generic:
+              - paragraph: No work orders found
+              - button: Create your first work order
+      - list
+  - listbox [ref=e1]:
+    - option "All Priorities" [active] [ref=e2]:
+      - generic [ref=e4]: All Priorities
+    - option "Low" [ref=e5]:
+      - generic [ref=e7]: Low
+    - option "Medium" [ref=e8]:
+      - generic [ref=e10]: Medium
+    - option "High" [ref=e11]:
+      - generic [ref=e13]: High
+    - option "Urgent" [ref=e14]:
+      - generic [ref=e16]: Urgent
+```

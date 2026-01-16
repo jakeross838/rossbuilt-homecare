@@ -29,7 +29,7 @@ export function useInspectionForReport(inspectionId: string | undefined) {
             primary_photo_url,
             client:clients(id, first_name, last_name, email, phone)
           ),
-          inspector:users(id, first_name, last_name)
+          inspector:users!inspections_inspector_id_fkey(id, first_name, last_name)
         `)
         .eq('id', inspectionId)
         .single()

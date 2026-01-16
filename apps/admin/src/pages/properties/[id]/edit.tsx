@@ -31,7 +31,7 @@ export function EditPropertyPage() {
 
       // Navigate back to property detail
       navigate(`/properties/${id}`)
-    } catch (_) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update property. Please try again.',

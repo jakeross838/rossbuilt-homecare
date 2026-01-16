@@ -1,0 +1,262 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - generic:
+    - generic:
+      - link:
+        - /url: "#main-content"
+        - text: Skip to main content
+      - complementary:
+        - generic:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - generic: Ross Built
+              - generic: Home Care OS
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /dashboard
+                - img
+                - generic: Dashboard
+            - listitem:
+              - link:
+                - /url: /calendar
+                - img
+                - generic: Calendar
+            - listitem:
+              - link:
+                - /url: /clients
+                - img
+                - generic: Clients
+            - listitem:
+              - link:
+                - /url: /properties
+                - img
+                - generic: Properties
+            - listitem:
+              - link:
+                - /url: /inspections
+                - img
+                - generic: Inspections
+            - listitem:
+              - link:
+                - /url: /work-orders
+                - img
+                - generic: Work Orders
+            - listitem:
+              - link:
+                - /url: /billing
+                - img
+                - generic: Billing
+            - listitem:
+              - link:
+                - /url: /vendors
+                - img
+                - generic: Vendors
+            - listitem:
+              - link:
+                - /url: /reports
+                - img
+                - generic: Reports
+            - listitem:
+              - link:
+                - /url: /activity
+                - img
+                - generic: Activity
+        - generic:
+          - list:
+            - listitem:
+              - link:
+                - /url: /settings/templates
+                - img
+                - generic: Templates
+            - listitem:
+              - link:
+                - /url: /settings/pricing
+                - img
+                - generic: Pricing
+            - listitem:
+              - link:
+                - /url: /settings
+                - img
+                - generic: Settings
+          - button:
+            - img
+            - generic: Collapse
+      - generic:
+        - banner:
+          - generic:
+            - generic:
+              - img
+              - searchbox
+          - generic:
+            - button:
+              - generic:
+                - img
+            - button:
+              - generic:
+                - generic: TU
+              - generic:
+                - generic: Test User
+                - generic: admin
+              - img
+        - main:
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=1]: Calendar
+                - generic: View and manage scheduled inspections
+              - generic:
+                - button:
+                  - img
+                  - text: Schedule Inspection
+            - generic:
+              - generic:
+                - heading [level=2]: January 2026
+                - generic:
+                  - button:
+                    - img
+                    - text: Today
+                  - generic:
+                    - button:
+                      - img
+                    - button:
+                      - img
+              - generic:
+                - generic:
+                  - generic: Sun
+                  - generic: Mon
+                  - generic: Tue
+                  - generic: Wed
+                  - generic: Thu
+                  - generic: Fri
+                  - generic: Sat
+                - generic:
+                  - generic:
+                    - generic: "28"
+                  - generic:
+                    - generic: "29"
+                  - generic:
+                    - generic: "30"
+                  - generic:
+                    - generic: "31"
+                  - generic:
+                    - generic: "1"
+                  - generic:
+                    - generic: "2"
+                  - generic:
+                    - generic: "3"
+                  - generic:
+                    - generic: "4"
+                  - generic:
+                    - generic: "5"
+                  - generic:
+                    - generic: "6"
+                  - generic:
+                    - generic: "7"
+                  - generic:
+                    - generic: "8"
+                  - generic:
+                    - generic: "9"
+                  - generic:
+                    - generic: "10"
+                  - generic:
+                    - generic: "11"
+                  - generic:
+                    - generic: "12"
+                  - generic:
+                    - generic: "13"
+                  - generic:
+                    - generic: "14"
+                  - generic:
+                    - generic: "15"
+                    - generic:
+                      - button: 09:00 Jake Ross
+                  - generic:
+                    - generic: "16"
+                    - generic:
+                      - button: 01:00 Jake Ross
+                  - generic:
+                    - generic: "17"
+                  - generic:
+                    - generic: "18"
+                  - generic:
+                    - generic: "19"
+                  - generic:
+                    - generic: "20"
+                    - generic:
+                      - button: 09:00 Jake Ross
+                      - button: 09:00 Jake Ross
+                      - button: 09:00 Jake Ross
+                  - generic:
+                    - generic: "21"
+                  - generic:
+                    - generic: "22"
+                  - generic:
+                    - generic: "23"
+                  - generic:
+                    - generic: "24"
+                  - generic:
+                    - generic: "25"
+                  - generic:
+                    - generic: "26"
+                  - generic:
+                    - generic: "27"
+                  - generic:
+                    - generic: "28"
+                  - generic:
+                    - generic: "29"
+                  - generic:
+                    - generic: "30"
+                  - generic:
+                    - generic: "31"
+      - list
+  - dialog:
+    - generic:
+      - heading [level=2]: Schedule Inspection
+      - paragraph: Create a new inspection for a property.
+    - generic:
+      - generic:
+        - text: Property *
+        - combobox [expanded]:
+          - generic: Select property
+          - img
+        - combobox
+      - generic:
+        - text: Inspection Type
+        - combobox:
+          - generic: Scheduled
+          - img
+        - combobox
+      - generic:
+        - text: Date *
+        - textbox
+      - generic:
+        - generic:
+          - text: Start Time
+          - textbox: 09:00
+        - generic:
+          - text: Duration (min)
+          - spinbutton: "60"
+      - generic:
+        - text: Assign Inspector
+        - combobox:
+          - generic: Unassigned
+          - img
+        - combobox
+      - generic:
+        - button: Cancel
+        - button: Schedule Inspection
+    - button:
+      - img
+      - generic: Close
+  - listbox [ref=e2]:
+    - option "Jake Ross - Bradenton" [active] [ref=e3]:
+      - generic [ref=e5]: Jake Ross - Bradenton
+    - option "Jake Ross - Bradenton" [ref=e6]:
+      - generic [ref=e8]: Jake Ross - Bradenton
+```

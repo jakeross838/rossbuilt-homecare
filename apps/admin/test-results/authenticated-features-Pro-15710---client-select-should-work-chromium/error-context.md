@@ -1,0 +1,407 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - generic:
+    - generic:
+      - link:
+        - /url: "#main-content"
+        - text: Skip to main content
+      - complementary:
+        - generic:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - generic: Ross Built
+              - generic: Home Care OS
+        - navigation:
+          - list:
+            - listitem:
+              - link:
+                - /url: /dashboard
+                - img
+                - generic: Dashboard
+            - listitem:
+              - link:
+                - /url: /calendar
+                - img
+                - generic: Calendar
+            - listitem:
+              - link:
+                - /url: /clients
+                - img
+                - generic: Clients
+            - listitem:
+              - link:
+                - /url: /properties
+                - img
+                - generic: Properties
+            - listitem:
+              - link:
+                - /url: /inspections
+                - img
+                - generic: Inspections
+            - listitem:
+              - link:
+                - /url: /work-orders
+                - img
+                - generic: Work Orders
+            - listitem:
+              - link:
+                - /url: /billing
+                - img
+                - generic: Billing
+            - listitem:
+              - link:
+                - /url: /vendors
+                - img
+                - generic: Vendors
+            - listitem:
+              - link:
+                - /url: /reports
+                - img
+                - generic: Reports
+            - listitem:
+              - link:
+                - /url: /activity
+                - img
+                - generic: Activity
+        - generic:
+          - list:
+            - listitem:
+              - link:
+                - /url: /settings/templates
+                - img
+                - generic: Templates
+            - listitem:
+              - link:
+                - /url: /settings/pricing
+                - img
+                - generic: Pricing
+            - listitem:
+              - link:
+                - /url: /settings
+                - img
+                - generic: Settings
+          - button:
+            - img
+            - generic: Collapse
+      - generic:
+        - banner:
+          - generic:
+            - generic:
+              - img
+              - searchbox
+          - generic:
+            - button:
+              - generic:
+                - img
+            - button:
+              - generic:
+                - generic: TU
+              - generic:
+                - generic: Test User
+                - generic: admin
+              - img
+        - main:
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=1]: New Property
+                - generic: Add a new property to your organization
+              - generic:
+                - button:
+                  - img
+                  - text: Back
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - heading [level=3]: Client
+                    - paragraph: Select the client who owns this property
+                  - generic:
+                    - generic:
+                      - generic: Client *
+                      - combobox [expanded]:
+                        - generic: Select a client
+                        - img
+                      - combobox
+                - generic:
+                  - generic:
+                    - heading [level=3]: Property Information
+                    - paragraph: Basic details about the property
+                  - generic:
+                    - generic:
+                      - generic: Property Name *
+                      - textbox:
+                        - /placeholder: e.g., Oceanfront Estate, Main Residence
+                        - text: Test Property
+                    - generic:
+                      - generic: Address *
+                      - textbox:
+                        - /placeholder: 123 Ocean Drive
+                    - generic:
+                      - text: Address Line 2
+                      - textbox:
+                        - /placeholder: Unit, Suite, etc.
+                    - generic:
+                      - generic: City *
+                      - textbox:
+                        - /placeholder: Palm Beach
+                    - generic:
+                      - generic:
+                        - generic: State *
+                        - combobox:
+                          - generic: State
+                          - img
+                        - combobox
+                      - generic:
+                        - generic: ZIP Code *
+                        - textbox:
+                          - /placeholder: "33480"
+                    - generic:
+                      - text: County
+                      - textbox:
+                        - /placeholder: Palm Beach County
+                - generic:
+                  - generic:
+                    - heading [level=3]: Property Details
+                    - paragraph: Physical characteristics of the property
+                  - generic:
+                    - generic:
+                      - text: Year Built
+                      - spinbutton
+                    - generic:
+                      - text: Square Footage
+                      - spinbutton
+                    - generic:
+                      - text: Lot Size (sq ft)
+                      - spinbutton
+                    - generic:
+                      - text: Bedrooms
+                      - spinbutton
+                    - generic:
+                      - text: Bathrooms
+                      - spinbutton
+                    - generic:
+                      - text: Stories
+                      - spinbutton
+                    - generic:
+                      - text: Construction Type
+                      - combobox:
+                        - generic: Select type
+                        - img
+                      - combobox
+                    - generic:
+                      - text: Roof Type
+                      - combobox:
+                        - generic: Select type
+                        - img
+                      - combobox
+                    - generic:
+                      - text: Foundation Type
+                      - combobox:
+                        - generic: Select type
+                        - img
+                      - combobox
+                    - generic:
+                      - text: HOA Name
+                      - textbox:
+                        - /placeholder: Palm Beach HOA
+                    - generic:
+                      - text: Flood Zone
+                      - textbox:
+                        - /placeholder: Zone X
+                    - generic:
+                      - generic:
+                        - checkbox
+                        - checkbox
+                        - generic: Gated Community
+                      - generic:
+                        - checkbox
+                        - checkbox
+                        - generic: Coastal Property
+                - generic:
+                  - generic:
+                    - heading [level=3]: Access Information
+                    - paragraph: Codes and instructions for property access
+                  - generic:
+                    - generic:
+                      - text: Gate Code
+                      - textbox:
+                        - /placeholder: "****"
+                    - generic:
+                      - text: Garage Code
+                      - textbox:
+                        - /placeholder: "****"
+                    - generic:
+                      - text: Alarm Code
+                      - textbox:
+                        - /placeholder: "****"
+                    - generic:
+                      - text: Alarm Company
+                      - textbox:
+                        - /placeholder: ADT
+                    - generic:
+                      - text: Alarm Company Phone
+                      - textbox:
+                        - /placeholder: (800) 555-0123
+                    - generic:
+                      - text: Lockbox Code
+                      - textbox:
+                        - /placeholder: "****"
+                    - generic:
+                      - text: Lockbox Location
+                      - textbox:
+                        - /placeholder: On rear gate, left side
+                    - generic:
+                      - text: WiFi Network
+                      - textbox:
+                        - /placeholder: MyNetwork
+                    - generic:
+                      - text: WiFi Password
+                      - textbox:
+                        - /placeholder: "****"
+                    - generic:
+                      - text: Access Instructions
+                      - textbox:
+                        - /placeholder: Park in driveway, enter through side gate...
+                - generic:
+                  - generic:
+                    - heading [level=3]: Property Features
+                    - paragraph: Select all features that apply to this property
+                  - generic:
+                    - generic:
+                      - generic:
+                        - heading [level=4]: Water Features
+                        - generic:
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Pool
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Spa/Hot Tub
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Dock
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Boat Lift
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Seawall
+                      - generic:
+                        - heading [level=4]: Outdoor Features
+                        - generic:
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Outdoor Kitchen
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Fire Pit
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Fountain
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Irrigation System
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Tennis Court
+                      - generic:
+                        - heading [level=4]: Systems
+                        - generic:
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Generator
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Solar Panels
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Water Softener
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Water Filtration
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Smart Home System
+                      - generic:
+                        - heading [level=4]: Property Characteristics
+                        - generic:
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Elevator
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Wine Cellar
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Theater Room
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Guest House
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Detached Garage
+                      - generic:
+                        - heading [level=4]: Climate Control
+                        - generic:
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Hurricane Shutters
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Impact Windows
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Whole House Fan
+                          - generic:
+                            - checkbox
+                            - checkbox
+                            - generic: Radiant Heating
+                - generic:
+                  - generic:
+                    - heading [level=3]: Notes
+                    - paragraph: Additional information about this property
+                  - generic:
+                    - generic:
+                      - text: Client-Visible Notes
+                      - textbox:
+                        - /placeholder: Notes that may be shared with the client...
+                    - generic:
+                      - text: Internal Notes (Staff Only)
+                      - textbox:
+                        - /placeholder: Private notes for staff only...
+                - generic:
+                  - button: Cancel
+                  - button: Create Property
+      - list
+  - listbox [ref=e1]:
+    - option "Jake Ross (jake@rossbuilt.com)" [active] [ref=e2]:
+      - generic [ref=e4]: Jake Ross (jake@rossbuilt.com)
+```
