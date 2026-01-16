@@ -25,6 +25,9 @@ import WorkOrdersPage from '@/pages/work-orders'
 import WorkOrderDetailPage from '@/pages/work-orders/[id]'
 import VendorsPage from '@/pages/vendors'
 import VendorDetailPage from '@/pages/vendors/[id]'
+import BillingDashboard from '@/pages/billing/index'
+import InvoicesPage from '@/pages/billing/invoices/index'
+import InvoiceDetailPage from '@/pages/billing/invoices/[id]'
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -92,7 +95,9 @@ function App() {
               <Route path="/work-orders/:id" element={<WorkOrderDetailPage />} />
 
               {/* Billing */}
-              <Route path="/billing" element={<PlaceholderPage title="Billing" />} />
+              <Route path="/billing" element={<BillingDashboard />} />
+              <Route path="/billing/invoices" element={<InvoicesPage />} />
+              <Route path="/billing/invoices/:id" element={<InvoiceDetailPage />} />
 
               {/* Vendors */}
               <Route path="/vendors" element={<VendorsPage />} />
