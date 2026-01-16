@@ -232,7 +232,11 @@ Reference: Database schema already includes notifications and activity_log table
 **Goal**: QA, optimization, and production deployment
 **Depends on**: Phase 13
 **Research**: Unlikely (Vercel deployment)
-**Plans**: TBD
+**Plans**: 4 plans in 4 waves
+- 14-01: Build & Type Verification (TypeScript check, production build)
+- 14-02: Production Environment Setup (env docs, deployment guide)
+- 14-03: Vercel Deployment (deploy to production with checkpoint)
+- 14-04: Launch Verification (final testing, project completion)
 
 ## Progress
 
@@ -254,4 +258,4 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 11. Client Portal | 5/5 | ✓ Complete | 2026-01-15 |
 | 12. Analytics & Dashboards | 4/4 | ✅ Complete | 2026-01-15 |
 | 13. Notifications & Automation | 5/5 | ✅ Complete | 2026-01-16 |
-| 14. Testing & Launch | 0/TBD | Not started | - |
+| 14. Testing & Launch | 0/4 | Planned | - |
