@@ -28,6 +28,7 @@ import VendorDetailPage from '@/pages/vendors/[id]'
 import BillingDashboard from '@/pages/billing/index'
 import InvoicesPage from '@/pages/billing/invoices/index'
 import InvoiceDetailPage from '@/pages/billing/invoices/[id]'
+import ReportsPage from '@/pages/dashboard/reports'
 
 // Client Portal imports
 import { PortalLayout } from '@/components/portal/portal-layout'
@@ -133,7 +134,7 @@ function App() {
               <Route path="/vendors/:id" element={<VendorDetailPage />} />
 
               {/* Reports */}
-              <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+              <Route path="/reports" element={<ReportsPage />} />
 
               {/* Settings */}
               <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
