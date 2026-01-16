@@ -5,16 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 8 Complete — Ready for Phase 9
+**Current focus:** Phase 9 Complete — Ready for Phase 10
 
 ## Current Position
 
-Phase: 8 of 14 (Findings & Reports) - COMPLETE
-Plan: 6 of 6 in current phase
-Status: Phase 8 Checkpoint Complete
-Last activity: 2026-01-15 - Completed 08-06 (Report Page & Integration)
+Phase: 9 of 14 (Work Orders & Vendors) - COMPLETE
+Plan: 7 of 7 in current phase
+Status: Phase 9 Complete - All Waves Done
+Last activity: 2026-01-15 - Completed 09-07-PLAN.md (Work Orders & Vendors Pages Checkpoint)
 
-Progress: █████████░ 73% (44 of ~60 plans)
+Progress: █████████░ 88% (58 of ~60 plans)
+
+### Phase 9 Plans (COMPLETE)
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 09-01 | Work Order Data Foundation | 1 | **Complete** |
+| 09-02 | Vendor Data Foundation | 1 | **Complete** |
+| 09-03 | Work Order Hooks | 2 | **Complete** |
+| 09-04 | Vendor Hooks | 2 | **Complete** |
+| 09-05 | Work Order UI Components | 3 | **Complete** |
+| 09-06 | Vendor UI Components | 3 | **Complete** |
+| 09-07 | Work Orders & Vendors Pages (Checkpoint) | 4 | **Complete** |
+
+**Wave Structure:**
+- Wave 1: 09-01, 09-02 (parallel - no dependencies) - Complete
+- Wave 2: 09-03, 09-04 (parallel - depend on Wave 1) - Complete
+- Wave 3: 09-05, 09-06 (parallel - depend on Wave 2) - Complete
+- Wave 4: 09-07 (checkpoint - depends on Wave 3) - Complete
 
 ### Phase 8 Plans (COMPLETE)
 
@@ -111,9 +129,9 @@ Progress: █████████░ 73% (44 of ~60 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 58
 - Average duration: 6 min
-- Total execution time: 115 min
+- Total execution time: ~350 min
 
 **By Phase:**
 
@@ -123,10 +141,15 @@ Progress: █████████░ 73% (44 of ~60 plans)
 | 2 | 6/6 | 78 min | 13 min |
 | 3 | 4/4 | 21 min | 5 min |
 | 4 | 5/5 | 25 min | 5 min |
+| 5 | 5/5 | 30 min | 6 min |
+| 6 | 5/5 | 30 min | 6 min |
+| 7 | 8/8 | 48 min | 6 min |
+| 8 | 6/6 | 36 min | 6 min |
+| 9 | 7/7 | 42 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (4 min), 04-03 (7 min), 04-04 (5 min), 04-05 (6 min)
-- Trend: Phase 4 completed efficiently, ready for Phase 5
+- Last 5 plans: 09-05 (6 min), 09-06 (6 min), 09-07 (15 min)
+- Trend: Phase 9 completed efficiently, ready for Phase 10
 
 ## Accumulated Context
 
@@ -213,6 +236,35 @@ Recent decisions affecting current work:
 - **08-06**: Date range filter: 30 days past to 7 days ahead for list view
 - **08-06**: Kept existing ClipboardCheck icon for Inspections in sidebar (already correct)
 - **08-06**: Report page shows recommendations in tabbed interface with priority badges
+- **09-01**: Work order types reference database enums via `Enums<'work_order_status'>` and `Enums<'priority_level'>`
+- **09-01**: WorkOrderWithRelations pattern for display with expanded property, client, vendor, user relations
+- **09-01**: 14 work order categories aligned with equipment categories and vendor trades
+- **09-01**: Default 15% markup for vendor work with `calculateClientCost()` helper
+- **09-01**: Status workflow config with `allowedTransitions` array for state machine validation
+- **09-02**: Trade categories aligned with work order categories for consistency
+- **09-02**: US_STATES reusable constant (may be used elsewhere for address forms)
+- **09-02**: 30-day compliance warning threshold for license/insurance expiration
+- **09-02**: Flexible phone validation regex allows various formats (digits, spaces, dashes, parentheses)
+- **09-02**: Optional fields allow empty strings or null for form compatibility
+- **09-04**: Used `vendorKeys` factory pattern for hierarchical cache invalidation (consistent with other hooks)
+- **09-04**: Compliance counts computed client-side from minimal vendor fields for efficiency
+- **09-04**: Rolling average rating calculation: `(currentRating * (completedJobs - 1) + newRating) / completedJobs`
+- **09-03**: Used `workOrderKeys` factory pattern for hierarchical cache invalidation (consistent with vendor hooks)
+- **09-03**: RPC functions (`increment_vendor_total_jobs`, `increment_vendor_completed_jobs`) use SECURITY DEFINER
+- **09-03**: Work order number generation uses `work_order_seq` sequence with timestamp fallback
+- **09-06**: Resolver type cast for zod v4 compatibility with react-hook-form (consistent with 04-03)
+- **09-06**: TooltipProvider wrapper for self-contained tooltip in VendorComplianceBadge (consistent with 05-05)
+- **09-06**: Checkbox grid pattern for multi-select trade categories in VendorForm
+- **09-06**: Conditional field display (W-9 received date only shown when W-9 is on file)
+- **09-06**: Color-coded status badges with semantic meaning (green/yellow/red) for compliance
+- **09-05**: Status badge variants map to shadcn Badge (success/info -> default, warning -> secondary, destructive -> destructive)
+- **09-05**: Priority icons use Lucide (ArrowDown, Minus, ArrowUp, AlertTriangle) for visual hierarchy
+- **09-05**: RadioGroup with sr-only items for card-based vendor selection (consistent with 04-03)
+- **09-05**: Real-time cost summary calculation using `calculateClientCost()` helper in completion dialog
+- **09-07**: Sidebar already had Work Orders (Wrench icon) and Vendors (Truck icon) navigation
+- **09-07**: Fixed null type handling in work order detail page using fallback default status
+- **09-07**: Removed `invoiced` status from constants (not in database enum)
+- **09-07**: Added Form component from shadcn/ui to support vendor forms
 
 ### Pending Todos
 
@@ -231,13 +283,40 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 08-06-PLAN.md (Report Page & Integration - Checkpoint)
+Stopped at: Completed 09-07-PLAN.md (Work Orders & Vendors Pages Checkpoint)
 Resume file: None
 
 ## Next Action
 
-Phase 8 verified and complete! Ready for Phase 9: Work Orders & Vendors
-Run: `/gsd:plan-phase 9` to create plans for work order workflow
+Phase 9 Complete! Ready for Phase 10:
+- Phase 10: Billing & Invoicing (not yet planned)
+
+## Phase 9 Summary
+
+**Work Orders & Vendors Complete:**
+- Work order types, constants, and validation schemas
+- Vendor types, constants, and validation schemas
+- React Query hooks for work orders (CRUD, status, assignment, completion)
+- React Query hooks for vendors (CRUD, compliance, ratings)
+- Work order UI components (cards, badges, dialogs)
+- Vendor UI components (cards, badges, forms)
+- Work orders list and detail pages
+- Vendors list and detail pages
+- Full route integration in App.tsx
+
+**Key Files Created:**
+- apps/admin/src/lib/types/work-order.ts - Work order TypeScript types
+- apps/admin/src/lib/types/vendor.ts - Vendor TypeScript types
+- apps/admin/src/lib/constants/work-order.ts - Work order status, categories
+- apps/admin/src/lib/constants/vendor.ts - Vendor trades, compliance helpers
+- apps/admin/src/hooks/use-work-orders.ts - Work order React Query hooks
+- apps/admin/src/hooks/use-vendors.ts - Vendor React Query hooks
+- apps/admin/src/components/work-orders/* - Work order UI components
+- apps/admin/src/components/vendors/* - Vendor UI components
+- apps/admin/src/pages/work-orders/index.tsx - Work orders list page
+- apps/admin/src/pages/work-orders/[id].tsx - Work order detail page
+- apps/admin/src/pages/vendors/index.tsx - Vendors list page
+- apps/admin/src/pages/vendors/[id].tsx - Vendor detail page
 
 ## Phase 8 Summary
 
@@ -397,25 +476,3 @@ Run: `/gsd:plan-phase 9` to create plans for work order workflow
 - apps/admin/src/components/inspector/* - Mobile UI components
 - apps/admin/src/pages/inspector/index.tsx - Inspector dashboard
 - apps/admin/src/pages/inspector/inspection.tsx - Inspection execution page
-
-## Phase 8 Summary
-
-**Findings & Reports Complete:**
-- Report data foundation with TypeScript types and constants
-- Findings and recommendations React Query hooks
-- AI-powered report summary generation via Supabase Edge Function
-- PDF report generation with @react-pdf/renderer
-- Report UI components (preview, dialog, badges, summary cards)
-- Inspections list page with report status tracking
-- Dedicated report viewing page with full details
-
-**Key Files Created:**
-- apps/admin/src/lib/types/report.ts - Report TypeScript types
-- apps/admin/src/lib/constants/report.ts - Report colors, fonts, dimensions
-- apps/admin/src/hooks/use-reports.ts - Report data fetching and transformation
-- supabase/functions/generate-report-summary/ - AI summary edge function
-- apps/admin/src/lib/pdf/report-document.tsx - PDF document components
-- apps/admin/src/lib/pdf/generate-pdf.ts - PDF generation and upload
-- apps/admin/src/components/reports/* - Report UI components
-- apps/admin/src/pages/inspections/index.tsx - Inspections list page
-- apps/admin/src/pages/inspections/report.tsx - Report detail page
