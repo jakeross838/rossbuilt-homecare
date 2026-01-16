@@ -29,6 +29,9 @@ import BillingDashboard from '@/pages/billing/index'
 import InvoicesPage from '@/pages/billing/invoices/index'
 import InvoiceDetailPage from '@/pages/billing/invoices/[id]'
 import ReportsPage from '@/pages/dashboard/reports'
+import NotificationsPage from '@/pages/notifications'
+import NotificationSettingsPage from '@/pages/settings/notifications'
+import ActivityPage from '@/pages/activity'
 
 // Client Portal imports
 import { PortalLayout } from '@/components/portal/portal-layout'
@@ -136,11 +139,18 @@ function App() {
               {/* Reports */}
               <Route path="/reports" element={<ReportsPage />} />
 
+              {/* Notifications */}
+              <Route path="/notifications" element={<NotificationsPage />} />
+
+              {/* Activity */}
+              <Route path="/activity" element={<ActivityPage />} />
+
               {/* Settings */}
               <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
               <Route path="/settings/profile" element={<PlaceholderPage title="Profile Settings" />} />
               <Route path="/settings/pricing" element={<PricingSettingsPage />} />
               <Route path="/settings/templates" element={<TemplatesPage />} />
+              <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
             </Route>
 
             {/* Catch all - redirect to dashboard */}
