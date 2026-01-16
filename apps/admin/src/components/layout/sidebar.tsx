@@ -10,6 +10,7 @@ import {
   Receipt,
   Truck,
   BarChart3,
+  Activity,
   Settings,
   DollarSign,
   FileText,
@@ -39,6 +40,7 @@ const navItems: NavItem[] = [
   { title: 'Billing', href: '/billing', icon: Receipt },
   { title: 'Vendors', href: '/vendors', icon: Truck },
   { title: 'Reports', href: '/reports', icon: BarChart3 },
+  { title: 'Activity', href: '/activity', icon: Activity },
 ]
 
 const bottomNavItems: NavItem[] = [
