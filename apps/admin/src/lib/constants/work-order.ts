@@ -40,7 +40,7 @@ export const WORK_ORDER_STATUS: Record<
     label: 'Completed',
     color: 'success',
     description: 'Work has been completed',
-    allowedTransitions: ['invoiced'],
+    allowedTransitions: [],
   },
   on_hold: {
     label: 'On Hold',
@@ -52,12 +52,6 @@ export const WORK_ORDER_STATUS: Record<
     label: 'Cancelled',
     color: 'destructive',
     description: 'Work order has been cancelled',
-    allowedTransitions: [],
-  },
-  invoiced: {
-    label: 'Invoiced',
-    color: 'success',
-    description: 'Work has been invoiced to client',
     allowedTransitions: [],
   },
 }

@@ -630,7 +630,6 @@ export function useWorkOrderCounts() {
         completed: 0,
         on_hold: 0,
         cancelled: 0,
-        invoiced: 0,
       }
 
       data?.forEach((wo) => {
