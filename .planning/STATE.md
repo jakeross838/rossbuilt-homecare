@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 10 of 14 (Billing & Invoicing) - IN PROGRESS
-Plan: 4 of 6 in current phase
-Status: Plan 10-04 Complete - Wave 2 Complete
-Last activity: 2026-01-15 - Completed 10-04 (Stripe Integration Edge Function)
+Plan: 5 of 6 in current phase
+Status: Plan 10-05 Complete - Wave 3 Complete
+Last activity: 2026-01-15 - Completed 10-05 (Invoice UI Components)
 
-Progress: █████████░ 92% (62 of ~64 plans)
+Progress: █████████░ 94% (63 of ~64 plans)
 
 ### Phase 10 Plans (IN PROGRESS)
 
@@ -24,13 +24,13 @@ Progress: █████████░ 92% (62 of ~64 plans)
 | 10-02 | Invoice Hooks | 2 | **Complete** |
 | 10-03 | Payment Hooks | 2 | **Complete** |
 | 10-04 | Stripe Integration Edge Function | 2 | **Complete** |
-| 10-05 | Invoice UI Components | 3 | Pending |
+| 10-05 | Invoice UI Components | 3 | **Complete** |
 | 10-06 | Billing Pages & Integration (Checkpoint) | 4 | Pending |
 
 **Wave Structure:**
 - Wave 1: 10-01 (no dependencies) - Complete
 - Wave 2: 10-02, 10-03, 10-04 (parallel - depend on 10-01) - Complete
-- Wave 3: 10-05 (depends on 10-02, 10-03, 10-04)
+- Wave 3: 10-05 (depends on 10-02, 10-03, 10-04) - Complete
 - Wave 4: 10-06 (checkpoint - depends on 10-05)
 
 ### Phase 9 Plans (COMPLETE)
@@ -163,11 +163,11 @@ Progress: █████████░ 92% (62 of ~64 plans)
 | 7 | 8/8 | 48 min | 6 min |
 | 8 | 6/6 | 36 min | 6 min |
 | 9 | 7/7 | 42 min | 6 min |
-| 10 | 4/6 | 24 min | 6 min |
+| 10 | 5/6 | 32 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 10-01 (6 min), 10-02 (6 min), 10-03 (4 min), 10-04 (6 min)
-- Trend: Wave 2 complete, ready for Wave 3
+- Last 5 plans: 10-01 (6 min), 10-02 (6 min), 10-03 (4 min), 10-04 (6 min), 10-05 (8 min)
+- Trend: Wave 3 complete, ready for Wave 4 (checkpoint)
 
 ## Accumulated Context
 
@@ -302,6 +302,12 @@ Recent decisions affecting current work:
 - **10-04**: Stripe customer ID cached on client record for repeat payments
 - **10-04**: Invoice metadata links Stripe to Supabase via payment intent metadata
 - **10-04**: Discount handling uses Stripe coupons for one-time discounts
+- **10-05**: Resolver type cast for zod v4 compatibility with react-hook-form (consistent with 04-03, 09-06)
+- **10-05**: Conditional form fields: show check number for check payments, card details for card payments
+- **10-05**: Real-time invoice total calculation as line items are edited
+- **10-05**: Pre-filled email template in SendInvoiceDialog with Ross Built branding
+- **10-05**: PaymentLinkButton state transitions: create button -> copy/open buttons after generation
+- **10-05**: Due date presets (Net 15/30/45/60) calculated from invoice date dynamically
 
 ### Pending Todos
 
@@ -322,14 +328,14 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 10-04-PLAN.md (Stripe Integration Edge Function)
+Stopped at: Completed 10-05-PLAN.md (Invoice UI Components)
 Resume file: None
 
 ## Next Action
 
-Phase 10 Wave 2 Complete! Ready for Wave 3:
-- Run 10-05 (Invoice UI Components) to continue
-- Or run `/gsd:execute-plan .planning/phases/10-billing-invoicing/10-05-PLAN.md`
+Phase 10 Wave 3 Complete! Ready for Wave 4 (checkpoint):
+- Run 10-06 (Billing Pages & Integration) to complete Phase 10
+- Or run `/gsd:execute-plan .planning/phases/10-billing-invoicing/10-06-PLAN.md`
 
 ## Phase 9 Summary
 
