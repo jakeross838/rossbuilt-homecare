@@ -13,6 +13,10 @@ type WorkOrder = Tables<'work_orders'>
 type WorkOrderInsert = InsertTables<'work_orders'>
 type WorkOrderUpdate = UpdateTables<'work_orders'>
 
+// UUID validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const isValidUUID = (id: string | undefined): boolean => !!id && UUID_REGEX.test(id)
+
 // Query keys for cache management
 export const workOrderKeys = {
   all: ['work-orders'] as const,
@@ -223,7 +227,7 @@ export function useVendorWorkOrders(vendorId: string | undefined) {
   return useQuery({
     queryKey: workOrderKeys.vendor(vendorId || ''),
     queryFn: async () => {
-      if (!vendorId) return []
+      if (!vendorId || !isValidUUID(vendorId)) return []
 
       const { data, error } = await supabase
         .from('work_orders')
@@ -242,7 +246,7 @@ export function useVendorWorkOrders(vendorId: string | undefined) {
       if (error) throw error
       return data
     },
-    enabled: !!vendorId,
+    enabled: isValidUUID(vendorId),
   })
 }
 
@@ -263,7 +267,7 @@ export function useCreateWorkOrder() {
       const { data: profile } = await supabase
         .from('users')
         .select('organization_id')
-        .eq('auth_id', userData.user.id)
+        .eq('id', userData.user.id)
         .single()
 
       if (!profile) throw new Error('User profile not found')

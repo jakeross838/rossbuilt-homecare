@@ -53,7 +53,7 @@ async function syncPendingPhotos(): Promise<{ uploaded: number; errors: string[]
     try {
       // Upload to Supabase Storage
       const path = `inspections/${photo.inspection_id}/${photo.item_id}/${photo.filename}`
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('inspection-photos')
         .upload(path, photo.blob, {
           cacheControl: '3600',
@@ -106,7 +106,7 @@ async function syncPendingFindings(): Promise<{ synced: number; errors: string[]
 
       // Merge findings
       const currentFindings = (inspection.findings || {}) as Record<string, unknown>
-      const mergedFindings = { ...currentFindings }
+      const mergedFindings: Record<string, unknown> = { ...currentFindings }
 
       for (const item of items) {
         mergedFindings[item.item_id] = item.finding
@@ -117,7 +117,7 @@ async function syncPendingFindings(): Promise<{ synced: number; errors: string[]
       const { error: updateError } = await supabase
         .from('inspections')
         .update({
-          findings: mergedFindings,
+          findings: mergedFindings as unknown as null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', inspectionId)

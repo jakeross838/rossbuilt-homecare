@@ -55,11 +55,10 @@ export function GenerateReportDialog({
       setProgress(10)
 
       // Generate AI summary if enabled
-      let aiSummary
       if (options.include_ai_summary) {
         setProgress(30)
         try {
-          aiSummary = await generateAISummary(reportData)
+          await generateAISummary(reportData)
         } catch (error) {
           console.warn('AI summary failed, continuing without:', error)
         }

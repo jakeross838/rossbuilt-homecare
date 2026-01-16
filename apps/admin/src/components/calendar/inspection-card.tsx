@@ -91,7 +91,11 @@ export function InspectionCard({ inspection, onClick, compact = false }: Inspect
         {inspection.inspector && (
           <div className="flex items-center gap-1">
             <User className="h-3 w-3" />
-            <span>{inspection.inspector.full_name || inspection.inspector.email}</span>
+            <span>
+              {inspection.inspector.first_name && inspection.inspector.last_name
+                ? `${inspection.inspector.first_name} ${inspection.inspector.last_name}`
+                : inspection.inspector.email}
+            </span>
           </div>
         )}
       </div>

@@ -54,7 +54,7 @@ export function useWorkOrderMetrics(options: UseWorkOrderMetricsOptions = {}) {
           actual_cost,
           created_at,
           completed_at,
-          vendor:vendors(id, company_name, rating)
+          vendor:vendors(id, company_name, average_rating)
         `)
         .eq('organization_id', orgId)
         .gte('created_at', range.start.toISOString())
@@ -104,7 +104,7 @@ export function useWorkOrderMetrics(options: UseWorkOrderMetricsOptions = {}) {
       const vendorMap = new Map<string, VendorPerformanceMetric>()
       data.forEach((wo) => {
         if (wo.vendor) {
-          const vendor = wo.vendor as unknown as { id: string; company_name: string; rating: number }
+          const vendor = wo.vendor as unknown as { id: string; company_name: string; average_rating: number }
           const existing = vendorMap.get(vendor.id)
           if (existing) {
             if (wo.status === 'completed') existing.completedJobs++
@@ -114,7 +114,7 @@ export function useWorkOrderMetrics(options: UseWorkOrderMetricsOptions = {}) {
               vendorId: vendor.id,
               vendorName: vendor.company_name,
               completedJobs: wo.status === 'completed' ? 1 : 0,
-              averageRating: vendor.rating || 0,
+              averageRating: vendor.average_rating || 0,
               totalRevenue: wo.actual_cost || 0,
             })
           }

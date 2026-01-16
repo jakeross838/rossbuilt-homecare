@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bell, Check, Settings, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -32,17 +32,21 @@ export function NotificationDropdown() {
   // Group notifications by date
   const groupedNotifications = groupNotificationsByDate(notifications)
 
-  // Real-time subscription
-  useEffect(() => {
-    const unsubscribe = useNotificationSubscription((notification) => {
-      toast({
-        title: notification.title,
-        description: notification.message,
-      })
+  // Memoize the notification callback to prevent re-subscriptions
+  const handleNewNotification = useCallback((notification: { title: string; message: string }) => {
+    toast({
+      title: notification.title,
+      description: notification.message,
     })
-
-    return unsubscribe
   }, [toast])
+
+  // Real-time subscription - hook called at top level, subscribe in useEffect
+  const subscribe = useNotificationSubscription(handleNewNotification)
+
+  useEffect(() => {
+    const unsubscribe = subscribe()
+    return unsubscribe
+  }, [subscribe])
 
   const handleMarkAllRead = async () => {
     await markAllRead.mutateAsync()

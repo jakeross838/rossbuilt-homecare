@@ -23,10 +23,15 @@ export default function CalendarPage() {
   const [selectedInspection, setSelectedInspection] = useState<CalendarInspection | null>(null)
   const [detailSheetOpen, setDetailSheetOpen] = useState(false)
 
-  const { data: inspections, isLoading } = useCalendarInspections(
+  const { data: inspections, isLoading, refetch } = useCalendarInspections(
     dateRange.start,
     dateRange.end
   )
+
+  // Refetch calendar when inspection is created
+  const handleInspectionCreated = useCallback(() => {
+    refetch()
+  }, [refetch])
 
   const handleDateRangeChange = useCallback((start: string, end: string) => {
     setDateRange({ start, end })
@@ -71,6 +76,7 @@ export default function CalendarPage() {
         open={scheduleDialogOpen}
         onOpenChange={setScheduleDialogOpen}
         initialDate={selectedDate}
+        onSuccess={handleInspectionCreated}
       />
 
       <InspectionDetailSheet

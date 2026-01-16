@@ -15,7 +15,7 @@ export const createServiceRequestSchema = z.object({
     'departure',
     'question',
     'other',
-  ], { required_error: 'Please select a request type' }),
+  ], { message: 'Please select a request type' }),
   title: z.string()
     .min(5, 'Title must be at least 5 characters')
     .max(100, 'Title must be less than 100 characters'),

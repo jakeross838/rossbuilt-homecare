@@ -173,7 +173,6 @@ export function useLogActivity() {
       if (!profile?.organization_id) throw new Error('Not authenticated')
 
       const { error } = await supabase.from('activity_log').insert({
-        organization_id: profile.organization_id,
         user_id: profile.id,
         action: params.action,
         entity_type: params.entity_type,

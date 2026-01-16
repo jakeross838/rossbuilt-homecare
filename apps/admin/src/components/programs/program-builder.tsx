@@ -426,11 +426,11 @@ export function ProgramBuilder({
             <div className="space-y-2">
               <Label>Preferred Day</Label>
               <Select
-                value={values.preferred_day_of_week?.toString() ?? ''}
+                value={values.preferred_day_of_week?.toString() ?? 'any'}
                 onValueChange={(v) =>
                   setValue(
                     'preferred_day_of_week',
-                    v ? parseInt(v) : null
+                    v && v !== 'any' ? parseInt(v) : null
                   )
                 }
               >
@@ -438,7 +438,7 @@ export function ProgramBuilder({
                   <SelectValue placeholder="Any day" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Any day</SelectItem>
+                  <SelectItem value="any">Any day</SelectItem>
                   {DAYS_OF_WEEK.map((day) => (
                     <SelectItem key={day.value} value={day.value.toString()}>
                       {day.label}
@@ -477,16 +477,16 @@ export function ProgramBuilder({
             <div className="space-y-2">
               <Label>Preferred Inspector</Label>
               <Select
-                value={values.preferred_inspector_id ?? ''}
+                value={values.preferred_inspector_id ?? 'any'}
                 onValueChange={(v) =>
-                  setValue('preferred_inspector_id', v || null)
+                  setValue('preferred_inspector_id', v && v !== 'any' ? v : null)
                 }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Any inspector" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Any inspector</SelectItem>
+                  <SelectItem value="any">Any inspector</SelectItem>
                   {inspectors?.map((inspector) => (
                     <SelectItem key={inspector.id} value={inspector.id}>
                       {inspector.first_name} {inspector.last_name}

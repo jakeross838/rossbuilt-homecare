@@ -1,5 +1,5 @@
 import { pdf } from '@react-pdf/renderer'
-import { createElement } from 'react'
+import { createElement, type ReactElement } from 'react'
 import { ReportDocument } from './report-document'
 import type { InspectionReport, ReportGenerationOptions } from '@/lib/types/report'
 import { supabase } from '@/lib/supabase'
@@ -25,7 +25,7 @@ export async function generatePDFBlob({
   options,
   aiSummary,
 }: GeneratePDFOptions): Promise<Blob> {
-  const doc = createElement(ReportDocument, { report, options, aiSummary })
+  const doc = createElement(ReportDocument, { report, options, aiSummary }) as unknown as ReactElement
   const blob = await pdf(doc).toBlob()
   return blob
 }

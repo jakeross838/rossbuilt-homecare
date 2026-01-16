@@ -149,10 +149,9 @@ export function getActiveChannels(
     (type === 'inspection' && preferences.inspection_reminders) ||
     (type === 'work_order' && preferences.work_order_updates) ||
     (type === 'payment' && preferences.payment_alerts) ||
-    type === 'alert' || // Always send alerts
-    type === 'message'
+    type === 'reminder' // Always send reminders
 
-  if (!typeEnabled && type !== 'alert') {
+  if (!typeEnabled && type !== 'reminder') {
     return channels
   }
 

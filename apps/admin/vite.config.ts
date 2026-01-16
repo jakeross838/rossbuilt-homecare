@@ -13,6 +13,7 @@ export default defineConfig({
       manifest: false, // Use our own manifest.json
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
@@ -36,6 +37,21 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+    },
+  },
+  build: {
+    chunkSizeWarningLimit: 1000, // Increase warning limit to 1 MB
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select', '@radix-ui/react-tabs', '@radix-ui/react-toast'],
+          'vendor-query': ['@tanstack/react-query', '@tanstack/react-table'],
+          'vendor-charts': ['recharts'],
+          'vendor-pdf': ['@react-pdf/renderer'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+        },
+      },
     },
   },
 })

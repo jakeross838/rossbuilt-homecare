@@ -49,11 +49,11 @@ export function useInspectionMetrics(options: UseInspectionMetricsOptions = {}) 
         .select(`
           id,
           status,
-          tier,
           scheduled_date,
-          started_at,
-          completed_at,
-          findings
+          actual_start_at,
+          actual_end_at,
+          findings,
+          programs(inspection_tier)
         `)
         .eq('organization_id', orgId)
         .gte('scheduled_date', range.start.toISOString())
@@ -71,21 +71,22 @@ export function useInspectionMetrics(options: UseInspectionMetricsOptions = {}) 
         return acc
       }, {} as Record<string, number>)
 
-      // Count by tier
+      // Count by tier (from joined programs)
       const byTier = data.reduce((acc, i) => {
-        acc[i.tier] = (acc[i.tier] || 0) + 1
+        const tier = (i.programs as { inspection_tier: string } | null)?.inspection_tier || 'unknown'
+        acc[tier] = (acc[tier] || 0) + 1
         return acc
       }, {} as Record<string, number>)
 
       // Calculate average duration (completed inspections only)
       const completedWithTimes = data.filter(
-        (i) => i.status === 'completed' && i.started_at && i.completed_at
+        (i) => i.status === 'completed' && i.actual_start_at && i.actual_end_at
       )
       let averageDuration = 0
       if (completedWithTimes.length > 0) {
         const totalMinutes = completedWithTimes.reduce((sum, i) => {
-          const start = new Date(i.started_at!).getTime()
-          const end = new Date(i.completed_at!).getTime()
+          const start = new Date(i.actual_start_at!).getTime()
+          const end = new Date(i.actual_end_at!).getTime()
           return sum + (end - start) / 60000 // Convert to minutes
         }, 0)
         averageDuration = Math.round(totalMinutes / completedWithTimes.length)
@@ -193,14 +194,18 @@ export function useInspectionsByTier(options: UseInspectionMetricsOptions = {}) 
 
       const { data, error } = await supabase
         .from('inspections')
-        .select('id, tier')
+        .select('id, programs(inspection_tier)')
         .eq('organization_id', orgId)
         .gte('scheduled_date', range.start.toISOString())
         .lte('scheduled_date', range.end.toISOString())
 
       if (error) throw error
 
-      return groupByCategory(data || [], (i) => i.tier, TIER_CHART_COLORS)
+      return groupByCategory(
+        data || [],
+        (i) => (i.programs as { inspection_tier: string } | null)?.inspection_tier || 'unknown',
+        TIER_CHART_COLORS
+      )
     },
     enabled: !!profile?.organization_id,
     staleTime: 5 * 60 * 1000,

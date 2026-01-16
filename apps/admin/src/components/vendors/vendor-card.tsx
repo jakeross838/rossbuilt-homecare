@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { VendorRating } from './vendor-rating'
 import { VendorTradeBadges } from './vendor-trade-badges'
@@ -35,9 +34,7 @@ export function VendorCard({ vendor, onClick }: VendorCardProps) {
               </p>
             )}
           </div>
-          <Button variant="ghost" size="icon" className="shrink-0">
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </div>
       </CardHeader>
       <CardContent className="pt-0">

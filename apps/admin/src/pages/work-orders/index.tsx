@@ -41,10 +41,10 @@ export default function WorkOrdersPage() {
     setFilters((prev) => ({ ...prev, search: search || undefined }))
   }
 
-  const handlePriorityFilter = (priority: string | undefined) => {
+  const handlePriorityFilter = (priority: string) => {
     setFilters((prev) => ({
       ...prev,
-      priority: priority ? [priority as any] : undefined,
+      priority: priority && priority !== 'all' ? [priority as any] : undefined,
     }))
   }
 
@@ -101,7 +101,7 @@ export default function WorkOrdersPage() {
             <SelectValue placeholder="All Priorities" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Priorities</SelectItem>
+            <SelectItem value="all">All Priorities</SelectItem>
             {Object.entries(PRIORITY_LEVELS).map(([value, config]) => (
               <SelectItem key={value} value={value}>
                 {config.label}

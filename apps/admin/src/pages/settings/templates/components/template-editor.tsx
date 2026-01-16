@@ -244,16 +244,16 @@ export function TemplateEditor({
               <div className="space-y-2">
                 <Label>Category</Label>
                 <Select
-                  value={watch('category') || ''}
+                  value={watch('category') || 'none'}
                   onValueChange={(value) =>
-                    setValue('category', value || null)
+                    setValue('category', value && value !== 'none' ? value : null)
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {CATEGORY_OPTIONS.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
@@ -266,16 +266,16 @@ export function TemplateEditor({
               <div className="space-y-2">
                 <Label>Feature Type</Label>
                 <Select
-                  value={watch('feature_type') || ''}
+                  value={watch('feature_type') || 'none'}
                   onValueChange={(value) =>
-                    setValue('feature_type', value || null)
+                    setValue('feature_type', value && value !== 'none' ? value : null)
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select feature" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {FEATURE_TYPE_OPTIONS.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}

@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Dialog,
@@ -19,7 +20,7 @@ import {
 } from '@/components/ui/form'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Badge } from '@/components/ui/badge'
-import { Star, AlertTriangle, CheckCircle } from 'lucide-react'
+import { Star, AlertTriangle, CheckCircle, Plus } from 'lucide-react'
 import { useVendorsByTrade } from '@/hooks/use-vendors'
 import {
   assignVendorSchema,
@@ -40,11 +41,12 @@ interface AssignVendorDialogProps {
 export function AssignVendorDialog({
   open,
   onOpenChange,
-  workOrderId,
+  workOrderId: _workOrderId,
   category,
   onAssign,
   isLoading,
 }: AssignVendorDialogProps) {
+  const navigate = useNavigate()
   const { data: vendors = [], isLoading: loadingVendors } = useVendorsByTrade(
     category || undefined
   )
@@ -94,9 +96,22 @@ export function AssignVendorDialog({
                           Loading vendors...
                         </p>
                       ) : vendors.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">
-                          No vendors available for this category
-                        </p>
+                        <div className="text-center py-4">
+                          <p className="text-sm text-muted-foreground mb-3">
+                            No vendors available for this category
+                          </p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                              onOpenChange(false)
+                              navigate('/vendors/new')
+                            }}
+                          >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Vendor
+                          </Button>
+                        </div>
                       ) : (
                         vendors.map((vendor) => (
                           <label

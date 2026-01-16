@@ -29,7 +29,8 @@ export interface CalendarInspection {
   }
   inspector?: {
     id: string
-    full_name: string | null
+    first_name: string | null
+    last_name: string | null
     email: string
   }
 }

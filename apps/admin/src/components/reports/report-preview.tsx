@@ -36,7 +36,7 @@ export function ReportPreview({
   onGenerateClick,
   className,
 }: ReportPreviewProps) {
-  const { data: reportData, isLoading, refetch } = useBuildReportData(inspectionId)
+  const { data: reportData, isLoading } = useBuildReportData(inspectionId)
 
   // Determine report status
   const getStatus = (): ReportStatus => {
@@ -69,7 +69,7 @@ export function ReportPreview({
         <CardContent className="flex flex-col items-center justify-center py-12">
           <FileText className="h-12 w-12 text-muted-foreground mb-4" />
           <p className="text-muted-foreground mb-4">Unable to load report data</p>
-          <Button variant="outline" onClick={() => refetch()}>
+          <Button variant="outline" onClick={() => window.location.reload()}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Retry
           </Button>

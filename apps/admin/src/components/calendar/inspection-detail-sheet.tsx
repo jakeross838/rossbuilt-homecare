@@ -76,7 +76,7 @@ export function InspectionDetailSheet({
     try {
       await assignInspector.mutateAsync({
         inspectionId: inspection.id,
-        inspectorId: inspectorId || null,
+        inspectorId: inspectorId && inspectorId !== 'unassigned' ? inspectorId : null,
       })
       toast({
         title: 'Inspector assigned',
@@ -171,7 +171,7 @@ export function InspectionDetailSheet({
           <div className="space-y-3">
             <h3 className="font-medium">Inspector</h3>
             <Select
-              value={inspection.inspector_id || ''}
+              value={inspection.inspector_id || 'unassigned'}
               onValueChange={handleAssignInspector}
               disabled={assignInspector.isPending}
             >
@@ -179,7 +179,7 @@ export function InspectionDetailSheet({
                 <SelectValue placeholder="Assign inspector" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Unassigned</SelectItem>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
                 {inspectors?.map((inspector) => (
                   <SelectItem key={inspector.id} value={inspector.id}>
                     {inspector.first_name && inspector.last_name

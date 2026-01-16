@@ -82,7 +82,7 @@ function buildReportData(data: {
   inspection: unknown
   recommendations: Recommendation[]
   photos: Tables<'inspection_photos'>[]
-}): InspectionReport {
+}): InspectionReport | null {
   const inspection = data.inspection as Inspection & {
     property: {
       id: string
@@ -99,9 +99,14 @@ function buildReportData(data: {
         last_name: string
         email: string | null
         phone: string | null
-      }
-    }
-    inspector: { id: string; first_name: string; last_name: string }
+      } | null
+    } | null
+    inspector: { id: string; first_name: string; last_name: string } | null
+  }
+
+  // Return null if required relationships are missing
+  if (!inspection.property) {
+    return null
   }
 
   const checklist = (inspection.checklist || { sections: [] }) as unknown as {
@@ -148,17 +153,27 @@ function buildReportData(data: {
       photo_url: inspection.property.primary_photo_url || undefined,
     },
 
-    client: {
-      id: inspection.property.client.id,
-      name: `${inspection.property.client.first_name} ${inspection.property.client.last_name}`,
-      email: inspection.property.client.email || undefined,
-      phone: inspection.property.client.phone || undefined,
-    },
+    client: inspection.property.client
+      ? {
+          id: inspection.property.client.id,
+          name: `${inspection.property.client.first_name} ${inspection.property.client.last_name}`,
+          email: inspection.property.client.email || undefined,
+          phone: inspection.property.client.phone || undefined,
+        }
+      : {
+          id: '',
+          name: 'No client assigned',
+        },
 
-    inspector: {
-      id: inspection.inspector.id,
-      name: `${inspection.inspector.first_name} ${inspection.inspector.last_name}`,
-    },
+    inspector: inspection.inspector
+      ? {
+          id: inspection.inspector.id,
+          name: `${inspection.inspector.first_name} ${inspection.inspector.last_name}`,
+        }
+      : {
+          id: '',
+          name: 'No inspector assigned',
+        },
 
     overall_condition: inspection.overall_condition,
     summary: inspection.summary || 'No summary provided.',

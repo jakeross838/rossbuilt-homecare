@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
@@ -249,7 +250,8 @@ export function useClearReadNotifications() {
 }
 
 /**
- * Real-time notification subscription
+ * Real-time notification subscription - returns subscribe function
+ * Must be used with useEffect at component level
  */
 export function useNotificationSubscription(
   onNewNotification: (notification: Notification) => void
@@ -257,26 +259,33 @@ export function useNotificationSubscription(
   const { profile } = useAuthStore()
   const queryClient = useQueryClient()
 
-  // Set up real-time subscription
-  const subscription = supabase
-    .channel('notifications')
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'notifications',
-        filter: `user_id=eq.${profile?.id}`,
-      },
-      (payload) => {
-        const notification = payload.new as Notification
-        onNewNotification(notification)
-        queryClient.invalidateQueries({ queryKey: notificationKeys.all })
-      }
-    )
-    .subscribe()
+  // Memoize the subscribe function to prevent infinite re-renders
+  const subscribe = useCallback(() => {
+    if (!profile?.id) return () => {}
 
-  return () => {
-    subscription.unsubscribe()
-  }
+    const subscription = supabase
+      .channel('notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${profile.id}`,
+        },
+        (payload) => {
+          const notification = payload.new as Notification
+          onNewNotification(notification)
+          queryClient.invalidateQueries({ queryKey: notificationKeys.all })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id, queryClient])
+
+  return subscribe
 }

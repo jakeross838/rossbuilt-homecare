@@ -32,10 +32,10 @@ export default function VendorsPage() {
     setFilters((prev) => ({ ...prev, search: search || undefined }))
   }
 
-  const handleTradeFilter = (trade: string | undefined) => {
+  const handleTradeFilter = (trade: string) => {
     setFilters((prev) => ({
       ...prev,
-      trade_category: trade || undefined,
+      trade_category: trade && trade !== 'all' ? trade : undefined,
     }))
   }
 
@@ -108,7 +108,7 @@ export default function VendorsPage() {
             <SelectValue placeholder="All Trades" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Trades</SelectItem>
+            <SelectItem value="all">All Trades</SelectItem>
             {TRADE_CATEGORIES.map((trade) => (
               <SelectItem key={trade.value} value={trade.value}>
                 {trade.label}

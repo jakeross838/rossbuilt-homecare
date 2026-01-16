@@ -43,7 +43,7 @@ interface LineItemData {
   description: string
   quantity: number
   unit_price: number
-  line_type?: string
+  line_type?: 'subscription' | 'addon' | 'service' | 'work_order' | 'materials' | 'other'
 }
 
 export function CreateInvoiceDialog({

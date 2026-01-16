@@ -69,8 +69,8 @@ export default function InvoiceDetailPage() {
     company_name: string | null
   }
   const clientName = client?.company_name || `${client?.first_name} ${client?.last_name}`
-  const daysUntilDue = getDaysUntilDue(invoice.due_date)
-  const overdue = isInvoiceOverdue(invoice.due_date, invoice.status)
+  const daysUntilDue = getDaysUntilDue(invoice.due_date || '')
+  const overdue = isInvoiceOverdue(invoice.due_date || '', invoice.status || 'draft')
 
   const handleVoid = async () => {
     try {
@@ -117,7 +117,7 @@ export default function InvoiceDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold">{invoice.invoice_number}</h1>
-              <InvoiceStatusBadge status={invoice.status} />
+              <InvoiceStatusBadge status={invoice.status || 'draft'} />
             </div>
             <p className="text-muted-foreground">{invoice.invoice_type} invoice</p>
           </div>
@@ -379,7 +379,7 @@ export default function InvoiceDetailPage() {
                           </p>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(payment.payment_date).toLocaleDateString()}
+                          {payment.payment_date ? new Date(payment.payment_date).toLocaleDateString() : 'N/A'}
                         </p>
                       </div>
                     )
@@ -398,7 +398,7 @@ export default function InvoiceDetailPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Created</span>
-                  <span>{new Date(invoice.created_at).toLocaleDateString()}</span>
+                  <span>{invoice.created_at ? new Date(invoice.created_at).toLocaleDateString() : 'N/A'}</span>
                 </div>
                 {invoice.sent_at && (
                   <div className="flex justify-between">

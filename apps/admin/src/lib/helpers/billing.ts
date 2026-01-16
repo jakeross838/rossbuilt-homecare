@@ -82,7 +82,7 @@ export function getDaysUntilDue(dueDate: string): number {
  */
 export function canTransitionTo(currentStatus: InvoiceStatus, newStatus: InvoiceStatus): boolean {
   const config = INVOICE_STATUS_CONFIG[currentStatus]
-  return config.allowedTransitions.includes(newStatus)
+  return (config.allowedTransitions as readonly InvoiceStatus[]).includes(newStatus)
 }
 
 /**

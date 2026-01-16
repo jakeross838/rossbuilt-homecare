@@ -45,7 +45,7 @@ export function useRecentActivity(limit: number = 10) {
           description: property?.name || 'Unknown property',
           entityId: insp.id,
           userName: inspector ? `${inspector.first_name} ${inspector.last_name}` : undefined,
-          timestamp: insp.updated_at,
+          timestamp: insp.updated_at || new Date().toISOString(),
         })
       })
 
@@ -70,10 +70,10 @@ export function useRecentActivity(limit: number = 10) {
           id: `work-order-${wo.id}`,
           type: 'work_order',
           action: wo.status === 'completed' ? 'completed' : 'updated',
-          title: wo.status === 'completed' ? 'Work order completed' : `Work order ${wo.status.replace('_', ' ')}`,
+          title: wo.status === 'completed' ? 'Work order completed' : `Work order ${(wo.status || '').replace('_', ' ')}`,
           description: wo.title || property?.name || wo.work_order_number,
           entityId: wo.id,
-          timestamp: wo.updated_at,
+          timestamp: wo.updated_at || new Date().toISOString(),
         })
       })
 
@@ -102,7 +102,7 @@ export function useRecentActivity(limit: number = 10) {
           title: inv.status === 'paid' ? 'Invoice paid' : `Invoice ${inv.status}`,
           description: `${inv.invoice_number} - ${clientName}`,
           entityId: inv.id,
-          timestamp: inv.updated_at,
+          timestamp: inv.updated_at || new Date().toISOString(),
         })
       })
 
@@ -135,7 +135,7 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
         .select(`
           id,
           scheduled_date,
-          tier,
+          inspection_type,
           property:properties(name),
           client:properties(client:clients(first_name, last_name, company_name)),
           inspector:users(first_name, last_name)
@@ -159,8 +159,8 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
           id: insp.id,
           propertyName: property?.name || 'Unknown property',
           clientName: client?.company_name || (client ? `${client.first_name} ${client.last_name}` : 'Unknown'),
-          scheduledDate: insp.scheduled_date,
-          tier: insp.tier,
+          scheduledDate: insp.scheduled_date || '',
+          tier: insp.inspection_type || 'scheduled',
           inspectorName: inspector ? `${inspector.first_name} ${inspector.last_name}` : undefined,
         }
       })

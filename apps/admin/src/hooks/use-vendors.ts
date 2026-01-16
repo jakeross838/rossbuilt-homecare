@@ -16,6 +16,10 @@ type VendorRow = Tables<'vendors'>
 type VendorInsert = InsertTables<'vendors'>
 type VendorUpdate = UpdateTables<'vendors'>
 
+// UUID validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const isValidUUID = (id: string | undefined): boolean => !!id && UUID_REGEX.test(id)
+
 // Query keys for cache management
 export const vendorKeys = {
   all: ['vendors'] as const,
@@ -94,7 +98,7 @@ export function useVendor(id: string | undefined) {
   return useQuery({
     queryKey: vendorKeys.detail(id || ''),
     queryFn: async () => {
-      if (!id) throw new Error('Vendor ID is required')
+      if (!id || !isValidUUID(id)) throw new Error('Valid vendor ID is required')
 
       const { data: vendor, error } = await supabase
         .from('vendors')
@@ -127,7 +131,7 @@ export function useVendor(id: string | undefined) {
         open_work_orders: openWorkOrders || 0,
       } as VendorWithStats
     },
-    enabled: !!id,
+    enabled: isValidUUID(id),
   })
 }
 
@@ -241,7 +245,7 @@ export function useCreateVendor() {
       const { data: profile } = await supabase
         .from('users')
         .select('organization_id')
-        .eq('auth_id', userData.user.id)
+        .eq('id', userData.user.id)
         .single()
 
       if (!profile) throw new Error('User profile not found')

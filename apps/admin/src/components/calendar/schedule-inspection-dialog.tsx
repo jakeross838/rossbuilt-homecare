@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
@@ -33,12 +34,14 @@ interface ScheduleInspectionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   initialDate?: Date
+  onSuccess?: () => void
 }
 
 export function ScheduleInspectionDialog({
   open,
   onOpenChange,
   initialDate,
+  onSuccess,
 }: ScheduleInspectionDialogProps) {
   const { toast } = useToast()
   const { data: properties, isLoading: loadingProperties } = useProperties()
@@ -58,6 +61,19 @@ export function ScheduleInspectionDialog({
 
   const selectedType = form.watch('inspection_type')
 
+  // Reset form when dialog opens or initialDate changes
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        property_id: '',
+        inspection_type: 'scheduled',
+        scheduled_date: initialDate ? format(initialDate, 'yyyy-MM-dd') : '',
+        scheduled_time_start: '09:00',
+        estimated_duration_minutes: 60,
+      })
+    }
+  }, [open, initialDate, form])
+
   // Update duration when type changes (use tier-based defaults)
   const handleTypeChange = (value: string) => {
     form.setValue('inspection_type', value as ScheduleInspectionInput['inspection_type'])
@@ -73,7 +89,7 @@ export function ScheduleInspectionDialog({
         title: 'Inspection scheduled',
         description: `Inspection scheduled for ${format(new Date(data.scheduled_date), 'MMMM d, yyyy')}`,
       })
-      form.reset()
+      onSuccess?.()
       onOpenChange(false)
     } catch (error) {
       toast({
@@ -187,15 +203,15 @@ export function ScheduleInspectionDialog({
           <div className="space-y-2">
             <Label htmlFor="inspector_id">Assign Inspector</Label>
             <Select
-              value={form.watch('inspector_id') || ''}
-              onValueChange={(v) => form.setValue('inspector_id', v || undefined)}
+              value={form.watch('inspector_id') || 'unassigned'}
+              onValueChange={(v) => form.setValue('inspector_id', v && v !== 'unassigned' ? v : undefined)}
               disabled={loadingInspectors}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Unassigned" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Unassigned</SelectItem>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
                 {inspectors?.map((inspector) => (
                   <SelectItem key={inspector.id} value={inspector.id}>
                     {inspector.first_name && inspector.last_name

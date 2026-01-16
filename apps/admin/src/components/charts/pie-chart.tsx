@@ -96,8 +96,8 @@ export function PieChart({
                 animationDuration={CHART_DEFAULTS.animationDuration}
                 label={
                   showLabels
-                    ? ({ displayName, value }) =>
-                        `${displayName}: ${valueFormatter(value)}`
+                    ? ({ name, value }: { name: string; value: number }) =>
+                        `${name}: ${valueFormatter(value)}`
                     : undefined
                 }
               >

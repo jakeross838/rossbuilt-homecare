@@ -50,9 +50,10 @@ export function useCalendarInspections(startDate: string, endDate: string) {
             address_line1,
             city
           ),
-          users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             id,
-            full_name,
+            first_name,
+            last_name,
             email
           )
         `)
@@ -63,21 +64,23 @@ export function useCalendarInspections(startDate: string, endDate: string) {
 
       if (error) throw error
 
-      // Transform to CalendarInspection type
-      return (data || []).map((row) => ({
-        id: row.id,
-        property_id: row.property_id,
-        program_id: row.program_id,
-        inspector_id: row.inspector_id,
-        inspection_type: row.inspection_type,
-        status: row.status,
-        scheduled_date: row.scheduled_date,
-        scheduled_time_start: row.scheduled_time_start,
-        scheduled_time_end: row.scheduled_time_end,
-        estimated_duration_minutes: row.estimated_duration_minutes,
-        property: row.properties as unknown as CalendarInspection['property'],
-        inspector: row.users as unknown as CalendarInspection['inspector'],
-      })) as CalendarInspection[]
+      // Transform to CalendarInspection type, filtering out any with null properties
+      return (data || [])
+        .filter((row) => row.id && row.properties)
+        .map((row) => ({
+          id: row.id,
+          property_id: row.property_id,
+          program_id: row.program_id,
+          inspector_id: row.inspector_id,
+          inspection_type: row.inspection_type,
+          status: row.status,
+          scheduled_date: row.scheduled_date,
+          scheduled_time_start: row.scheduled_time_start,
+          scheduled_time_end: row.scheduled_time_end,
+          estimated_duration_minutes: row.estimated_duration_minutes,
+          property: row.properties as unknown as CalendarInspection['property'],
+          inspector: row.inspector as unknown as CalendarInspection['inspector'],
+        })) as CalendarInspection[]
     },
     enabled: !!startDate && !!endDate,
   })
@@ -105,9 +108,10 @@ export function useInspection(id: string | undefined) {
             state,
             zip
           ),
-          users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             id,
-            full_name,
+            first_name,
+            last_name,
             email
           ),
           programs (
@@ -149,9 +153,10 @@ export function usePropertyInspections(propertyId: string | undefined) {
           scheduled_date,
           scheduled_time_start,
           completed_at,
-          users!inspections_inspector_id_fkey (
+          inspector:users!inspector_id (
             id,
-            full_name
+            first_name,
+            last_name
           )
         `)
         .eq('property_id', propertyId)
@@ -213,7 +218,8 @@ export function useScheduleInspection() {
       return data as Inspection
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-inspections'] })
+      // Force immediate refetch to show new inspection on calendar
+      queryClient.refetchQueries({ queryKey: ['calendar-inspections'] })
       queryClient.invalidateQueries({ queryKey: ['property-inspections'] })
       queryClient.invalidateQueries({ queryKey: ['inspector-workload'] })
     },
@@ -252,7 +258,8 @@ export function useRescheduleInspection() {
       return data as Inspection
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-inspections'] })
+      // Force immediate refetch to update calendar
+      queryClient.refetchQueries({ queryKey: ['calendar-inspections'] })
       queryClient.invalidateQueries({ queryKey: ['inspection', variables.id] })
       queryClient.invalidateQueries({ queryKey: ['property-inspections'] })
       queryClient.invalidateQueries({ queryKey: ['inspector-workload'] })
@@ -283,7 +290,8 @@ export function useCancelInspection() {
       return data as Inspection
     },
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-inspections'] })
+      // Force immediate refetch to update calendar
+      queryClient.refetchQueries({ queryKey: ['calendar-inspections'] })
       queryClient.invalidateQueries({ queryKey: ['inspection', id] })
       queryClient.invalidateQueries({ queryKey: ['property-inspections'] })
       queryClient.invalidateQueries({ queryKey: ['inspector-workload'] })
@@ -320,7 +328,8 @@ export function useAssignInspector() {
       return data as Inspection
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-inspections'] })
+      // Force immediate refetch to update calendar
+      queryClient.refetchQueries({ queryKey: ['calendar-inspections'] })
       queryClient.invalidateQueries({
         queryKey: ['inspection', variables.inspectionId],
       })

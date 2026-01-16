@@ -39,7 +39,7 @@ export function BarChart({
   height = 300,
   showGrid = true,
   horizontal = false,
-  showLabels = false,
+  showLabels: _showLabels = false,
 }: BarChartProps) {
   if (loading) {
     return (

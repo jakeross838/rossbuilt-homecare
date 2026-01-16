@@ -138,14 +138,14 @@ export function PropertiesPage() {
           />
         </div>
         <Select
-          value={clientFilter}
-          onValueChange={setClientFilter}
+          value={clientFilter || 'all'}
+          onValueChange={(v) => setClientFilter(v === 'all' ? '' : v)}
         >
           <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder="All Clients" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Clients</SelectItem>
+            <SelectItem value="all">All Clients</SelectItem>
             {clients?.map((client) => (
               <SelectItem key={client.id} value={client.id}>
                 {client.first_name} {client.last_name}
