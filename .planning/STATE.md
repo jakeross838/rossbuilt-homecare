@@ -5,16 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 9 Complete — Ready for Phase 10
+**Current focus:** Phase 10 In Progress — Billing & Invoicing
 
 ## Current Position
 
-Phase: 9 of 14 (Work Orders & Vendors) - COMPLETE
-Plan: 7 of 7 in current phase
-Status: Phase 9 Complete - All Waves Done
-Last activity: 2026-01-15 - Completed 09-07-PLAN.md (Work Orders & Vendors Pages Checkpoint)
+Phase: 10 of 14 (Billing & Invoicing) - IN PROGRESS
+Plan: 1 of 6 in current phase
+Status: Plan 10-01 Complete - Ready for Wave 2
+Last activity: 2026-01-15 - Completed 10-01 (Billing Data Foundation)
 
-Progress: █████████░ 88% (58 of ~60 plans)
+Progress: █████████░ 89% (59 of ~64 plans)
+
+### Phase 10 Plans (IN PROGRESS)
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 10-01 | Billing Data Foundation | 1 | **Complete** |
+| 10-02 | Invoice Hooks | 2 | Pending |
+| 10-03 | Payment Hooks | 2 | Pending |
+| 10-04 | Stripe Integration Edge Function | 2 | Pending |
+| 10-05 | Invoice UI Components | 3 | Pending |
+| 10-06 | Billing Pages & Integration (Checkpoint) | 4 | Pending |
+
+**Wave Structure:**
+- Wave 1: 10-01 (no dependencies) - Complete
+- Wave 2: 10-02, 10-03, 10-04 (parallel - depend on 10-01)
+- Wave 3: 10-05 (depends on 10-02, 10-03, 10-04)
+- Wave 4: 10-06 (checkpoint - depends on 10-05)
 
 ### Phase 9 Plans (COMPLETE)
 
@@ -129,9 +146,9 @@ Progress: █████████░ 88% (58 of ~60 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 58
+- Total plans completed: 59
 - Average duration: 6 min
-- Total execution time: ~350 min
+- Total execution time: ~356 min
 
 **By Phase:**
 
@@ -146,10 +163,11 @@ Progress: █████████░ 88% (58 of ~60 plans)
 | 7 | 8/8 | 48 min | 6 min |
 | 8 | 6/6 | 36 min | 6 min |
 | 9 | 7/7 | 42 min | 6 min |
+| 10 | 1/6 | 6 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 09-05 (6 min), 09-06 (6 min), 09-07 (15 min)
-- Trend: Phase 9 completed efficiently, ready for Phase 10
+- Last 5 plans: 09-06 (6 min), 09-07 (15 min), 10-01 (6 min)
+- Trend: Phase 10 started, billing data foundation complete
 
 ## Accumulated Context
 
@@ -265,6 +283,12 @@ Recent decisions affecting current work:
 - **09-07**: Fixed null type handling in work order detail page using fallback default status
 - **09-07**: Removed `invoiced` status from constants (not in database enum)
 - **09-07**: Added Form component from shadcn/ui to support vendor forms
+- **10-01**: Invoice types reference database enum via `Enums<'invoice_status'>`
+- **10-01**: InvoiceWithRelations pattern for display with expanded client, line_items, payments
+- **10-01**: Status workflow config with `allowedTransitions` array plus `canEdit`/`canDelete` flags
+- **10-01**: Currency precision via `Math.round(x * 100) / 100` for 2 decimal places
+- **10-01**: Created `lib/helpers/` directory for centralized helper functions (new pattern)
+- **10-01**: Default 30-day payment terms with Net 15/30/45/60 options
 
 ### Pending Todos
 
@@ -283,13 +307,14 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 09-07-PLAN.md (Work Orders & Vendors Pages Checkpoint)
+Stopped at: Completed 10-01-PLAN.md (Billing Data Foundation)
 Resume file: None
 
 ## Next Action
 
-Phase 9 Complete! Ready for Phase 10:
-- Phase 10: Billing & Invoicing (not yet planned)
+Phase 10 Wave 1 Complete! Ready for Wave 2:
+- Run Wave 2 plans in parallel: 10-02 (Invoice Hooks), 10-03 (Payment Hooks), 10-04 (Stripe Integration)
+- Or run `/gsd:execute-plan .planning/phases/10-billing-invoicing/10-02-PLAN.md` to continue sequentially
 
 ## Phase 9 Summary
 
