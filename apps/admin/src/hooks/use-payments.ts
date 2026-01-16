@@ -1,0 +1,345 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { supabase } from '@/lib/supabase'
+import type { InsertTables } from '@/lib/supabase'
+import { useAuthStore } from '@/stores/auth-store'
+import type { Payment, RecordPaymentData, InvoiceStatus } from '@/lib/types/billing'
+import { invoiceKeys } from './use-invoices'
+
+type PaymentInsert = InsertTables<'payments'>
+
+// Payment with invoice info
+export interface PaymentWithInvoice extends Payment {
+  invoice?: {
+    id: string
+    invoice_number: string
+    total: number
+    client_id: string
+  }
+}
+
+// Payment list filters
+export interface PaymentFilters {
+  invoice_id?: string
+  client_id?: string
+  payment_method?: string
+  date_from?: string
+  date_to?: string
+}
+
+// Query keys factory
+export const paymentKeys = {
+  all: ['payments'] as const,
+  lists: () => [...paymentKeys.all, 'list'] as const,
+  list: (filters: PaymentFilters) => [...paymentKeys.lists(), filters] as const,
+  invoice: (invoiceId: string) => [...paymentKeys.all, 'invoice', invoiceId] as const,
+  client: (clientId: string) => [...paymentKeys.all, 'client', clientId] as const,
+}
+
+/**
+ * Hook to fetch payments with filters
+ */
+export function usePayments(filters: PaymentFilters = {}) {
+  const profile = useAuthStore((state) => state.profile)
+
+  return useQuery({
+    queryKey: paymentKeys.list(filters),
+    queryFn: async () => {
+      let query = supabase
+        .from('payments')
+        .select(`
+          *,
+          invoice:invoices(
+            id,
+            invoice_number,
+            total,
+            client_id
+          )
+        `)
+        .eq('organization_id', profile!.organization_id)
+        .order('payment_date', { ascending: false })
+
+      if (filters.invoice_id) {
+        query = query.eq('invoice_id', filters.invoice_id)
+      }
+      if (filters.client_id) {
+        query = query.eq('client_id', filters.client_id)
+      }
+      if (filters.payment_method) {
+        query = query.eq('payment_method', filters.payment_method)
+      }
+      if (filters.date_from) {
+        query = query.gte('payment_date', filters.date_from)
+      }
+      if (filters.date_to) {
+        query = query.lte('payment_date', filters.date_to)
+      }
+
+      const { data, error } = await query
+
+      if (error) throw error
+      return data as PaymentWithInvoice[]
+    },
+    enabled: !!profile?.organization_id,
+  })
+}
+
+/**
+ * Hook to fetch payments for a specific invoice
+ */
+export function useInvoicePayments(invoiceId: string) {
+  return useQuery({
+    queryKey: paymentKeys.invoice(invoiceId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('invoice_id', invoiceId)
+        .order('payment_date', { ascending: false })
+
+      if (error) throw error
+      return data as Payment[]
+    },
+    enabled: !!invoiceId,
+  })
+}
+
+/**
+ * Hook to fetch payments for a specific client
+ */
+export function useClientPayments(clientId: string) {
+  return usePayments({ client_id: clientId })
+}
+
+/**
+ * Hook to record a new payment
+ * Automatically updates invoice balance and status
+ */
+export function useRecordPayment() {
+  const queryClient = useQueryClient()
+  const profile = useAuthStore((state) => state.profile)
+
+  return useMutation({
+    mutationFn: async (data: RecordPaymentData) => {
+      if (!profile?.organization_id) {
+        throw new Error('No organization found')
+      }
+
+      // Get invoice to determine client and current balance
+      const { data: invoice, error: invoiceError } = await supabase
+        .from('invoices')
+        .select('client_id, total, amount_paid, balance_due')
+        .eq('id', data.invoice_id)
+        .single()
+
+      if (invoiceError) throw invoiceError
+      if (!invoice) throw new Error('Invoice not found')
+
+      // Create payment
+      const paymentInsert: PaymentInsert = {
+        organization_id: profile.organization_id,
+        invoice_id: data.invoice_id,
+        client_id: invoice.client_id,
+        amount: data.amount,
+        payment_method: data.payment_method,
+        payment_date: data.payment_date || new Date().toISOString(),
+        last_four: data.last_four || null,
+        card_brand: data.card_brand || null,
+        check_number: data.check_number || null,
+        notes: data.notes || null,
+        recorded_by: profile.id,
+      }
+
+      const { data: payment, error: paymentError } = await supabase
+        .from('payments')
+        .insert(paymentInsert)
+        .select()
+        .single()
+
+      if (paymentError) throw paymentError
+
+      // Calculate new balance
+      const newAmountPaid = Number(invoice.amount_paid) + data.amount
+      const newBalanceDue = Number(invoice.total) - newAmountPaid
+
+      // Determine new status
+      let newStatus: InvoiceStatus
+      if (newBalanceDue <= 0) {
+        newStatus = 'paid'
+      } else if (newAmountPaid > 0) {
+        newStatus = 'partial'
+      } else {
+        newStatus = 'sent' // Shouldn't happen but fallback
+      }
+
+      // Update invoice
+      const { error: updateError } = await supabase
+        .from('invoices')
+        .update({
+          amount_paid: newAmountPaid,
+          balance_due: Math.max(0, newBalanceDue),
+          status: newStatus,
+          paid_at: newStatus === 'paid' ? new Date().toISOString() : null,
+          payment_method: data.payment_method,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', data.invoice_id)
+
+      if (updateError) throw updateError
+
+      return payment as Payment
+    },
+    onSuccess: (data) => {
+      // Invalidate payment lists
+      queryClient.invalidateQueries({ queryKey: paymentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: paymentKeys.invoice(data.invoice_id) })
+
+      // Invalidate invoice (balance changed)
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.detail(data.invoice_id) })
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.summary() })
+    },
+  })
+}
+
+/**
+ * Hook to delete a payment (admin only)
+ * Re-calculates invoice balance
+ */
+export function useDeletePayment() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (paymentId: string) => {
+      // Get payment to find invoice
+      const { data: payment, error: paymentError } = await supabase
+        .from('payments')
+        .select('invoice_id, amount')
+        .eq('id', paymentId)
+        .single()
+
+      if (paymentError) throw paymentError
+      if (!payment) throw new Error('Payment not found')
+
+      // Get invoice current totals
+      const { data: invoice, error: invoiceError } = await supabase
+        .from('invoices')
+        .select('total, amount_paid, status')
+        .eq('id', payment.invoice_id)
+        .single()
+
+      if (invoiceError) throw invoiceError
+      if (!invoice) throw new Error('Invoice not found')
+
+      // Delete payment
+      const { error: deleteError } = await supabase
+        .from('payments')
+        .delete()
+        .eq('id', paymentId)
+
+      if (deleteError) throw deleteError
+
+      // Recalculate invoice balance
+      const newAmountPaid = Math.max(0, Number(invoice.amount_paid) - Number(payment.amount))
+      const newBalanceDue = Number(invoice.total) - newAmountPaid
+
+      // Determine new status
+      let newStatus: InvoiceStatus
+      if (newBalanceDue <= 0) {
+        newStatus = 'paid'
+      } else if (newAmountPaid > 0) {
+        newStatus = 'partial'
+      } else if (invoice.status === 'paid') {
+        // Was paid, now unpaid - revert to sent
+        newStatus = 'sent'
+      } else {
+        // Keep current status if not paid
+        newStatus = invoice.status as InvoiceStatus
+      }
+
+      // Update invoice
+      const { error: updateError } = await supabase
+        .from('invoices')
+        .update({
+          amount_paid: newAmountPaid,
+          balance_due: newBalanceDue,
+          status: newStatus,
+          paid_at: newStatus === 'paid' ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', payment.invoice_id)
+
+      if (updateError) throw updateError
+
+      return { invoiceId: payment.invoice_id }
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: paymentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: paymentKeys.invoice(data.invoiceId) })
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.detail(data.invoiceId) })
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.summary() })
+    },
+  })
+}
+
+/**
+ * Hook to get payment summary for dashboard
+ */
+export function usePaymentSummary(period: 'week' | 'month' | 'year' = 'month') {
+  const profile = useAuthStore((state) => state.profile)
+
+  return useQuery({
+    queryKey: [...paymentKeys.all, 'summary', period],
+    queryFn: async () => {
+      // Calculate start date based on period
+      const now = new Date()
+      let startDate: Date
+
+      switch (period) {
+        case 'week':
+          startDate = new Date(now)
+          startDate.setDate(now.getDate() - 7)
+          break
+        case 'month':
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+          break
+        case 'year':
+          startDate = new Date(now.getFullYear(), 0, 1)
+          break
+      }
+
+      const { data, error } = await supabase
+        .from('payments')
+        .select('amount, payment_method, payment_date')
+        .eq('organization_id', profile!.organization_id)
+        .gte('payment_date', startDate.toISOString())
+
+      if (error) throw error
+
+      // Aggregate by payment method
+      const byMethod = (data || []).reduce((acc, payment) => {
+        const method = payment.payment_method
+        if (!acc[method]) {
+          acc[method] = { count: 0, total: 0 }
+        }
+        acc[method].count += 1
+        acc[method].total += Number(payment.amount)
+        return acc
+      }, {} as Record<string, { count: number; total: number }>)
+
+      const totalAmount = (data || []).reduce(
+        (sum, p) => sum + Number(p.amount),
+        0
+      )
+
+      return {
+        totalPayments: data?.length || 0,
+        totalAmount,
+        byMethod,
+        period,
+        startDate: startDate.toISOString(),
+      }
+    },
+    enabled: !!profile?.organization_id,
+  })
+}
