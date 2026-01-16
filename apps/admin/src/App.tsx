@@ -21,6 +21,10 @@ import InspectionsPage from '@/pages/inspections'
 import InspectionReportPage from '@/pages/inspections/report'
 import InspectorDashboard from '@/pages/inspector'
 import InspectionPage from '@/pages/inspector/inspection'
+import WorkOrdersPage from '@/pages/work-orders'
+import WorkOrderDetailPage from '@/pages/work-orders/[id]'
+import VendorsPage from '@/pages/vendors'
+import VendorDetailPage from '@/pages/vendors/[id]'
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -84,15 +88,15 @@ function App() {
               <Route path="/inspections/:id/report" element={<InspectionReportPage />} />
 
               {/* Work Orders */}
-              <Route path="/work-orders" element={<PlaceholderPage title="Work Orders" />} />
-              <Route path="/work-orders/:id" element={<PlaceholderPage title="Work Order Details" />} />
+              <Route path="/work-orders" element={<WorkOrdersPage />} />
+              <Route path="/work-orders/:id" element={<WorkOrderDetailPage />} />
 
               {/* Billing */}
               <Route path="/billing" element={<PlaceholderPage title="Billing" />} />
 
               {/* Vendors */}
-              <Route path="/vendors" element={<PlaceholderPage title="Vendors" />} />
-              <Route path="/vendors/:id" element={<PlaceholderPage title="Vendor Details" />} />
+              <Route path="/vendors" element={<VendorsPage />} />
+              <Route path="/vendors/:id" element={<VendorDetailPage />} />
 
               {/* Reports */}
               <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
