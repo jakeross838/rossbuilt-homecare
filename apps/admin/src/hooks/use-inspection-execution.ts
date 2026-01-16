@@ -175,7 +175,6 @@ export function useCompleteInspection() {
             summary: data.summary,
             weather_conditions: data.weather_conditions || {},
             actual_end_at: now,
-            completed_at: now,
             updated_at: now,
           })
           .eq('id', inspectionId)

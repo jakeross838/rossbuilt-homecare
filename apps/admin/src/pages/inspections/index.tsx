@@ -97,7 +97,8 @@ function useInspectionsList(startDate: string, endDate: string) {
         .order('scheduled_date', { ascending: false })
 
       if (error) throw error
-      return (data || []) as InspectionListItem[]
+      // Filter out inspections with missing property data
+      return (data || []).filter((row) => row.id && row.property) as InspectionListItem[]
     },
     enabled: !!startDate && !!endDate,
   })

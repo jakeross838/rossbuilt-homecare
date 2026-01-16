@@ -83,16 +83,16 @@ export function useDashboardOverview(options: UseOverviewOptions = {}) {
           .select('id', { count: 'exact', head: true })
           .eq('organization_id', orgId)
           .eq('status', 'completed')
-          .gte('completed_at', currentRange.start.toISOString())
-          .lte('completed_at', currentRange.end.toISOString()),
+          .gte('actual_end_at', currentRange.start.toISOString())
+          .lte('actual_end_at', currentRange.end.toISOString()),
         // Previous period completed inspections
         supabase
           .from('inspections')
           .select('id', { count: 'exact', head: true })
           .eq('organization_id', orgId)
           .eq('status', 'completed')
-          .gte('completed_at', previousRange.start.toISOString())
-          .lte('completed_at', previousRange.end.toISOString()),
+          .gte('actual_end_at', previousRange.start.toISOString())
+          .lte('actual_end_at', previousRange.end.toISOString()),
         // Current open work orders
         supabase
           .from('work_orders')

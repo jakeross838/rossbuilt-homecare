@@ -24,7 +24,7 @@ export function NewVendorPage() {
 
       // Navigate to the new vendor's detail page
       navigate(`/vendors/${vendor.id}`)
-    } catch (_) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create vendor. Please try again.',

@@ -97,8 +97,8 @@ export function usePortalInspection(inspectionId: string | undefined) {
           overall_condition,
           summary,
           report_url,
-          started_at,
-          completed_at,
+          actual_start_at,
+          actual_end_at,
           inspector:users!inspections_inspector_id_fkey (
             first_name,
             last_name

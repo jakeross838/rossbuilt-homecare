@@ -130,7 +130,7 @@ export function useProperty(id: string | undefined) {
             id,
             status,
             scheduled_date,
-            completed_at,
+            actual_end_at,
             inspector_id
           )
         `)

@@ -22,6 +22,7 @@ import InspectionReportPage from '@/pages/inspections/report'
 import InspectorDashboard from '@/pages/inspector'
 import InspectionPage from '@/pages/inspector/inspection'
 import WorkOrdersPage from '@/pages/work-orders'
+import NewWorkOrderPage from '@/pages/work-orders/new'
 import WorkOrderDetailPage from '@/pages/work-orders/[id]'
 import VendorsPage from '@/pages/vendors'
 import NewVendorPage from '@/pages/vendors/new'
@@ -126,6 +127,7 @@ function App() {
 
               {/* Work Orders */}
               <Route path="/work-orders" element={<WorkOrdersPage />} />
+              <Route path="/work-orders/new" element={<NewWorkOrderPage />} />
               <Route path="/work-orders/:id" element={<WorkOrderDetailPage />} />
 
               {/* Billing */}
