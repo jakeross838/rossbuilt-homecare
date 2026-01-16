@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 11 of 14 (Client Portal) - IN PROGRESS
-Plan: 2 of 5 in current phase
-Status: Phase 11 Wave 1 Complete - Ready for Wave 2
-Last activity: 2026-01-15 - Completed 11-02 (Client Portal Hooks)
+Plan: 3 of 5 in current phase
+Status: Phase 11 Wave 2 Complete - Ready for Wave 3
+Last activity: 2026-01-15 - Completed 11-03 (Service Request & Recommendation Hooks)
 
-Progress: █████████░ 96% (66 of ~69 plans)
+Progress: █████████░ 97% (67 of ~69 plans)
 
 ### Phase 11 Plans (IN PROGRESS)
 
@@ -22,13 +22,13 @@ Progress: █████████░ 96% (66 of ~69 plans)
 |------|------|------|--------|
 | 11-01 | Client Portal Data Foundation | 1 | **Complete** |
 | 11-02 | Client Portal Hooks | 1 | **Complete** |
-| 11-03 | Service Request & Recommendation Hooks | 2 | Ready |
+| 11-03 | Service Request & Recommendation Hooks | 2 | **Complete** |
 | 11-04 | Client Portal UI Components | 3 | Ready |
 | 11-05 | Client Portal Pages & Routes (Checkpoint) | 4 | Ready |
 
 **Wave Structure:**
 - Wave 1: 11-01, 11-02 (parallel - no dependencies) - Complete
-- Wave 2: 11-03 (depends on 11-01, 11-02)
+- Wave 2: 11-03 (depends on 11-01, 11-02) - Complete
 - Wave 3: 11-04 (depends on 11-01, 11-02, 11-03)
 - Wave 4: 11-05 (checkpoint - depends on all previous)
 
@@ -180,11 +180,11 @@ Progress: █████████░ 96% (66 of ~69 plans)
 | 8 | 6/6 | 36 min | 6 min |
 | 9 | 7/7 | 42 min | 6 min |
 | 10 | 6/6 | 36 min | 6 min |
-| 11 | 2/5 | 14 min | 7 min |
+| 11 | 3/5 | 20 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 10-05 (8 min), 10-06 (4 min), 11-01 (6 min), 11-02 (8 min)
-- Trend: Phase 11 Wave 1 complete, ready for Wave 2
+- Last 5 plans: 10-06 (4 min), 11-01 (6 min), 11-02 (8 min), 11-03 (6 min)
+- Trend: Phase 11 Wave 2 complete, ready for Wave 3
 
 ## Accumulated Context
 
@@ -333,6 +333,11 @@ Recent decisions affecting current work:
 - **11-02**: Type assertions via unknown for JSONB fields (findings, line_items) for portal hooks
 - **11-02**: All portal hooks enabled only when profile?.role === 'client'
 - **11-02**: RLS policies handle data filtering automatically for client role users
+- **11-03**: Service request hooks use `serviceRequestKeys` factory pattern (consistent with portal hooks)
+- **11-03**: Request number generation uses `nextval` RPC with timestamp fallback for sequence failures
+- **11-03**: Clients can only post non-internal comments (is_internal: false enforced)
+- **11-03**: Recommendation response requires status='pending' filter for idempotent updates
+- **11-03**: Created `lib/storage/` directory for storage configuration documentation
 
 ### Pending Todos
 
@@ -353,15 +358,15 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed 11-02-PLAN.md (Client Portal Hooks)
+Stopped at: Completed 11-03-PLAN.md (Service Request & Recommendation Hooks)
 Resume file: None
 
 ## Next Action
 
-Phase 11 Wave 1 Complete! Continue with Wave 2:
-- Run 11-03 (Service Request & Recommendation Hooks) to continue Phase 11
-- Then run 11-04 (Client Portal UI Components) for Wave 3
-- Or run `/gsd:execute-plan .planning/phases/11-client-portal/11-03-PLAN.md`
+Phase 11 Wave 2 Complete! Continue with Wave 3:
+- Run 11-04 (Client Portal UI Components) to continue Phase 11
+- Then run 11-05 (Client Portal Pages & Routes) for Wave 4
+- Or run `/gsd:execute-plan .planning/phases/11-client-portal/11-04-PLAN.md`
 
 ## Phase 9 Summary
 
