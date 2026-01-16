@@ -5,16 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 12 Complete — Analytics & Dashboards
+**Current focus:** Phase 13 Planned — Notifications & Automation
 
 ## Current Position
 
-Phase: 12 of 14 (Analytics & Dashboards) - COMPLETE
-Plan: 4 of 4 in current phase
-Status: Phase 12 Complete - Ready for Phase 13
-Last activity: 2026-01-16 - Completed 12-04 Dashboard Pages & Integration
+Phase: 13 of 14 (Notifications & Automation) - IN PROGRESS
+Plan: 2 of 5 in current phase
+Status: Plan 13-03 Complete - Notification Hooks
+Last activity: 2026-01-16 - Completed 13-03-PLAN.md
 
-Progress: ██████████ 100% (73 of ~73 plans)
+Progress: █████████░ 96% (75 of ~78 plans)
+
+### Phase 13 Plans (IN PROGRESS)
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 13-01 | Notification Data Foundation | 1 | **Complete** |
+| 13-02 | Email Edge Function (Resend) | 2 | Pending |
+| 13-03 | Notification Hooks | 2 | **Complete** |
+| 13-04 | Notification UI Components | 3 | Pending |
+| 13-05 | Notification Pages & Integration (Checkpoint) | 4 | Pending |
+
+**Wave Structure:**
+- Wave 1: 13-01 (no dependencies) - Complete
+- Wave 2: 13-02, 13-03 (parallel - depend on 13-01) - 13-03 Complete
+- Wave 3: 13-04 (depends on 13-02, 13-03)
+- Wave 4: 13-05 (checkpoint - depends on 13-04)
 
 ### Phase 12 Plans (COMPLETE)
 
@@ -176,9 +192,9 @@ Progress: ██████████ 100% (73 of ~73 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 73
+- Total plans completed: 75
 - Average duration: 6 min
-- Total execution time: ~433 min
+- Total execution time: ~444 min
 
 **By Phase:**
 
@@ -196,10 +212,11 @@ Progress: ██████████ 100% (73 of ~73 plans)
 | 10 | 6/6 | 36 min | 6 min |
 | 11 | 5/5 | 35 min | 7 min |
 | 12 | 4/4 | 21 min | 5 min |
+| 13 | 2/5 | 11 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 12-01 (4 min), 12-02 (5 min), 12-03 (6 min), 12-04 (6 min)
-- Trend: Phase 12 Complete - Analytics & Dashboards ready
+- Last 5 plans: 12-03 (6 min), 12-04 (6 min), 13-01 (5 min), 13-03 (6 min)
+- Trend: Phase 13 In Progress - Notification hooks complete
 
 ## Accumulated Context
 
@@ -387,6 +404,20 @@ Recent decisions affecting current work:
 - **12-04**: Reports page uses tabbed interface for inspections, work orders, revenue sections
 - **12-04**: Sidebar already had Reports link with BarChart3 icon (no changes needed)
 - **12-04**: Chart components index already exported all required components (no changes needed)
+- **13-01**: Notification types reference database enums via `Enums<'notification_type'>` and `Enums<'priority_level'>`
+- **13-01**: NotificationPreferences structure with global + per-type overrides for fine-grained control
+- **13-01**: 16 email template types covering inspections, work orders, invoices, service requests, digests
+- **13-01**: SMS templates character-limited (160 chars) with truncation helper
+- **13-01**: `getActiveChannels()` determines channels based on preferences, type, and priority
+- **13-01**: Notification sorting: unread > priority > date (newest first)
+- **13-01**: Notification grouping: Today/Yesterday/This Week/Earlier
+- **13-01**: Payload generator helpers for common notification events (inspection, work order, invoice)
+- **13-03**: Used `notificationKeys` factory pattern for hierarchical cache invalidation (consistent with other hooks)
+- **13-03**: Type assertions via `unknown` for JSONB fields (changes, metadata) in activity log entries
+- **13-03**: Preference parsing with safe fallback to DEFAULT_NOTIFICATION_PREFERENCES
+- **13-03**: Real-time subscription via Supabase postgres_changes for live notification updates
+- **13-03**: Notification triggers compose create notification + send email with preference checking
+- **13-03**: Trigger hooks depend on use-email.ts from plan 13-02 for email functionality
 
 ### Pending Todos
 
@@ -407,14 +438,37 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Completed 12-04-PLAN.md (Dashboard Pages & Integration)
+Stopped at: Completed 13-03-PLAN.md (Notification Hooks)
 Resume file: None
 
 ## Next Action
 
-Start Phase 13:
-- Run `/gsd:execute-phase 13` for Settings & Admin Features
-- Or run `/gsd:discuss-phase 13` if planning needed
+Continue Phase 13:
+- Wave 2 remaining: 13-02 (Email Edge Function) - pending
+- Wave 3 ready when 13-02 completes: 13-04 (Notification UI Components)
+- Plans: .planning/phases/13-notifications-automation/
+
+## Phase 13 Summary (In Progress)
+
+**Notification Data Foundation Complete (13-01):**
+- TypeScript types for notifications, email, SMS, activity log
+- Notification constants (types, priorities, channels, templates)
+- Helper functions (formatting, sorting, grouping, payloads)
+
+**Notification Hooks Complete (13-03):**
+- Notification CRUD hooks with real-time subscription
+- Notification preferences hooks with toggle/reset helpers
+- Activity log hooks with infinite scroll pagination
+- Notification trigger hooks for common business events
+
+**Key Files Created:**
+- apps/admin/src/lib/types/notification.ts - Notification TypeScript types
+- apps/admin/src/lib/constants/notifications.ts - Notification configuration constants
+- apps/admin/src/lib/helpers/notifications.ts - Notification helper functions
+- apps/admin/src/hooks/use-notifications.ts - Notification CRUD hooks
+- apps/admin/src/hooks/use-notification-preferences.ts - User preference hooks
+- apps/admin/src/hooks/use-activity-log.ts - Activity log hooks
+- apps/admin/src/hooks/use-notification-triggers.ts - Event trigger hooks
 
 ## Phase 12 Summary
 
