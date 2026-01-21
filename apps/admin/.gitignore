@@ -27,3 +27,4 @@ dist-ssr
 
 # PWA dev build
 dev-dist
+test-results/
