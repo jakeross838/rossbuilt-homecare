@@ -6,40 +6,61 @@
 -- CLIENTS (3 clients with different profiles)
 -- =============================================================================
 
-INSERT INTO clients (id, organization_id, name, email, phone, secondary_email, secondary_phone, billing_address, notes, is_active) VALUES
+INSERT INTO clients (id, organization_id, first_name, last_name, email, phone, secondary_first_name, secondary_last_name, secondary_email, secondary_phone, secondary_relationship, billing_address_line1, billing_city, billing_state, billing_zip, notes, is_active) VALUES
   (
     '22222222-2222-2222-2222-222222222201',
     '00000000-0000-0000-0000-000000000001',
-    'Michael & Sarah Thompson',
+    'Michael',
+    'Thompson',
     'mthompson@email.com',
     '941-555-1234',
+    'Sarah',
+    'Thompson',
     'sthompson@email.com',
     '941-555-1235',
-    '{"line1": "456 Oak Lane", "line2": "", "city": "Bradenton", "state": "FL", "zip": "34209"}'::jsonb,
+    'spouse',
+    '456 Oak Lane',
+    'Bradenton',
+    'FL',
+    '34209',
     'Preferred contact method: email. Snowbirds - in FL from Oct to April.',
     true
   ),
   (
     '22222222-2222-2222-2222-222222222202',
     '00000000-0000-0000-0000-000000000001',
-    'Robert Martinez',
+    'Robert',
+    'Martinez',
     'rmartinez@business.com',
     '941-555-2345',
     NULL,
     NULL,
-    '{"line1": "789 Palm Ave", "line2": "Suite 100", "city": "Sarasota", "state": "FL", "zip": "34236"}'::jsonb,
+    NULL,
+    NULL,
+    NULL,
+    '789 Palm Ave',
+    'Sarasota',
+    'FL',
+    '34236',
     'Business owner with multiple properties. Prefers detailed reports.',
     true
   ),
   (
     '22222222-2222-2222-2222-222222222203',
     '00000000-0000-0000-0000-000000000001',
-    'Jennifer & David Wilson',
+    'Jennifer',
+    'Wilson',
     'jwilson@gmail.com',
     '941-555-3456',
+    'David',
+    'Wilson',
     'dwilson@gmail.com',
     '941-555-3457',
-    '{"line1": "123 Beach Blvd", "city": "Longboat Key", "state": "FL", "zip": "34228"}'::jsonb,
+    'spouse',
+    '123 Beach Blvd',
+    'Longboat Key',
+    'FL',
+    '34228',
     'New clients as of 2024. Very responsive.',
     true
   );
@@ -48,15 +69,29 @@ INSERT INTO clients (id, organization_id, name, email, phone, secondary_email, s
 -- PROPERTIES (3 properties with different features)
 -- =============================================================================
 
-INSERT INTO properties (id, organization_id, client_id, name, address, features, access_info, notes, is_active) VALUES
+INSERT INTO properties (id, organization_id, client_id, name, address_line1, city, state, zip, year_built, square_footage, bedrooms, bathrooms, gate_code, lockbox_code, alarm_code, alarm_company, alarm_company_phone, wifi_network, wifi_password, access_instructions, features, notes, is_active) VALUES
   (
     '33333333-3333-3333-3333-333333333301',
     '00000000-0000-0000-0000-000000000001',
     '22222222-2222-2222-2222-222222222201',
     'Thompson Residence',
-    '{"line1": "1234 Sunset Drive", "city": "Bradenton", "state": "FL", "zip": "34209"}'::jsonb,
-    '{"pool": true, "spa": true, "boat_dock": false, "elevator": false, "solar": true, "smart_home": true, "generator": true, "fire_sprinkler": true, "wine_cellar": false, "outdoor_kitchen": true}'::jsonb,
-    '{"gate_code": "1234", "lockbox_code": "5678", "alarm_code": "9012", "alarm_company": "ADT", "alarm_phone": "800-238-2727", "wifi_name": "ThompsonHome", "wifi_password": "WelcomeHome2024", "special_instructions": "Dogs are friendly. Key under blue pot by side door."}'::jsonb,
+    '1234 Sunset Drive',
+    'Bradenton',
+    'FL',
+    '34209',
+    2018,
+    3500,
+    4,
+    3.0,
+    '1234',
+    '5678',
+    '9012',
+    'ADT',
+    '800-238-2727',
+    'ThompsonHome',
+    'WelcomeHome2024',
+    'Dogs are friendly. Key under blue pot by side door.',
+    '{"pool": true, "spa": true, "dock": false, "elevator": false, "solar": true, "generator": true, "fire_sprinkler": true, "outdoor_kitchen": true, "security_system": true}'::jsonb,
     'Beautiful waterfront property with extensive pool area. 4BR/3BA, 3500 sqft. Built 2018.',
     true
   ),
@@ -65,9 +100,23 @@ INSERT INTO properties (id, organization_id, client_id, name, address, features,
     '00000000-0000-0000-0000-000000000001',
     '22222222-2222-2222-2222-222222222202',
     'Martinez Beach House',
-    '{"line1": "567 Gulf Shore Blvd", "city": "Sarasota", "state": "FL", "zip": "34236"}'::jsonb,
-    '{"pool": true, "spa": false, "boat_dock": true, "elevator": true, "solar": false, "smart_home": true, "generator": true, "fire_sprinkler": true, "wine_cellar": true, "outdoor_kitchen": true}'::jsonb,
-    '{"gate_code": "4567", "lockbox_code": "", "alarm_code": "3456", "alarm_company": "Vivint", "alarm_phone": "855-832-1550", "special_instructions": "Call ahead before arriving. Housekeeper on-site Mon/Thu."}'::jsonb,
+    '567 Gulf Shore Blvd',
+    'Sarasota',
+    'FL',
+    '34236',
+    2015,
+    5200,
+    5,
+    5.0,
+    '4567',
+    NULL,
+    '3456',
+    'Vivint',
+    '855-832-1550',
+    NULL,
+    NULL,
+    'Call ahead before arriving. Housekeeper on-site Mon/Thu.',
+    '{"pool": true, "spa": false, "dock": true, "elevator": true, "solar": false, "generator": true, "fire_sprinkler": true, "outdoor_kitchen": true, "security_system": true}'::jsonb,
     'Luxury beachfront property. 5BR/5BA, 5200 sqft. Built 2015. Full elevator access.',
     true
   ),
@@ -76,9 +125,23 @@ INSERT INTO properties (id, organization_id, client_id, name, address, features,
     '00000000-0000-0000-0000-000000000001',
     '22222222-2222-2222-2222-222222222203',
     'Wilson Family Home',
-    '{"line1": "890 Bay View Lane", "city": "Longboat Key", "state": "FL", "zip": "34228"}'::jsonb,
-    '{"pool": false, "spa": true, "boat_dock": false, "elevator": false, "solar": true, "smart_home": false, "generator": false, "fire_sprinkler": false, "wine_cellar": false, "outdoor_kitchen": false}'::jsonb,
-    '{"gate_code": "", "lockbox_code": "2468", "alarm_code": "", "special_instructions": "No alarm system. Use lockbox on front door."}'::jsonb,
+    '890 Bay View Lane',
+    'Longboat Key',
+    'FL',
+    '34228',
+    2010,
+    2200,
+    3,
+    2.0,
+    NULL,
+    '2468',
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'No alarm system. Use lockbox on front door.',
+    '{"pool": false, "spa": true, "dock": false, "elevator": false, "solar": true, "generator": false, "fire_sprinkler": false, "outdoor_kitchen": false, "security_system": false}'::jsonb,
     'Cozy family home. 3BR/2BA, 2200 sqft. Built 2010. Recently updated kitchen.',
     true
   );
@@ -87,14 +150,14 @@ INSERT INTO properties (id, organization_id, client_id, name, address, features,
 -- EQUIPMENT (for each property)
 -- =============================================================================
 
-INSERT INTO equipment (id, organization_id, property_id, name, category, manufacturer, model_number, serial_number, install_date, warranty_expiration, location, specifications, notes) VALUES
+INSERT INTO equipment (id, organization_id, property_id, category, equipment_type, manufacturer, model_number, serial_number, install_date, warranty_expiration, location, specifications, notes) VALUES
   -- Thompson Residence Equipment
   (
     '44444444-4444-4444-4444-444444444401',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
-    'Main Floor HVAC',
     'hvac',
+    'central_ac',
     'Carrier',
     'CA16NA036',
     'SN-2018-CAR-001',
@@ -108,8 +171,8 @@ INSERT INTO equipment (id, organization_id, property_id, name, category, manufac
     '44444444-4444-4444-4444-444444444402',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
-    'Pool Equipment - Pump',
-    'pool_equipment',
+    'pool',
+    'pool_pump',
     'Pentair',
     'IntelliFlo VSF',
     'SN-2020-PEN-001',
@@ -123,8 +186,8 @@ INSERT INTO equipment (id, organization_id, property_id, name, category, manufac
     '44444444-4444-4444-4444-444444444403',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
-    'Water Heater',
-    'water_heater',
+    'plumbing',
+    'water_heater_tank',
     'Rheem',
     'PROG50-38N RH67',
     'SN-2018-RHE-001',
@@ -139,8 +202,8 @@ INSERT INTO equipment (id, organization_id, property_id, name, category, manufac
     '44444444-4444-4444-4444-444444444404',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
-    'HVAC Zone 1 - Main Living',
     'hvac',
+    'central_ac',
     'Trane',
     'XR15',
     'SN-2015-TRN-001',
@@ -154,8 +217,8 @@ INSERT INTO equipment (id, organization_id, property_id, name, category, manufac
     '44444444-4444-4444-4444-444444444405',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
-    'HVAC Zone 2 - Bedrooms',
     'hvac',
+    'central_ac',
     'Trane',
     'XR15',
     'SN-2015-TRN-002',
@@ -169,7 +232,7 @@ INSERT INTO equipment (id, organization_id, property_id, name, category, manufac
     '44444444-4444-4444-4444-444444444406',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
-    'Elevator',
+    'other',
     'elevator',
     'Savaria',
     'Eclipse',
@@ -185,8 +248,8 @@ INSERT INTO equipment (id, organization_id, property_id, name, category, manufac
     '44444444-4444-4444-4444-444444444407',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333303',
-    'HVAC System',
     'hvac',
+    'central_ac',
     'Lennox',
     'XC21',
     'SN-2022-LEN-001',
@@ -200,8 +263,8 @@ INSERT INTO equipment (id, organization_id, property_id, name, category, manufac
     '44444444-4444-4444-4444-444444444408',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333303',
-    'Spa/Hot Tub',
-    'pool_equipment',
+    'pool',
+    'spa',
     'Hot Spring',
     'Grandee',
     'SN-2023-HS-001',
@@ -216,19 +279,18 @@ INSERT INTO equipment (id, organization_id, property_id, name, category, manufac
 -- VENDORS (5 vendors with different specialties)
 -- =============================================================================
 
-INSERT INTO vendors (id, organization_id, company_name, contact_name, email, phone, trade_categories, service_area, license_number, insurance_expiration, rating, notes, is_active, is_preferred) VALUES
+INSERT INTO vendors (id, organization_id, company_name, contact_first_name, contact_last_name, email, phone, trade_categories, license_number, insurance_expiration, notes, is_active, is_preferred) VALUES
   (
     '55555555-5555-5555-5555-555555555501',
     '00000000-0000-0000-0000-000000000001',
     'Cool Breeze HVAC',
-    'Mike Johnson',
+    'Mike',
+    'Johnson',
     'mike@coolbreezehvac.com',
     '941-555-4001',
-    ARRAY['hvac', 'air_quality'],
-    ARRAY['Bradenton', 'Sarasota', 'Longboat Key'],
+    ARRAY['hvac'],
     'CAC-1812345',
     '2025-06-30',
-    4.8,
     'Excellent response time. Specializes in high-end systems.',
     true,
     true
@@ -237,14 +299,13 @@ INSERT INTO vendors (id, organization_id, company_name, contact_name, email, pho
     '55555555-5555-5555-5555-555555555502',
     '00000000-0000-0000-0000-000000000001',
     'Crystal Clear Pools',
-    'Lisa Chen',
+    'Lisa',
+    'Chen',
     'lisa@crystalclearpools.com',
     '941-555-4002',
-    ARRAY['pool', 'spa'],
-    ARRAY['Bradenton', 'Sarasota', 'Longboat Key', 'Anna Maria'],
+    ARRAY['pool'],
     'CPC-1823456',
     '2025-08-15',
-    4.9,
     'Premium pool service. Weekly maintenance available.',
     true,
     true
@@ -253,14 +314,13 @@ INSERT INTO vendors (id, organization_id, company_name, contact_name, email, pho
     '55555555-5555-5555-5555-555555555503',
     '00000000-0000-0000-0000-000000000001',
     'Gulf Coast Electric',
-    'James Brown',
+    'James',
+    'Brown',
     'james@gulfcoastelectric.com',
     '941-555-4003',
-    ARRAY['electrical', 'generator'],
-    ARRAY['Bradenton', 'Sarasota'],
+    ARRAY['electrical'],
     'EC-1834567',
     '2025-04-30',
-    4.5,
     'Licensed master electrician. Generator specialist.',
     true,
     false
@@ -269,14 +329,13 @@ INSERT INTO vendors (id, organization_id, company_name, contact_name, email, pho
     '55555555-5555-5555-5555-555555555504',
     '00000000-0000-0000-0000-000000000001',
     'Pro Plumbing Solutions',
-    'David Williams',
+    'David',
+    'Williams',
     'david@proplumbing.com',
     '941-555-4004',
-    ARRAY['plumbing', 'water_heater'],
-    ARRAY['Bradenton', 'Sarasota', 'Longboat Key'],
+    ARRAY['plumbing'],
     'CFC-1845678',
     '2025-09-30',
-    4.7,
     '24/7 emergency service available.',
     true,
     true
@@ -285,14 +344,13 @@ INSERT INTO vendors (id, organization_id, company_name, contact_name, email, pho
     '55555555-5555-5555-5555-555555555505',
     '00000000-0000-0000-0000-000000000001',
     'Sunshine Roofing',
-    'Carlos Rodriguez',
+    'Carlos',
+    'Rodriguez',
     'carlos@sunshineroofing.com',
     '941-555-4005',
-    ARRAY['roofing', 'gutters'],
-    ARRAY['Bradenton', 'Sarasota', 'Longboat Key', 'Palmetto'],
+    ARRAY['roofing'],
     'CCC-1856789',
     '2025-12-31',
-    4.6,
     'Tile and shingle specialists. Free estimates.',
     true,
     false
@@ -302,14 +360,14 @@ INSERT INTO vendors (id, organization_id, company_name, contact_name, email, pho
 -- PROGRAMS (Service programs for properties)
 -- =============================================================================
 
-INSERT INTO programs (id, organization_id, property_id, name, frequency, tier, status, start_date, next_inspection_date, price_per_visit, notes) VALUES
+INSERT INTO programs (id, organization_id, property_id, name, tier, frequency, status, start_date, next_inspection_date, price_per_inspection, notes) VALUES
   (
     '66666666-6666-6666-6666-666666666601',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
     'Premium Annual Care',
-    'quarterly',
     'comprehensive',
+    'quarterly',
     'active',
     '2024-01-01',
     '2025-02-15',
@@ -321,8 +379,8 @@ INSERT INTO programs (id, organization_id, property_id, name, frequency, tier, s
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
     'Executive Home Watch',
-    'monthly',
     'comprehensive',
+    'monthly',
     'active',
     '2023-06-01',
     '2025-02-01',
@@ -334,8 +392,8 @@ INSERT INTO programs (id, organization_id, property_id, name, frequency, tier, s
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333303',
     'Standard Care',
-    'semi_annual',
     'visual',
+    'semi_annual',
     'active',
     '2024-06-01',
     '2025-06-01',
@@ -347,7 +405,7 @@ INSERT INTO programs (id, organization_id, property_id, name, frequency, tier, s
 -- INSPECTIONS (Various statuses - past, scheduled, in-progress)
 -- =============================================================================
 
-INSERT INTO inspections (id, organization_id, property_id, program_id, inspector_id, template_id, tier, status, scheduled_date, scheduled_time, completed_at, findings, notes) VALUES
+INSERT INTO inspections (id, organization_id, property_id, program_id, inspector_id, inspection_type, status, scheduled_date, scheduled_time_start, scheduled_time_end, estimated_duration_minutes, completed_at, checklist, findings, overall_condition, summary) VALUES
   -- Completed inspection
   (
     '77777777-7777-7777-7777-777777777701',
@@ -355,13 +413,16 @@ INSERT INTO inspections (id, organization_id, property_id, program_id, inspector
     '33333333-3333-3333-3333-333333333301',
     '66666666-6666-6666-6666-666666666601',
     NULL,
-    (SELECT id FROM inspection_templates WHERE name = 'Exterior Inspection Checklist' AND organization_id = '00000000-0000-0000-0000-000000000001' LIMIT 1),
-    'comprehensive',
+    'scheduled',
     'completed',
     '2024-11-15',
     '09:00',
+    '11:00',
+    120,
     '2024-11-15 11:30:00+00',
-    '{"sections": [{"id": "roof", "items": [{"id": "roof_surface", "status": "pass", "notes": "Good condition"}, {"id": "gutters", "status": "needs_attention", "notes": "Minor debris buildup"}]}]}'::jsonb,
+    '{"sections": [{"id": "exterior", "title": "Exterior", "items": [{"id": "roof_surface", "text": "Roof Surface Condition", "type": "status"}, {"id": "gutters", "text": "Gutters & Downspouts", "type": "status"}]}]}'::jsonb,
+    '{"roof_surface": {"status": "pass", "notes": "Good condition", "completed_at": "2024-11-15T10:00:00Z"}, "gutters": {"status": "needs_attention", "notes": "Minor debris buildup", "completed_at": "2024-11-15T10:15:00Z"}}'::jsonb,
+    'good',
     'Overall property in excellent condition. Gutters need cleaning before rainy season.'
   ),
   -- Completed inspection with issues
@@ -371,13 +432,16 @@ INSERT INTO inspections (id, organization_id, property_id, program_id, inspector
     '33333333-3333-3333-3333-333333333302',
     '66666666-6666-6666-6666-666666666602',
     NULL,
-    (SELECT id FROM inspection_templates WHERE name = 'Interior Inspection Checklist' AND organization_id = '00000000-0000-0000-0000-000000000001' LIMIT 1),
-    'comprehensive',
+    'scheduled',
     'completed',
     '2025-01-10',
     '10:00',
+    '13:00',
+    180,
     '2025-01-10 13:00:00+00',
-    '{"sections": [{"id": "systems", "items": [{"id": "hvac_filters", "status": "fail", "notes": "Filters very dirty, need replacement"}, {"id": "water_heater", "status": "pass"}]}]}'::jsonb,
+    '{"sections": [{"id": "systems", "title": "Systems", "items": [{"id": "hvac_filters", "text": "HVAC Filters", "type": "status"}, {"id": "water_heater", "text": "Water Heater", "type": "status"}]}]}'::jsonb,
+    '{"hvac_filters": {"status": "fail", "notes": "Filters very dirty, need replacement", "completed_at": "2025-01-10T11:00:00Z"}, "water_heater": {"status": "pass", "completed_at": "2025-01-10T11:30:00Z"}}'::jsonb,
+    'fair',
     'HVAC filters need immediate attention. Work order created for filter replacement.'
   ),
   -- Scheduled upcoming inspection
@@ -387,12 +451,15 @@ INSERT INTO inspections (id, organization_id, property_id, program_id, inspector
     '33333333-3333-3333-3333-333333333301',
     '66666666-6666-6666-6666-666666666601',
     NULL,
-    (SELECT id FROM inspection_templates WHERE name = 'Pool & Spa Inspection' AND organization_id = '00000000-0000-0000-0000-000000000001' LIMIT 1),
-    'functional',
+    'scheduled',
     'scheduled',
     '2025-02-15',
     '09:00',
+    '11:00',
+    120,
     NULL,
+    '{"sections": [{"id": "pool", "title": "Pool & Spa", "items": [{"id": "pool_water", "text": "Pool Water Quality", "type": "status"}, {"id": "pool_pump", "text": "Pool Pump Operation", "type": "status"}]}]}'::jsonb,
+    '{}'::jsonb,
     NULL,
     'Quarterly pool inspection.'
   ),
@@ -403,13 +470,16 @@ INSERT INTO inspections (id, organization_id, property_id, program_id, inspector
     '33333333-3333-3333-3333-333333333302',
     '66666666-6666-6666-6666-666666666602',
     NULL,
-    (SELECT id FROM inspection_templates WHERE name = 'HVAC System Inspection' AND organization_id = '00000000-0000-0000-0000-000000000001' LIMIT 1),
-    'functional',
+    'scheduled',
     'in_progress',
     '2025-01-19',
     '14:00',
+    '16:00',
+    120,
     NULL,
-    '{"sections": [{"id": "air_handler", "items": [{"id": "filter", "status": "pass", "notes": "New filter installed"}]}]}'::jsonb,
+    '{"sections": [{"id": "hvac", "title": "HVAC System", "items": [{"id": "filter", "text": "Air Filter", "type": "status"}, {"id": "thermostat", "text": "Thermostat Operation", "type": "status"}]}]}'::jsonb,
+    '{"filter": {"status": "pass", "notes": "New filter installed", "completed_at": "2025-01-19T14:30:00Z"}}'::jsonb,
+    NULL,
     'HVAC inspection in progress.'
   ),
   -- Scheduled for Wilson property
@@ -419,12 +489,15 @@ INSERT INTO inspections (id, organization_id, property_id, program_id, inspector
     '33333333-3333-3333-3333-333333333303',
     '66666666-6666-6666-6666-666666666603',
     NULL,
-    (SELECT id FROM inspection_templates WHERE name = 'Exterior Inspection Checklist' AND organization_id = '00000000-0000-0000-0000-000000000001' LIMIT 1),
-    'visual',
+    'scheduled',
     'scheduled',
     '2025-02-01',
     '11:00',
+    '12:30',
+    90,
     NULL,
+    '{"sections": [{"id": "exterior", "title": "Exterior", "items": [{"id": "siding", "text": "Exterior Siding", "type": "status"}, {"id": "windows", "text": "Windows & Doors", "type": "status"}]}]}'::jsonb,
+    '{}'::jsonb,
     NULL,
     'Semi-annual exterior inspection.'
   );
@@ -433,12 +506,13 @@ INSERT INTO inspections (id, organization_id, property_id, program_id, inspector
 -- WORK ORDERS (Various statuses)
 -- =============================================================================
 
-INSERT INTO work_orders (id, organization_id, property_id, vendor_id, inspection_id, title, description, category, priority, status, estimated_cost, scheduled_date, completed_date, completion_notes) VALUES
+INSERT INTO work_orders (id, organization_id, property_id, client_id, vendor_id, inspection_id, title, description, category, priority, status, estimated_cost, scheduled_date, completed_at, completion_notes) VALUES
   -- Completed work order
   (
     '88888888-8888-8888-8888-888888888801',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
+    '22222222-2222-2222-2222-222222222201',
     '55555555-5555-5555-5555-555555555501',
     '77777777-7777-7777-7777-777777777701',
     'HVAC Annual Maintenance',
@@ -448,7 +522,7 @@ INSERT INTO work_orders (id, organization_id, property_id, vendor_id, inspection
     'completed',
     250.00,
     '2024-11-20',
-    '2024-11-20',
+    '2024-11-20 15:00:00+00',
     'Completed maintenance. Replaced filter, cleaned coils. System operating at peak efficiency.'
   ),
   -- In-progress work order
@@ -456,6 +530,7 @@ INSERT INTO work_orders (id, organization_id, property_id, vendor_id, inspection
     '88888888-8888-8888-8888-888888888802',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
+    '22222222-2222-2222-2222-222222222202',
     '55555555-5555-5555-5555-555555555501',
     '77777777-7777-7777-7777-777777777702',
     'HVAC Filter Replacement - Urgent',
@@ -473,6 +548,7 @@ INSERT INTO work_orders (id, organization_id, property_id, vendor_id, inspection
     '88888888-8888-8888-8888-888888888803',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
+    '22222222-2222-2222-2222-222222222201',
     '55555555-5555-5555-5555-555555555502',
     NULL,
     'Pool Service - Monthly',
@@ -490,6 +566,7 @@ INSERT INTO work_orders (id, organization_id, property_id, vendor_id, inspection
     '88888888-8888-8888-8888-888888888804',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333303',
+    '22222222-2222-2222-2222-222222222203',
     '55555555-5555-5555-5555-555555555504',
     NULL,
     'Water Heater Inspection',
@@ -507,6 +584,7 @@ INSERT INTO work_orders (id, organization_id, property_id, vendor_id, inspection
     '88888888-8888-8888-8888-888888888805',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
+    '22222222-2222-2222-2222-222222222202',
     '55555555-5555-5555-5555-555555555503',
     NULL,
     'Generator Annual Service',
@@ -524,13 +602,12 @@ INSERT INTO work_orders (id, organization_id, property_id, vendor_id, inspection
 -- RECOMMENDATIONS (From inspections)
 -- =============================================================================
 
-INSERT INTO recommendations (id, organization_id, inspection_id, property_id, template_id, title, description, category, priority, status, estimated_cost_low, estimated_cost_high) VALUES
+INSERT INTO recommendations (id, organization_id, inspection_id, property_id, title, description, category, priority, status, estimated_cost_low, estimated_cost_high) VALUES
   (
     '99999999-9999-9999-9999-999999999901',
     '00000000-0000-0000-0000-000000000001',
     '77777777-7777-7777-7777-777777777701',
     '33333333-3333-3333-3333-333333333301',
-    (SELECT id FROM recommendation_templates WHERE template_key = 'gutter_cleaning' LIMIT 1),
     'Gutter Cleaning Recommended',
     'Gutters have debris buildup. Recommend professional cleaning before rainy season.',
     'exterior',
@@ -544,7 +621,6 @@ INSERT INTO recommendations (id, organization_id, inspection_id, property_id, te
     '00000000-0000-0000-0000-000000000001',
     '77777777-7777-7777-7777-777777777702',
     '33333333-3333-3333-3333-333333333302',
-    (SELECT id FROM recommendation_templates WHERE template_key = 'hvac_filter_replace' LIMIT 1),
     'HVAC Filter Replacement Due',
     'All HVAC filters need immediate replacement. Very dirty condition.',
     'hvac',
@@ -558,7 +634,6 @@ INSERT INTO recommendations (id, organization_id, inspection_id, property_id, te
     '00000000-0000-0000-0000-000000000001',
     '77777777-7777-7777-7777-777777777701',
     '33333333-3333-3333-3333-333333333301',
-    (SELECT id FROM recommendation_templates WHERE template_key = 'water_heater_age' LIMIT 1),
     'Water Heater Approaching End of Life',
     'Water heater installed in 2018, now 7 years old. Warranty expired. Recommend budgeting for replacement.',
     'plumbing',
@@ -572,19 +647,19 @@ INSERT INTO recommendations (id, organization_id, inspection_id, property_id, te
 -- INVOICES (Various statuses)
 -- =============================================================================
 
-INSERT INTO invoices (id, organization_id, client_id, property_id, inspection_id, invoice_number, status, issue_date, due_date, subtotal, tax_amount, total, notes) VALUES
+INSERT INTO invoices (id, organization_id, client_id, invoice_number, invoice_type, status, issue_date, due_date, subtotal, tax_rate, tax_amount, total, notes) VALUES
   -- Paid invoice
   (
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001',
     '00000000-0000-0000-0000-000000000001',
     '22222222-2222-2222-2222-222222222201',
-    '33333333-3333-3333-3333-333333333301',
-    '77777777-7777-7777-7777-777777777701',
     'INV-2024-001',
+    'service',
     'paid',
     '2024-11-16',
     '2024-12-16',
     350.00,
+    7.0,
     24.50,
     374.50,
     'Q4 2024 Comprehensive Inspection'
@@ -594,13 +669,13 @@ INSERT INTO invoices (id, organization_id, client_id, property_id, inspection_id
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002',
     '00000000-0000-0000-0000-000000000001',
     '22222222-2222-2222-2222-222222222202',
-    '33333333-3333-3333-3333-333333333302',
-    '77777777-7777-7777-7777-777777777702',
     'INV-2025-001',
+    'service',
     'sent',
     '2025-01-11',
     '2025-02-10',
     450.00,
+    7.0,
     31.50,
     481.50,
     'January 2025 Monthly Inspection'
@@ -610,183 +685,56 @@ INSERT INTO invoices (id, organization_id, client_id, property_id, inspection_id
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003',
     '00000000-0000-0000-0000-000000000001',
     '22222222-2222-2222-2222-222222222203',
-    '33333333-3333-3333-3333-333333333303',
-    NULL,
     'INV-2025-002',
+    'service',
     'draft',
     '2025-01-19',
     '2025-02-18',
     200.00,
+    7.0,
     14.00,
     214.00,
     'Semi-annual inspection fee'
-  ),
-  -- Overdue invoice
-  (
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa004',
-    '00000000-0000-0000-0000-000000000001',
-    '22222222-2222-2222-2222-222222222202',
-    '33333333-3333-3333-3333-333333333302',
-    NULL,
-    'INV-2024-002',
-    'overdue',
-    '2024-10-15',
-    '2024-11-14',
-    450.00,
-    31.50,
-    481.50,
-    'October 2024 Monthly Inspection - OVERDUE'
   );
 
 -- Invoice line items
 INSERT INTO invoice_line_items (id, invoice_id, description, quantity, unit_price, total) VALUES
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbb001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001', 'Comprehensive Quarterly Inspection', 1, 350.00, 350.00),
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbb002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002', 'Monthly Executive Inspection', 1, 450.00, 450.00),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbb003', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003', 'Semi-Annual Visual Inspection', 1, 200.00, 200.00),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbb004', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa004', 'Monthly Executive Inspection', 1, 450.00, 450.00);
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbb003', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003', 'Semi-Annual Visual Inspection', 1, 200.00, 200.00);
 
 -- Payment for paid invoice
 INSERT INTO payments (id, organization_id, invoice_id, amount, payment_method, payment_date, reference_number) VALUES
   ('cccccccc-cccc-cccc-cccc-ccccccccc001', '00000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001', 374.50, 'credit_card', '2024-11-20', 'CC-12345');
 
 -- =============================================================================
--- CALENDAR EVENTS
+-- SERVICE REQUESTS (From clients)
 -- =============================================================================
 
-INSERT INTO calendar_events (id, organization_id, title, description, event_type, start_date, start_time, end_date, end_time, all_day, property_id, inspection_id, work_order_id, location, status) VALUES
-  -- Upcoming inspection events
+INSERT INTO service_requests (id, organization_id, property_id, client_id, request_type, title, description, priority, status, created_at) VALUES
   (
-    'dddddddd-dddd-dddd-dddd-ddddddddd001',
-    '00000000-0000-0000-0000-000000000001',
-    'Pool Inspection - Thompson',
-    'Quarterly pool and spa inspection',
-    'inspection',
-    '2025-02-15',
-    '09:00',
-    '2025-02-15',
-    '11:00',
-    false,
-    '33333333-3333-3333-3333-333333333301',
-    '77777777-7777-7777-7777-777777777703',
-    NULL,
-    '1234 Sunset Drive, Bradenton, FL',
-    'scheduled'
-  ),
-  (
-    'dddddddd-dddd-dddd-dddd-ddddddddd002',
-    '00000000-0000-0000-0000-000000000001',
-    'Exterior Inspection - Wilson',
-    'Semi-annual exterior inspection',
-    'inspection',
-    '2025-02-01',
-    '11:00',
-    '2025-02-01',
-    '12:30',
-    false,
-    '33333333-3333-3333-3333-333333333303',
-    '77777777-7777-7777-7777-777777777705',
-    NULL,
-    '890 Bay View Lane, Longboat Key, FL',
-    'scheduled'
-  ),
-  -- Work order event
-  (
-    'dddddddd-dddd-dddd-dddd-ddddddddd003',
-    '00000000-0000-0000-0000-000000000001',
-    'Pool Service - Thompson',
-    'Monthly pool service',
-    'work_order',
-    '2025-01-25',
-    '08:00',
-    '2025-01-25',
-    '10:00',
-    false,
-    '33333333-3333-3333-3333-333333333301',
-    NULL,
-    '88888888-8888-8888-8888-888888888803',
-    '1234 Sunset Drive, Bradenton, FL',
-    'scheduled'
-  ),
-  -- Reminder event
-  (
-    'dddddddd-dddd-dddd-dddd-ddddddddd004',
-    '00000000-0000-0000-0000-000000000001',
-    'Review Quarterly Reports',
-    'Review and send Q1 inspection reports to clients',
-    'reminder',
-    '2025-01-31',
-    NULL,
-    '2025-01-31',
-    NULL,
-    true,
-    NULL,
-    NULL,
-    NULL,
-    'Office',
-    'scheduled'
-  ),
-  -- Today's event
-  (
-    'dddddddd-dddd-dddd-dddd-ddddddddd005',
-    '00000000-0000-0000-0000-000000000001',
-    'HVAC Inspection - Martinez',
-    'HVAC system inspection in progress',
-    'inspection',
-    CURRENT_DATE,
-    '14:00',
-    CURRENT_DATE,
-    '16:00',
-    false,
-    '33333333-3333-3333-3333-333333333302',
-    '77777777-7777-7777-7777-777777777704',
-    NULL,
-    '567 Gulf Shore Blvd, Sarasota, FL',
-    'scheduled'
-  );
-
--- =============================================================================
--- REMINDERS
--- =============================================================================
-
-INSERT INTO reminders (id, organization_id, property_id, equipment_id, title, description, reminder_type, due_date, reminder_date, status, notify_staff) VALUES
-  (
-    'eeeeeeee-eeee-eeee-eeee-eeeeeeeee001',
+    '22222222-0000-0000-0000-000000000001',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
-    '44444444-4444-4444-4444-444444444403',
-    'Water Heater Replacement Planning',
-    'Water heater warranty expired. Budget for replacement.',
+    '22222222-2222-2222-2222-222222222201',
     'maintenance',
-    '2025-03-15',
-    '2025-02-15',
-    'pending',
-    true
+    'Pool heater not working',
+    'The pool heater turns on but water is not getting warm. Please check.',
+    'medium',
+    'new',
+    NOW() - INTERVAL '2 days'
   ),
   (
-    'eeeeeeee-eeee-eeee-eeee-eeeeeeeee002',
+    '22222222-0000-0000-0000-000000000002',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
-    '44444444-4444-4444-4444-444444444406',
-    'Elevator Annual Inspection Due',
-    'Schedule annual elevator inspection - required by law.',
-    'inspection',
-    '2025-08-20',
-    '2025-07-20',
-    'pending',
-    true
-  ),
-  (
-    'eeeeeeee-eeee-eeee-eeee-eeeeeeeee003',
-    '00000000-0000-0000-0000-000000000001',
-    '33333333-3333-3333-3333-333333333301',
-    '44444444-4444-4444-4444-444444444402',
-    'Pool Pump Warranty Expiration',
-    'Pentair pool pump warranty expires June 2025. Consider extended warranty.',
-    'warranty',
-    '2025-06-01',
-    '2025-05-01',
-    'pending',
-    true
+    '22222222-2222-2222-2222-222222222202',
+    'maintenance',
+    'Strange noise from HVAC',
+    'There is a clicking/rattling noise coming from the air handler when it starts up.',
+    'high',
+    'acknowledged',
+    NOW() - INTERVAL '1 day'
   );
 
 -- =============================================================================
@@ -823,56 +771,6 @@ INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, ent
     '88888888-8888-8888-8888-888888888802',
     '{"title": "HVAC Filter Replacement created for Martinez Beach House"}'::jsonb,
     NOW() - INTERVAL '1 day'
-  ),
-  (
-    'ffffffff-ffff-ffff-ffff-fffffffffff04',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
-    'sent',
-    'invoice',
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002',
-    '{"invoice_number": "INV-2025-001", "client": "Robert Martinez", "amount": 481.50}'::jsonb,
-    NOW() - INTERVAL '8 days'
-  ),
-  (
-    'ffffffff-ffff-ffff-ffff-fffffffffff05',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
-    'completed',
-    'inspection',
-    '77777777-7777-7777-7777-777777777702',
-    '{"property": "Martinez Beach House", "findings": "HVAC filters need replacement"}'::jsonb,
-    NOW() - INTERVAL '9 days'
-  ),
-  (
-    'ffffffff-ffff-ffff-ffff-fffffffffff06',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
-    'payment_received',
-    'invoice',
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001',
-    '{"invoice_number": "INV-2024-001", "client": "Michael & Sarah Thompson", "amount": 374.50}'::jsonb,
-    NOW() - INTERVAL '60 days'
-  ),
-  (
-    'ffffffff-ffff-ffff-ffff-fffffffffff07',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
-    'completed',
-    'work_order',
-    '88888888-8888-8888-8888-888888888801',
-    '{"title": "HVAC Annual Maintenance completed", "vendor": "Cool Breeze HVAC"}'::jsonb,
-    NOW() - INTERVAL '60 days'
-  ),
-  (
-    'ffffffff-ffff-ffff-ffff-fffffffffff08',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
-    'created',
-    'client',
-    '22222222-2222-2222-2222-222222222203',
-    '{"name": "Jennifer & David Wilson", "email": "jwilson@gmail.com"}'::jsonb,
-    NOW() - INTERVAL '180 days'
   );
 
 -- =============================================================================
@@ -886,7 +784,7 @@ INSERT INTO notifications (id, organization_id, user_id, type, title, message, e
     NULL,
     'inspection',
     'Inspection In Progress',
-    'John Inspector started HVAC inspection at Martinez Beach House',
+    'HVAC inspection started at Martinez Beach House',
     'inspection',
     '77777777-7777-7777-7777-777777777704',
     false,
@@ -896,18 +794,6 @@ INSERT INTO notifications (id, organization_id, user_id, type, title, message, e
     '11111111-0000-0000-0000-000000000002',
     '00000000-0000-0000-0000-000000000001',
     NULL,
-    'payment',
-    'Invoice Overdue',
-    'Invoice INV-2024-002 for Martinez Beach House is 67 days overdue',
-    'invoice',
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa004',
-    false,
-    NOW() - INTERVAL '1 day'
-  ),
-  (
-    '11111111-0000-0000-0000-000000000003',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
     'work_order',
     'Work Order Assigned',
     'Generator Annual Service assigned to Gulf Coast Electric',
@@ -915,46 +801,4 @@ INSERT INTO notifications (id, organization_id, user_id, type, title, message, e
     '88888888-8888-8888-8888-888888888805',
     true,
     NOW() - INTERVAL '3 days'
-  ),
-  (
-    '11111111-0000-0000-0000-000000000004',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
-    'reminder',
-    'Upcoming Inspections',
-    'You have 2 inspections scheduled for next month',
-    NULL,
-    NULL,
-    true,
-    NOW() - INTERVAL '5 days'
-  );
-
--- =============================================================================
--- SERVICE REQUESTS (From clients)
--- =============================================================================
-
-INSERT INTO service_requests (id, organization_id, property_id, client_id, title, description, category, priority, status, requested_date) VALUES
-  (
-    '22222222-0000-0000-0000-000000000001',
-    '00000000-0000-0000-0000-000000000001',
-    '33333333-3333-3333-3333-333333333301',
-    '22222222-2222-2222-2222-222222222201',
-    'Pool heater not working',
-    'The pool heater turns on but water is not getting warm. Please check.',
-    'pool',
-    'medium',
-    'new',
-    NOW() - INTERVAL '2 days'
-  ),
-  (
-    '22222222-0000-0000-0000-000000000002',
-    '00000000-0000-0000-0000-000000000001',
-    '33333333-3333-3333-3333-333333333302',
-    '22222222-2222-2222-2222-222222222202',
-    'Strange noise from HVAC',
-    'There is a clicking/rattling noise coming from the air handler when it starts up.',
-    'hvac',
-    'high',
-    'acknowledged',
-    NOW() - INTERVAL '1 day'
   );
