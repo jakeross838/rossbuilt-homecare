@@ -35,6 +35,14 @@ Detailed phase specifications available in `~/Downloads/home-care-os-docs/`:
 - [x] **Phase 13: Notifications & Automation** - Email, SMS, scheduled jobs ✅
 - [x] **Phase 14: Testing & Launch** - QA, deployment, go-live ✅
 
+---
+
+## Milestone v1.1: Launch Readiness
+
+- [ ] **Phase 15: Bug Fixes & Polish** - Fix issues, improve UX, ensure quality
+- [ ] **Phase 16: Comprehensive Testing** - E2E tests, cross-browser, PWA verification
+- [ ] **Phase 17: Production Deployment** - Deploy to production, verify all services
+
 ## Phase Details
 
 ### Phase 1: Database & Auth ✅
@@ -264,3 +272,57 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 12. Analytics & Dashboards | 4/4 | ✅ Complete | 2026-01-15 |
 | 13. Notifications & Automation | 5/5 | ✅ Complete | 2026-01-16 |
 | 14. Testing & Launch | 4/4 | ✅ Complete | 2026-01-16 |
+
+### Milestone v1.1: Launch Readiness
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 15. Bug Fixes & Polish | 0/TBD | Not Started | — |
+| 16. Comprehensive Testing | 0/TBD | Not Started | — |
+| 17. Production Deployment | 0/TBD | Not Started | — |
+
+---
+
+### Phase 15: Bug Fixes & Polish
+**Goal**: Identify and fix bugs, polish UI/UX for production readiness
+**Depends on**: Phase 14
+**Status**: NOT STARTED
+**Milestone**: v1.1 Launch Readiness
+**Plans**: TBD
+- 15-01: Build verification and TypeScript error fixes
+- 15-02: UI/UX review and fixes
+- 15-03: Form validation and error handling improvements
+- 15-04: Mobile responsiveness verification
+- 15-05: Code cleanup and optimization
+
+Reference: REQUIREMENTS-v1.1.md (R1)
+
+### Phase 16: Comprehensive Testing
+**Goal**: Full E2E testing, PWA verification, cross-browser compatibility
+**Depends on**: Phase 15
+**Status**: NOT STARTED
+**Milestone**: v1.1 Launch Readiness
+**Plans**: TBD
+- 16-01: E2E test suite for critical flows (auth, inspections, reports)
+- 16-02: PWA offline testing (iOS + Android)
+- 16-03: PDF generation testing with real data
+- 16-04: Payment flow testing (Stripe test mode)
+- 16-05: Cross-browser testing (Chrome, Safari, Firefox, Edge)
+- 16-06: Performance benchmarking
+
+Reference: REQUIREMENTS-v1.1.md (R2)
+
+### Phase 17: Production Deployment
+**Goal**: Deploy to production, configure all services, verify functionality
+**Depends on**: Phase 16
+**Status**: NOT STARTED
+**Milestone**: v1.1 Launch Readiness
+**Plans**: TBD
+- 17-01: Production Supabase configuration
+- 17-02: Edge Functions deployment verification
+- 17-03: Vercel production deployment
+- 17-04: Domain and SSL configuration
+- 17-05: Demo data seeding
+- 17-06: Final verification and launch checklist
+
+Reference: REQUIREMENTS-v1.1.md (R3, R4)
