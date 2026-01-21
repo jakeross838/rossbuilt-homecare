@@ -15,6 +15,10 @@ DELETE FROM inspections WHERE organization_id = '00000000-0000-0000-0000-0000000
 DELETE FROM programs WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 DELETE FROM vendors WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 DELETE FROM equipment WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
+DELETE FROM calendar_events WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
+DELETE FROM calendar_reminders WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
+DELETE FROM documents WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
+DELETE FROM property_keys WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
 DELETE FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 DELETE FROM clients WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 
