@@ -14,7 +14,7 @@ DELETE FROM inspection_photos WHERE inspection_id IN (SELECT id FROM inspections
 DELETE FROM inspections WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 DELETE FROM programs WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 DELETE FROM vendors WHERE organization_id = '00000000-0000-0000-0000-000000000001';
-DELETE FROM equipment WHERE organization_id = '00000000-0000-0000-0000-000000000001';
+DELETE FROM equipment WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
 DELETE FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 DELETE FROM clients WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 
@@ -168,10 +168,9 @@ INSERT INTO properties (id, organization_id, client_id, name, address_line1, cit
 -- EQUIPMENT (for each property)
 -- =============================================================================
 
-INSERT INTO equipment (id, organization_id, property_id, category, equipment_type, manufacturer, model_number, serial_number, install_date, warranty_expiration, location, specifications, notes) VALUES
+INSERT INTO equipment (id, property_id, category, equipment_type, manufacturer, model_number, serial_number, install_date, warranty_expiration, location, specs, notes) VALUES
   (
     '44444444-4444-4444-4444-444444444401',
-    '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
     'hvac',
     'central_ac',
@@ -186,7 +185,6 @@ INSERT INTO equipment (id, organization_id, property_id, category, equipment_typ
   ),
   (
     '44444444-4444-4444-4444-444444444402',
-    '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
     'pool',
     'pool_pump',
@@ -201,7 +199,6 @@ INSERT INTO equipment (id, organization_id, property_id, category, equipment_typ
   ),
   (
     '44444444-4444-4444-4444-444444444403',
-    '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
     'plumbing',
     'water_heater_tank',
@@ -216,7 +213,6 @@ INSERT INTO equipment (id, organization_id, property_id, category, equipment_typ
   ),
   (
     '44444444-4444-4444-4444-444444444404',
-    '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
     'hvac',
     'central_ac',
@@ -231,7 +227,6 @@ INSERT INTO equipment (id, organization_id, property_id, category, equipment_typ
   ),
   (
     '44444444-4444-4444-4444-444444444405',
-    '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
     'hvac',
     'central_ac',
@@ -246,7 +241,6 @@ INSERT INTO equipment (id, organization_id, property_id, category, equipment_typ
   ),
   (
     '44444444-4444-4444-4444-444444444407',
-    '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333303',
     'hvac',
     'central_ac',
