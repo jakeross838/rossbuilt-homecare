@@ -9,6 +9,9 @@ import {
   Filter,
   ChevronRight,
   MapPin,
+  Plus,
+  Play,
+  ClipboardList,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,6 +34,7 @@ import { Badge } from '@/components/ui/badge'
 import { ReportStatusDot } from '@/components/reports/report-status-badge'
 import { FindingsSummaryInline } from '@/components/reports/findings-summary-card'
 import { GenerateReportDialog } from '@/components/reports/generate-report-dialog'
+import { ScheduleInspectionDialog } from '@/components/calendar/schedule-inspection-dialog'
 import { supabase } from '@/lib/supabase'
 import { INSPECTION_TYPE_LABELS, CONDITION_LABELS } from '@/lib/constants/report'
 import type { ReportStatus, ReportFindingSummary } from '@/lib/types/report'
@@ -110,6 +114,7 @@ export default function InspectionsPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [selectedInspectionId, setSelectedInspectionId] = useState<string | null>(null)
   const [showGenerateDialog, setShowGenerateDialog] = useState(false)
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false)
 
   // Get inspections from last 30 days to 7 days ahead
   const startDate = new Date()
@@ -213,13 +218,19 @@ export default function InspectionsPage() {
         <div>
           <h1 className="text-2xl font-semibold">Inspections</h1>
           <p className="text-muted-foreground">
-            View and manage inspection reports
+            Schedule, conduct, and manage inspections
           </p>
         </div>
-        <Button onClick={() => navigate('/calendar')}>
-          <Calendar className="h-4 w-4 mr-2" />
-          Calendar View
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate('/calendar')}>
+            <Calendar className="h-4 w-4 mr-2" />
+            Calendar
+          </Button>
+          <Button onClick={() => setShowScheduleDialog(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Schedule Inspection
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -259,7 +270,7 @@ export default function InspectionsPage() {
               <TableHead>Status</TableHead>
               <TableHead>Findings</TableHead>
               <TableHead>Report</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -289,7 +300,13 @@ export default function InspectionsPage() {
                   <TableRow
                     key={inspection.id}
                     className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => navigate(`/inspections/${inspection.id}/report`)}
+                    onClick={() => {
+                      if (inspection.status === 'scheduled' || inspection.status === 'in_progress') {
+                        navigate(`/inspector/inspection/${inspection.id}`)
+                      } else {
+                        navigate(`/inspections/${inspection.id}/report`)
+                      }
+                    }}
                   >
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -375,7 +392,49 @@ export default function InspectionsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      <div className="flex items-center gap-2">
+                        {inspection.status === 'scheduled' && (
+                          <Button
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              navigate(`/inspector/inspection/${inspection.id}`)
+                            }}
+                          >
+                            <Play className="h-3 w-3 mr-1" />
+                            Start
+                          </Button>
+                        )}
+                        {inspection.status === 'in_progress' && (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              navigate(`/inspector/inspection/${inspection.id}`)
+                            }}
+                          >
+                            <ClipboardList className="h-3 w-3 mr-1" />
+                            Continue
+                          </Button>
+                        )}
+                        {inspection.status === 'completed' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              navigate(`/inspections/${inspection.id}/report`)
+                            }}
+                          >
+                            <FileText className="h-3 w-3 mr-1" />
+                            Report
+                          </Button>
+                        )}
+                        {inspection.status === 'cancelled' && (
+                          <span className="text-sm text-muted-foreground">-</span>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 )
@@ -393,6 +452,12 @@ export default function InspectionsPage() {
           onOpenChange={setShowGenerateDialog}
         />
       )}
+
+      {/* Schedule Inspection Dialog */}
+      <ScheduleInspectionDialog
+        open={showScheduleDialog}
+        onOpenChange={setShowScheduleDialog}
+      />
     </div>
   )
 }

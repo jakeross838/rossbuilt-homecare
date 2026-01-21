@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Play, CheckCircle2, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { InspectionHeader } from '@/components/inspector/inspection-header'
@@ -10,20 +10,35 @@ import {
   useStartInspection,
   calculateInspectionProgress,
 } from '@/hooks/use-inspection-execution'
+import { useAuthStore } from '@/stores/auth-store'
 
 export default function InspectionPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
+  const { user, isLoading: authLoading } = useAuthStore()
   const { data: inspection, isLoading, error } = useInspectorInspection(id)
   const startInspection = useStartInspection()
   const [showCompletion, setShowCompletion] = useState(false)
 
-  if (isLoading) {
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login', { state: { from: location }, replace: true })
+    }
+  }, [user, authLoading, navigate, location])
+
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-rb-green" />
       </div>
     )
+  }
+
+  // Don't render if not authenticated
+  if (!user) {
+    return null
   }
 
   if (error || !inspection) {

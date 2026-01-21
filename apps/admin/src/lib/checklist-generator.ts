@@ -87,6 +87,7 @@ function calculateDuration(
 
 /**
  * Convert template items to checklist items with defaults
+ * Output format matches inspector UI expectations (label, item_type)
  */
 function templateToChecklistItems(
   template: TieredTemplate,
@@ -97,18 +98,24 @@ function templateToChecklistItems(
     return tierItems.map((item) => ({
       id: item.id,
       text: item.text,
+      // Also include 'label' for inspector UI compatibility
+      label: item.text,
       type: item.type || 'status',
+      // Also include 'item_type' for inspector UI compatibility
+      item_type: (item.type || 'status') === 'status' ? 'boolean' : (item.type || 'boolean'),
       options: item.options,
       photo_required: item.photo_required || false,
       photo_recommended: item.photo_recommended || false,
       help_text: item.help_text,
       recommendation_template_key: item.recommendation_template_key,
+      required: false,
     }))
   })
 }
 
 /**
  * Extract equipment-specific checklist items from AI-generated inspection_checklist
+ * Output format matches inspector UI expectations (label, item_type)
  */
 function getEquipmentChecklistItems(
   equipment: Equipment,
@@ -122,13 +129,17 @@ function getEquipmentChecklistItems(
   tiers.forEach((tier) => {
     const tierItems = checklist[tier] || []
     tierItems.forEach((text: string, idx: number) => {
+      const itemText = `${equipment.custom_name || equipment.equipment_type}: ${text}`
       items.push({
         id: `${equipment.id}_${tier}_${idx}`,
-        text: `${equipment.custom_name || equipment.equipment_type}: ${text}`,
+        text: itemText,
+        label: itemText, // For inspector UI compatibility
         type: 'status',
+        item_type: 'boolean', // For inspector UI compatibility
         photo_required: false,
         photo_recommended: false,
         equipment_id: equipment.id,
+        required: false,
       })
     })
   })
@@ -153,6 +164,7 @@ export function generateChecklist(params: GenerateChecklistParams): GeneratedChe
     sections.push({
       id: 'exterior',
       name: 'Exterior',
+      title: 'Exterior', // For inspector UI compatibility
       order: sectionOrder++,
       items: exteriorItems,
     })
@@ -164,6 +176,7 @@ export function generateChecklist(params: GenerateChecklistParams): GeneratedChe
     sections.push({
       id: 'interior',
       name: 'Interior',
+      title: 'Interior', // For inspector UI compatibility
       order: sectionOrder++,
       items: interiorItems,
     })
@@ -183,6 +196,7 @@ export function generateChecklist(params: GenerateChecklistParams): GeneratedChe
       sections.push({
         id: 'hvac',
         name: 'HVAC Systems',
+        title: 'HVAC Systems', // For inspector UI compatibility
         order: sectionOrder++,
         items: hvacItems,
       })
@@ -203,6 +217,7 @@ export function generateChecklist(params: GenerateChecklistParams): GeneratedChe
       sections.push({
         id: 'pool',
         name: 'Pool & Spa',
+        title: 'Pool & Spa', // For inspector UI compatibility
         order: sectionOrder++,
         items: poolItems,
       })
@@ -226,6 +241,7 @@ export function generateChecklist(params: GenerateChecklistParams): GeneratedChe
       sections.push({
         id: 'generator',
         name: 'Generator',
+        title: 'Generator', // For inspector UI compatibility
         order: sectionOrder++,
         items: genItems,
       })
@@ -266,9 +282,11 @@ export function generateChecklist(params: GenerateChecklistParams): GeneratedChe
       })
 
       if (categoryItems.length > 0) {
+        const categoryLabel = getCategoryLabel(category)
         sections.push({
           id: category,
-          name: getCategoryLabel(category),
+          name: categoryLabel,
+          title: categoryLabel, // For inspector UI compatibility
           order: sectionOrder++,
           items: categoryItems,
         })

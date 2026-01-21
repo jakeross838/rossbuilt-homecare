@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react'
 import { format, addDays, subDays } from 'date-fns'
-import { ChevronLeft, ChevronRight, Calendar, RefreshCw } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, Calendar, RefreshCw, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScheduleList } from '@/components/inspector/schedule-list'
 import { SyncStatus } from '@/components/inspector/sync-status'
 import { useOffline } from '@/hooks/use-offline'
 import { useInspectorUpcoming } from '@/hooks/use-inspector-schedule'
 import { registerPWA, updateServiceWorker } from '@/lib/pwa'
+import { useAuthStore } from '@/stores/auth-store'
 
 export default function InspectorDashboard() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { user, isLoading: authLoading } = useAuthStore()
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   )
@@ -18,12 +23,33 @@ export default function InspectorDashboard() {
   // PWA update state
   const [needsUpdate, setNeedsUpdate] = useState(false)
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login', { state: { from: location }, replace: true })
+    }
+  }, [user, authLoading, navigate, location])
+
   useEffect(() => {
     registerPWA(
       () => setNeedsUpdate(true),
       () => console.log('App ready for offline use')
     )
   }, [])
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-rb-green" />
+      </div>
+    )
+  }
+
+  // Don't render if not authenticated
+  if (!user) {
+    return null
+  }
 
   const handlePrevDay = () => {
     setSelectedDate(format(subDays(new Date(selectedDate), 1), 'yyyy-MM-dd'))

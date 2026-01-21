@@ -69,8 +69,8 @@ export const PRIORITY_CONFIG: Record<
 > = {
   low: {
     label: 'Low',
-    color: 'text-gray-600',
-    bgColor: 'bg-gray-100',
+    color: 'text-slate-700',
+    bgColor: 'bg-slate-200',
     sortOrder: 1,
   },
   medium: {

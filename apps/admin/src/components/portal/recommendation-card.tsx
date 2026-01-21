@@ -98,7 +98,7 @@ export function RecommendationCard({ recommendation }: RecommendationCardProps) 
           <p className="text-sm text-gray-600">{recommendation.description}</p>
 
           {recommendation.inspection && (
-            <p className="text-xs text-gray-400 mt-3">
+            <p className="text-xs text-muted-foreground mt-3">
               From inspection on {formatRelativeDate(recommendation.inspection.inspection_date)}
             </p>
           )}

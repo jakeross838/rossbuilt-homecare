@@ -59,8 +59,7 @@ export function ScheduleInspectionDialog({
     },
   })
 
-  const { control, register, handleSubmit, formState: { errors }, reset, setValue, watch } = form
-  const selectedType = watch('inspection_type')
+  const { control, register, handleSubmit, formState: { errors }, reset, setValue } = form
 
   // Reset form when dialog opens or initialDate changes
   useEffect(() => {
@@ -74,14 +73,6 @@ export function ScheduleInspectionDialog({
       })
     }
   }, [open, initialDate, reset])
-
-  // Update duration when type changes (use tier-based defaults)
-  const handleTypeChange = (value: string) => {
-    setValue('inspection_type', value as ScheduleInspectionInput['inspection_type'], { shouldValidate: true })
-    // Default duration based on common tier for type
-    const duration = value === 'preventative' ? 120 : 60
-    setValue('estimated_duration_minutes', duration, { shouldValidate: true })
-  }
 
   const onSubmit = async (data: ScheduleInspectionInput) => {
     try {

@@ -22,7 +22,7 @@ import { ReportStatusBadge } from '@/components/reports/report-status-badge'
 import { FindingsSummaryCard } from '@/components/reports/findings-summary-card'
 import { GenerateReportDialog } from '@/components/reports/generate-report-dialog'
 import { useBuildReportData, useInspectionForReport } from '@/hooks/use-reports'
-import { downloadPDF } from '@/lib/pdf/generate-pdf'
+import { downloadPDF } from '@/lib/pdf'
 import {
   CONDITION_LABELS,
   INSPECTION_TYPE_LABELS,

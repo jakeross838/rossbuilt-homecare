@@ -1,55 +1,70 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
 
 import { AuthProvider } from '@/components/providers/auth-provider'
-import { ErrorBoundary } from '@/components/shared/error-boundary'
+import { ErrorBoundary, PageErrorBoundary } from '@/components/shared/error-boundary'
 import { AppLayout } from '@/components/layout/app-layout'
+
+// Eagerly loaded pages (critical path)
 import LoginPage from '@/pages/auth/login'
 import DashboardPage from '@/pages/dashboard'
-import ClientsPage from '@/pages/clients'
-import NewClientPage from '@/pages/clients/new'
-import ClientDetailPage from '@/pages/clients/[id]'
-import EditClientPage from '@/pages/clients/[id]/edit'
-import PropertiesPage from '@/pages/properties'
-import NewPropertyPage from '@/pages/properties/new'
-import PropertyDetailPage from '@/pages/properties/[id]'
-import EditPropertyPage from '@/pages/properties/[id]/edit'
-import SettingsPage from '@/pages/settings'
-import OrganizationSettingsPage from '@/pages/settings/organization'
-import ProfileSettingsPage from '@/pages/settings/profile'
-import PricingSettingsPage from '@/pages/settings/pricing'
-import TemplatesPage from '@/pages/settings/templates'
-import CalendarPage from '@/pages/calendar'
-import InspectionsPage from '@/pages/inspections'
-import InspectionReportPage from '@/pages/inspections/report'
-import InspectorDashboard from '@/pages/inspector'
-import InspectionPage from '@/pages/inspector/inspection'
-import WorkOrdersPage from '@/pages/work-orders'
-import NewWorkOrderPage from '@/pages/work-orders/new'
-import WorkOrderDetailPage from '@/pages/work-orders/[id]'
-import VendorsPage from '@/pages/vendors'
-import NewVendorPage from '@/pages/vendors/new'
-import VendorDetailPage from '@/pages/vendors/[id]'
-import BillingDashboard from '@/pages/billing/index'
-import InvoicesPage from '@/pages/billing/invoices/index'
-import InvoiceDetailPage from '@/pages/billing/invoices/[id]'
-import ReportsPage from '@/pages/dashboard/reports'
-import NotificationsPage from '@/pages/notifications'
-import NotificationSettingsPage from '@/pages/settings/notifications'
-import ActivityPage from '@/pages/activity'
 
-// Client Portal imports
+// Lazy-loaded pages (code splitting)
+const ClientsPage = lazy(() => import('@/pages/clients'))
+const NewClientPage = lazy(() => import('@/pages/clients/new'))
+const ClientDetailPage = lazy(() => import('@/pages/clients/[id]'))
+const EditClientPage = lazy(() => import('@/pages/clients/[id]/edit'))
+const PropertiesPage = lazy(() => import('@/pages/properties'))
+const NewPropertyPage = lazy(() => import('@/pages/properties/new'))
+const PropertyDetailPage = lazy(() => import('@/pages/properties/[id]'))
+const EditPropertyPage = lazy(() => import('@/pages/properties/[id]/edit'))
+const SettingsPage = lazy(() => import('@/pages/settings'))
+const OrganizationSettingsPage = lazy(() => import('@/pages/settings/organization'))
+const ProfileSettingsPage = lazy(() => import('@/pages/settings/profile'))
+const PricingSettingsPage = lazy(() => import('@/pages/settings/pricing'))
+const TemplatesPage = lazy(() => import('@/pages/settings/templates'))
+const CalendarPage = lazy(() => import('@/pages/calendar'))
+const InspectionsPage = lazy(() => import('@/pages/inspections'))
+const InspectionReportPage = lazy(() => import('@/pages/inspections/report'))
+const InspectorDashboard = lazy(() => import('@/pages/inspector'))
+const InspectionPage = lazy(() => import('@/pages/inspector/inspection'))
+const WorkOrdersPage = lazy(() => import('@/pages/work-orders'))
+const NewWorkOrderPage = lazy(() => import('@/pages/work-orders/new'))
+const WorkOrderDetailPage = lazy(() => import('@/pages/work-orders/[id]'))
+const VendorsPage = lazy(() => import('@/pages/vendors'))
+const NewVendorPage = lazy(() => import('@/pages/vendors/new'))
+const VendorDetailPage = lazy(() => import('@/pages/vendors/[id]'))
+const BillingDashboard = lazy(() => import('@/pages/billing/index'))
+const InvoicesPage = lazy(() => import('@/pages/billing/invoices/index'))
+const InvoiceDetailPage = lazy(() => import('@/pages/billing/invoices/[id]'))
+const ReportsPage = lazy(() => import('@/pages/dashboard/reports'))
+const NotificationsPage = lazy(() => import('@/pages/notifications'))
+const NotificationSettingsPage = lazy(() => import('@/pages/settings/notifications'))
+const ActivityPage = lazy(() => import('@/pages/activity'))
+
+// Loading fallback component
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center h-64">
+      <Loader2 className="h-8 w-8 animate-spin text-rb-green" />
+    </div>
+  )
+}
+
+// Client Portal imports (lazy-loaded)
 import { PortalLayout } from '@/components/portal/portal-layout'
 import { PortalAuthGuard } from '@/components/portal/portal-auth-guard'
-import PortalLoginPage from '@/pages/portal/login'
-import PortalDashboardPage from '@/pages/portal'
-import PortalPropertiesPage from '@/pages/portal/properties'
-import PortalPropertyDetailPage from '@/pages/portal/properties/[id]'
-import PortalRequestsPage from '@/pages/portal/requests'
-import PortalRequestDetailPage from '@/pages/portal/requests/[id]'
-import PortalInvoicesPage from '@/pages/portal/invoices'
-import PortalInspectionsPage from '@/pages/portal/inspections'
-import PortalInspectionDetailPage from '@/pages/portal/inspections/[id]'
+const PortalLoginPage = lazy(() => import('@/pages/portal/login'))
+const PortalDashboardPage = lazy(() => import('@/pages/portal'))
+const PortalPropertiesPage = lazy(() => import('@/pages/portal/properties'))
+const PortalPropertyDetailPage = lazy(() => import('@/pages/portal/properties/[id]'))
+const PortalRequestsPage = lazy(() => import('@/pages/portal/requests'))
+const PortalRequestDetailPage = lazy(() => import('@/pages/portal/requests/[id]'))
+const PortalInvoicesPage = lazy(() => import('@/pages/portal/invoices'))
+const PortalInspectionsPage = lazy(() => import('@/pages/portal/inspections'))
+const PortalInspectionDetailPage = lazy(() => import('@/pages/portal/inspections/[id]'))
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -60,16 +75,6 @@ const queryClient = new QueryClient({
     },
   },
 })
-
-// Placeholder pages for routes not yet implemented
-function PlaceholderPage({ title }: { title: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center h-64 text-center">
-      <h2 className="text-2xl font-semibold text-foreground mb-2">{title}</h2>
-      <p className="text-muted-foreground">Coming soon in future phases</p>
-    </div>
-  )
-}
 
 function App() {
   return (
@@ -82,27 +87,29 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
 
             {/* Inspector routes (standalone mobile PWA - no AppLayout) */}
-            <Route path="/inspector" element={<InspectorDashboard />} />
-            <Route path="/inspector/inspection/:id" element={<InspectionPage />} />
+            <Route path="/inspector" element={<PageErrorBoundary><Suspense fallback={<PageLoader />}><InspectorDashboard /></Suspense></PageErrorBoundary>} />
+            <Route path="/inspector/inspection/:id" element={<PageErrorBoundary><Suspense fallback={<PageLoader />}><InspectionPage /></Suspense></PageErrorBoundary>} />
 
             {/* Client Portal Routes */}
-            <Route path="/portal/login" element={<PortalLoginPage />} />
+            <Route path="/portal/login" element={<Suspense fallback={<PageLoader />}><PortalLoginPage /></Suspense>} />
             <Route
               path="/portal"
               element={
-                <PortalAuthGuard>
-                  <PortalLayout />
-                </PortalAuthGuard>
+                <PageErrorBoundary>
+                  <PortalAuthGuard>
+                    <PortalLayout />
+                  </PortalAuthGuard>
+                </PageErrorBoundary>
               }
             >
-              <Route index element={<PortalDashboardPage />} />
-              <Route path="properties" element={<PortalPropertiesPage />} />
-              <Route path="properties/:id" element={<PortalPropertyDetailPage />} />
-              <Route path="requests" element={<PortalRequestsPage />} />
-              <Route path="requests/:id" element={<PortalRequestDetailPage />} />
-              <Route path="invoices" element={<PortalInvoicesPage />} />
-              <Route path="inspections" element={<PortalInspectionsPage />} />
-              <Route path="inspections/:id" element={<PortalInspectionDetailPage />} />
+              <Route index element={<Suspense fallback={<PageLoader />}><PortalDashboardPage /></Suspense>} />
+              <Route path="properties" element={<Suspense fallback={<PageLoader />}><PortalPropertiesPage /></Suspense>} />
+              <Route path="properties/:id" element={<Suspense fallback={<PageLoader />}><PortalPropertyDetailPage /></Suspense>} />
+              <Route path="requests" element={<Suspense fallback={<PageLoader />}><PortalRequestsPage /></Suspense>} />
+              <Route path="requests/:id" element={<Suspense fallback={<PageLoader />}><PortalRequestDetailPage /></Suspense>} />
+              <Route path="invoices" element={<Suspense fallback={<PageLoader />}><PortalInvoicesPage /></Suspense>} />
+              <Route path="inspections" element={<Suspense fallback={<PageLoader />}><PortalInspectionsPage /></Suspense>} />
+              <Route path="inspections/:id" element={<Suspense fallback={<PageLoader />}><PortalInspectionDetailPage /></Suspense>} />
             </Route>
 
             {/* Protected routes with AppLayout */}
@@ -114,55 +121,55 @@ function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
 
               {/* Clients */}
-              <Route path="/clients" element={<ClientsPage />} />
-              <Route path="/clients/new" element={<NewClientPage />} />
-              <Route path="/clients/:id" element={<ClientDetailPage />} />
-              <Route path="/clients/:id/edit" element={<EditClientPage />} />
+              <Route path="/clients" element={<Suspense fallback={<PageLoader />}><ClientsPage /></Suspense>} />
+              <Route path="/clients/new" element={<Suspense fallback={<PageLoader />}><NewClientPage /></Suspense>} />
+              <Route path="/clients/:id" element={<Suspense fallback={<PageLoader />}><ClientDetailPage /></Suspense>} />
+              <Route path="/clients/:id/edit" element={<Suspense fallback={<PageLoader />}><EditClientPage /></Suspense>} />
 
               {/* Properties */}
-              <Route path="/properties" element={<PropertiesPage />} />
-              <Route path="/properties/new" element={<NewPropertyPage />} />
-              <Route path="/properties/:id" element={<PropertyDetailPage />} />
-              <Route path="/properties/:id/edit" element={<EditPropertyPage />} />
+              <Route path="/properties" element={<Suspense fallback={<PageLoader />}><PropertiesPage /></Suspense>} />
+              <Route path="/properties/new" element={<Suspense fallback={<PageLoader />}><NewPropertyPage /></Suspense>} />
+              <Route path="/properties/:id" element={<Suspense fallback={<PageLoader />}><PropertyDetailPage /></Suspense>} />
+              <Route path="/properties/:id/edit" element={<Suspense fallback={<PageLoader />}><EditPropertyPage /></Suspense>} />
 
               {/* Calendar */}
-              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/calendar" element={<Suspense fallback={<PageLoader />}><CalendarPage /></Suspense>} />
 
               {/* Inspections */}
-              <Route path="/inspections" element={<InspectionsPage />} />
-              <Route path="/inspections/:id/report" element={<InspectionReportPage />} />
+              <Route path="/inspections" element={<Suspense fallback={<PageLoader />}><InspectionsPage /></Suspense>} />
+              <Route path="/inspections/:id/report" element={<Suspense fallback={<PageLoader />}><InspectionReportPage /></Suspense>} />
 
               {/* Work Orders */}
-              <Route path="/work-orders" element={<WorkOrdersPage />} />
-              <Route path="/work-orders/new" element={<NewWorkOrderPage />} />
-              <Route path="/work-orders/:id" element={<WorkOrderDetailPage />} />
+              <Route path="/work-orders" element={<Suspense fallback={<PageLoader />}><WorkOrdersPage /></Suspense>} />
+              <Route path="/work-orders/new" element={<Suspense fallback={<PageLoader />}><NewWorkOrderPage /></Suspense>} />
+              <Route path="/work-orders/:id" element={<Suspense fallback={<PageLoader />}><WorkOrderDetailPage /></Suspense>} />
 
               {/* Billing */}
-              <Route path="/billing" element={<BillingDashboard />} />
-              <Route path="/billing/invoices" element={<InvoicesPage />} />
-              <Route path="/billing/invoices/:id" element={<InvoiceDetailPage />} />
+              <Route path="/billing" element={<Suspense fallback={<PageLoader />}><BillingDashboard /></Suspense>} />
+              <Route path="/billing/invoices" element={<Suspense fallback={<PageLoader />}><InvoicesPage /></Suspense>} />
+              <Route path="/billing/invoices/:id" element={<Suspense fallback={<PageLoader />}><InvoiceDetailPage /></Suspense>} />
 
               {/* Vendors */}
-              <Route path="/vendors" element={<VendorsPage />} />
-              <Route path="/vendors/new" element={<NewVendorPage />} />
-              <Route path="/vendors/:id" element={<VendorDetailPage />} />
+              <Route path="/vendors" element={<Suspense fallback={<PageLoader />}><VendorsPage /></Suspense>} />
+              <Route path="/vendors/new" element={<Suspense fallback={<PageLoader />}><NewVendorPage /></Suspense>} />
+              <Route path="/vendors/:id" element={<Suspense fallback={<PageLoader />}><VendorDetailPage /></Suspense>} />
 
               {/* Reports */}
-              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/reports" element={<Suspense fallback={<PageLoader />}><ReportsPage /></Suspense>} />
 
               {/* Notifications */}
-              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/notifications" element={<Suspense fallback={<PageLoader />}><NotificationsPage /></Suspense>} />
 
               {/* Activity */}
-              <Route path="/activity" element={<ActivityPage />} />
+              <Route path="/activity" element={<Suspense fallback={<PageLoader />}><ActivityPage /></Suspense>} />
 
               {/* Settings */}
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/settings/organization" element={<OrganizationSettingsPage />} />
-              <Route path="/settings/profile" element={<ProfileSettingsPage />} />
-              <Route path="/settings/pricing" element={<PricingSettingsPage />} />
-              <Route path="/settings/templates" element={<TemplatesPage />} />
-              <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
+              <Route path="/settings" element={<Suspense fallback={<PageLoader />}><SettingsPage /></Suspense>} />
+              <Route path="/settings/organization" element={<Suspense fallback={<PageLoader />}><OrganizationSettingsPage /></Suspense>} />
+              <Route path="/settings/profile" element={<Suspense fallback={<PageLoader />}><ProfileSettingsPage /></Suspense>} />
+              <Route path="/settings/pricing" element={<Suspense fallback={<PageLoader />}><PricingSettingsPage /></Suspense>} />
+              <Route path="/settings/templates" element={<Suspense fallback={<PageLoader />}><TemplatesPage /></Suspense>} />
+              <Route path="/settings/notifications" element={<Suspense fallback={<PageLoader />}><NotificationSettingsPage /></Suspense>} />
             </Route>
 
             {/* Catch all - redirect to dashboard */}

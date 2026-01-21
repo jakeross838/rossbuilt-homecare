@@ -12,7 +12,7 @@ export function formatCondition(condition: Enums<'condition_rating'> | null): {
   color: string
 } {
   if (!condition) {
-    return { label: 'Not Rated', description: 'Condition not yet assessed', color: 'text-gray-400' }
+    return { label: 'Not Rated', description: 'Condition not yet assessed', color: 'text-slate-500' }
   }
   return CONDITION_DISPLAY[condition]
 }

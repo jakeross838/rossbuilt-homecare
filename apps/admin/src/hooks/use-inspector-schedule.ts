@@ -3,9 +3,16 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { InspectorInspection, InspectorDaySchedule } from '@/lib/types/inspector'
 
+// Helper to check if user is authenticated with a valid session
+function useIsAuthenticated() {
+  const { user, isInitialized } = useAuthStore()
+  return isInitialized && !!user
+}
+
 // Fetch inspector's inspections for a specific date
 export function useInspectorDaySchedule(date: string) {
   const { user } = useAuthStore()
+  const isAuthenticated = useIsAuthenticated()
   const inspectorId = user?.id
 
   return useQuery({
@@ -42,8 +49,11 @@ export function useInspectorDaySchedule(date: string) {
             city,
             state,
             zip,
-            access_codes,
-            special_instructions,
+            gate_code,
+            garage_code,
+            lockbox_code,
+            alarm_code,
+            access_instructions,
             clients (
               id,
               first_name,
@@ -69,8 +79,11 @@ export function useInspectorDaySchedule(date: string) {
           city: string
           state: string
           zip: string
-          access_codes: Record<string, string> | null
-          special_instructions: string | null
+          gate_code: string | null
+          garage_code: string | null
+          lockbox_code: string | null
+          alarm_code: string | null
+          access_instructions: string | null
           clients: {
             id: string
             first_name: string
@@ -106,8 +119,13 @@ export function useInspectorDaySchedule(date: string) {
                 city: property.city,
                 state: property.state,
                 zip: property.zip,
-                access_codes: property.access_codes,
-                special_instructions: property.special_instructions,
+                access_codes: {
+                  ...(property.gate_code && { 'Gate Code': property.gate_code }),
+                  ...(property.garage_code && { 'Garage Code': property.garage_code }),
+                  ...(property.lockbox_code && { 'Lockbox Code': property.lockbox_code }),
+                  ...(property.alarm_code && { 'Alarm Code': property.alarm_code }),
+                },
+                special_instructions: property.access_instructions,
               }
             : null,
           client: property?.clients || null,
@@ -121,13 +139,15 @@ export function useInspectorDaySchedule(date: string) {
 
       return { date, inspections, total_estimated_minutes }
     },
-    enabled: !!inspectorId && !!date,
+    enabled: !!inspectorId && !!date && isAuthenticated,
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
 }
 
 // Fetch single inspection with full details for execution
 export function useInspectorInspection(inspectionId: string | undefined) {
+  const isAuthenticated = useIsAuthenticated()
+
   return useQuery({
     queryKey: ['inspector-inspection', inspectionId],
     queryFn: async (): Promise<InspectorInspection | null> => {
@@ -160,8 +180,11 @@ export function useInspectorInspection(inspectionId: string | undefined) {
             city,
             state,
             zip,
-            access_codes,
-            special_instructions,
+            gate_code,
+            garage_code,
+            lockbox_code,
+            alarm_code,
+            access_instructions,
             clients (
               id,
               first_name,
@@ -187,8 +210,11 @@ export function useInspectorInspection(inspectionId: string | undefined) {
         city: string
         state: string
         zip: string
-        access_codes: Record<string, string> | null
-        special_instructions: string | null
+        gate_code: string | null
+        garage_code: string | null
+        lockbox_code: string | null
+        alarm_code: string | null
+        access_instructions: string | null
         clients: {
           id: string
           first_name: string
@@ -224,20 +250,26 @@ export function useInspectorInspection(inspectionId: string | undefined) {
               city: property.city,
               state: property.state,
               zip: property.zip,
-              access_codes: property.access_codes,
-              special_instructions: property.special_instructions,
+              access_codes: {
+                ...(property.gate_code && { 'Gate Code': property.gate_code }),
+                ...(property.garage_code && { 'Garage Code': property.garage_code }),
+                ...(property.lockbox_code && { 'Lockbox Code': property.lockbox_code }),
+                ...(property.alarm_code && { 'Alarm Code': property.alarm_code }),
+              },
+              special_instructions: property.access_instructions,
             }
           : null,
         client: property?.clients || null,
       }
     },
-    enabled: !!inspectionId,
+    enabled: !!inspectionId && isAuthenticated,
   })
 }
 
 // Fetch upcoming inspections for inspector (next 7 days)
 export function useInspectorUpcoming() {
   const { user } = useAuthStore()
+  const isAuthenticated = useIsAuthenticated()
   const inspectorId = user?.id
 
   return useQuery({
@@ -274,6 +306,6 @@ export function useInspectorUpcoming() {
       if (error) throw error
       return data
     },
-    enabled: !!inspectorId,
+    enabled: !!inspectorId && isAuthenticated,
   })
 }

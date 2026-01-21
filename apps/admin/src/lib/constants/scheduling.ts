@@ -241,10 +241,10 @@ export const INSPECTION_STATUS_COLORS = {
     status: 'cancelled',
     label: 'Cancelled',
     color: 'gray',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-500',
+    bgColor: 'bg-gray-200',
+    textColor: 'text-gray-700',
     borderColor: 'border-gray-300',
-    dotColor: 'bg-gray-400',
+    dotColor: 'bg-gray-500',
   },
   rescheduled: {
     status: 'rescheduled',

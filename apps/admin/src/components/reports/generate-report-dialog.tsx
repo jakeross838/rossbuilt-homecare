@@ -18,7 +18,7 @@ import {
   generateAndSaveReport,
   downloadPDF,
   generateAISummary,
-} from '@/lib/pdf/generate-pdf'
+} from '@/lib/pdf'
 import { DEFAULT_REPORT_OPTIONS } from '@/lib/constants/report'
 import type { ReportGenerationOptions } from '@/lib/types/report'
 

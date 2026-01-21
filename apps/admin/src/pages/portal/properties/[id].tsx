@@ -201,7 +201,7 @@ export default function PortalPropertyDetailPage() {
                         <p className="font-medium">{eq.name}</p>
                         <p className="text-sm text-gray-500">{eq.category}</p>
                         {eq.location && (
-                          <p className="text-sm text-gray-400">{eq.location}</p>
+                          <p className="text-sm text-muted-foreground">{eq.location}</p>
                         )}
                       </div>
                       {eq.condition && (

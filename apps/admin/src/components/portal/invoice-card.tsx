@@ -20,7 +20,7 @@ export function InvoiceCard({ invoice }: InvoiceCardProps) {
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm text-gray-500">Invoice #{invoice.invoice_number}</p>
+            <p className="text-sm text-muted-foreground">Invoice #{invoice.invoice_number}</p>
             <CardTitle className="text-lg mt-1">
               {formatCurrency(invoice.total)}
             </CardTitle>
@@ -36,7 +36,7 @@ export function InvoiceCard({ invoice }: InvoiceCardProps) {
 
       <CardContent className="pt-0">
         {/* Dates */}
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
           <span>Issued: {new Date(invoice.issue_date).toLocaleDateString()}</span>
           <span>Due: {new Date(invoice.due_date).toLocaleDateString()}</span>
         </div>
@@ -54,16 +54,16 @@ export function InvoiceCard({ invoice }: InvoiceCardProps) {
         {/* Line Items Preview */}
         {invoice.line_items.length > 0 && (
           <div className="border-t pt-3 mt-3">
-            <p className="text-sm text-gray-500 mb-2">Items:</p>
+            <p className="text-sm text-muted-foreground mb-2">Items:</p>
             <ul className="text-sm space-y-1">
               {invoice.line_items.slice(0, 3).map((item, i) => (
                 <li key={i} className="flex justify-between">
-                  <span className="text-gray-600">{item.description}</span>
+                  <span className="text-foreground/80">{item.description}</span>
                   <span>{formatCurrency(item.amount)}</span>
                 </li>
               ))}
               {invoice.line_items.length > 3 && (
-                <li className="text-gray-400">
+                <li className="text-muted-foreground">
                   +{invoice.line_items.length - 3} more items
                 </li>
               )}

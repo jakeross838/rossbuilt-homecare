@@ -54,7 +54,7 @@ function getActivityIcon(type: ActivityLogEntry['type']) {
 function getActivityLink(activity: ActivityLogEntry): string {
   switch (activity.type) {
     case 'inspection':
-      return `/inspections/${activity.entityId}`
+      return `/inspections/${activity.entityId}/report`
     case 'work_order':
       return `/work-orders/${activity.entityId}`
     case 'invoice':
@@ -71,7 +71,7 @@ function getActivityLink(activity: ActivityLogEntry): string {
 function getOverdueLink(item: OverdueItem): string {
   switch (item.type) {
     case 'inspection':
-      return `/inspections/${item.id}`
+      return `/inspections/${item.id}/report`
     case 'work_order':
       return `/work-orders/${item.id}`
     case 'invoice':

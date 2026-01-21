@@ -50,6 +50,7 @@ export default {
         },
         // Ross Built brand colors
         "rb-green": {
+          DEFAULT: "#16a34a", // 600 shade - good contrast with white text
           50: "#f0fdf4",
           100: "#dcfce7",
           200: "#bbf7d0",

@@ -322,3 +322,81 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 - ✅ Environment template documented (.env.example)
 - ✅ Demo data migration applied (023_demo_data.sql)
 - ✅ DEPLOYMENT.md documentation complete
+
+---
+
+## Milestone v1.2: Quality & Performance
+
+- [x] **Phase 18: Code Audit & Bug Fixes** - Fix bugs found during testing, code quality ✅
+- [x] **Phase 19: Performance Optimization** - Code splitting, lazy loading, bundle optimization ✅
+- [x] **Phase 20: Test Coverage & Error Handling** - Error boundaries, stability improvements ✅
+
+---
+
+### Phase 18: Code Audit & Bug Fixes ✅
+**Goal**: Fix bugs identified during comprehensive testing and improve code quality
+**Depends on**: Phase 17
+**Status**: COMPLETE (2026-01-21)
+**Milestone**: v1.2 Quality & Performance
+
+**Bugs Fixed (2026-01-21):**
+- ✅ Fixed missing access codes in inspection detail view (`use-inspector-schedule.ts:205-256`)
+  - Issue: `useInspectorInspection` hook tried to read non-existent `property.access_codes`
+  - Fix: Build access_codes object from individual columns (gate_code, garage_code, lockbox_code, alarm_code)
+  - Impact: Inspectors now see property access codes correctly
+- ✅ Removed unused variables in schedule dialog (`schedule-inspection-dialog.tsx:62-84`)
+  - Removed: `selectedType`, `handleTypeChange`, unused `watch` import
+- ✅ Removed unused `PlaceholderPage` component (`App.tsx:65-72`)
+
+**Verification Results:**
+| Check | Status |
+|-------|--------|
+| TypeScript Compilation | ✅ Pass |
+| Production Build | ✅ Pass (36.21s) |
+| Database Schema Alignment | ✅ Pass |
+| Route Configuration | ✅ Pass |
+| Inspector Flow | ✅ Pass |
+| Offline Database | ✅ Pass |
+| Photo Capture | ✅ Pass |
+
+### Phase 19: Performance Optimization ✅
+**Goal**: Optimize bundle size and improve load times through code splitting
+**Depends on**: Phase 18
+**Status**: COMPLETE (2026-01-21)
+**Milestone**: v1.2 Quality & Performance
+
+**Completed:**
+- ✅ Lazy-load PDF generation library (1.5MB → loaded on demand)
+  - Created `lib/pdf/index.ts` wrapper for dynamic import
+  - Updated all PDF imports to use lazy-loaded module
+- ✅ Implemented route-based code splitting for all pages
+  - Used React.lazy() for all page components except LoginPage and DashboardPage
+  - Added Suspense boundaries with PageLoader fallback
+- ✅ Manual chunks optimized in vite.config.ts
+  - vendor-react: 48.92 kB
+  - vendor-ui: 142.71 kB
+  - vendor-query: 36.48 kB
+  - vendor-charts: 381.10 kB
+  - vendor-supabase: 169.47 kB
+  - vendor-pdf: 1,584.07 kB (lazy-loaded)
+
+**Build Results:**
+- 121 chunks precached (~3.4 MB total)
+- Build time: 37.98s
+- All pages load on-demand for faster initial load
+
+### Phase 20: Test Coverage & Error Handling ✅
+**Goal**: Add error boundaries and improve application stability
+**Depends on**: Phase 18
+**Status**: COMPLETE (2026-01-21)
+**Milestone**: v1.2 Quality & Performance
+
+**Completed:**
+- ✅ Added PageErrorBoundary to Inspector routes
+  - /inspector wrapped with PageErrorBoundary
+  - /inspector/inspection/:id wrapped with PageErrorBoundary
+- ✅ Added PageErrorBoundary to Client Portal
+  - All /portal/* routes wrapped with PageErrorBoundary
+- ✅ Global ErrorBoundary already wraps entire app in App.tsx
+
+**Note:** Full unit testing infrastructure deferred - would require significant setup (Vitest, Testing Library). Error boundaries provide immediate production stability.

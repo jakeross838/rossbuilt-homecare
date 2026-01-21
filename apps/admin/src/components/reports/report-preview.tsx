@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator'
 import { ReportStatusBadge } from './report-status-badge'
 import { FindingsSummaryCard } from './findings-summary-card'
 import { useBuildReportData } from '@/hooks/use-reports'
-import { downloadPDF } from '@/lib/pdf/generate-pdf'
+import { downloadPDF } from '@/lib/pdf'
 import { CONDITION_LABELS, INSPECTION_TYPE_LABELS } from '@/lib/constants/report'
 import type { ReportStatus } from '@/lib/types/report'
 

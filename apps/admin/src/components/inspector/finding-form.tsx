@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, X, AlertTriangle, AlertCircle, Minus, Camera, Loader2 } from 'lucide-react'
+import { Check, X, AlertTriangle, AlertCircle, Minus, Camera, Loader2, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -16,6 +16,8 @@ interface FindingFormProps {
   item: ChecklistItem
   existingFinding?: ChecklistItemFinding
   onSaved?: () => void
+  onSaveAndNext?: () => void
+  hasNextItem?: boolean
 }
 
 const STATUS_ICONS = {
@@ -31,6 +33,8 @@ export function FindingForm({
   item,
   existingFinding,
   onSaved,
+  onSaveAndNext,
+  hasNextItem,
 }: FindingFormProps) {
   const [status, setStatus] = useState<ChecklistItemFindingInput['status']>(
     existingFinding?.status || 'pass'
@@ -52,7 +56,7 @@ export function FindingForm({
     handleFileChange,
   } = usePhotoCapture(inspectionId, item.id)
 
-  const handleSave = async () => {
+  const handleSave = async (goToNext = false) => {
     const finding: ChecklistItemFindingInput = {
       status,
       notes: notes || undefined,
@@ -66,7 +70,11 @@ export function FindingForm({
       finding,
     })
 
-    onSaved?.()
+    if (goToNext && onSaveAndNext) {
+      onSaveAndNext()
+    } else {
+      onSaved?.()
+    }
   }
 
   return (
@@ -211,18 +219,51 @@ export function FindingForm({
         <CameraInput inputRef={fileInputRef} onChange={handleFileChange} />
       </div>
 
-      {/* Save button */}
-      <Button
-        onClick={handleSave}
-        disabled={saveFinding.isPending}
-        className="w-full bg-rb-green hover:bg-rb-green/90"
-        size="lg"
-      >
-        {saveFinding.isPending ? (
-          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-        ) : null}
-        Save Finding
-      </Button>
+      {/* Save buttons */}
+      <div className="flex gap-2">
+        <Button
+          onClick={() => handleSave(false)}
+          disabled={saveFinding.isPending}
+          variant="outline"
+          className="flex-1"
+          size="lg"
+        >
+          {saveFinding.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+          ) : null}
+          Save & Close
+        </Button>
+        {hasNextItem && (
+          <Button
+            onClick={() => handleSave(true)}
+            disabled={saveFinding.isPending}
+            className="flex-1 bg-rb-green hover:bg-rb-green/90"
+            size="lg"
+          >
+            {saveFinding.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <>
+                Save & Next
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </>
+            )}
+          </Button>
+        )}
+        {!hasNextItem && (
+          <Button
+            onClick={() => handleSave(false)}
+            disabled={saveFinding.isPending}
+            className="flex-1 bg-rb-green hover:bg-rb-green/90"
+            size="lg"
+          >
+            {saveFinding.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : null}
+            Save Finding
+          </Button>
+        )}
+      </div>
     </div>
   )
 }

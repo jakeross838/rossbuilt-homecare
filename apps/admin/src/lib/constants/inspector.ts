@@ -13,7 +13,7 @@ export const ITEM_STATUS_OPTIONS = [
   { value: 'fail', label: 'Fail', icon: 'x', color: 'text-red-600' },
   { value: 'needs_attention', label: 'Needs Attention', icon: 'alert-triangle', color: 'text-yellow-600' },
   { value: 'urgent', label: 'Urgent', icon: 'alert-circle', color: 'text-red-600' },
-  { value: 'na', label: 'N/A', icon: 'minus', color: 'text-gray-400' },
+  { value: 'na', label: 'N/A', icon: 'minus', color: 'text-slate-500' },
 ] as const
 
 // Photo upload limits

@@ -42,8 +42,8 @@ export function FindingsSummaryCard({ summary, className }: FindingsSummaryCardP
       label: 'N/A',
       count: summary.not_applicable,
       icon: MinusCircle,
-      color: 'text-gray-500',
-      bgColor: 'bg-gray-100',
+      color: 'text-slate-600',
+      bgColor: 'bg-slate-200',
     },
   ]
 

@@ -23,6 +23,7 @@
   --radius: 0.5rem;
 
   /* Ross Built brand colors */
+  --color-rb-green: #16a34a; /* DEFAULT - good contrast with white text */
   --color-rb-green-50: #f0fdf4;
   --color-rb-green-100: #dcfce7;
   --color-rb-green-200: #bbf7d0;

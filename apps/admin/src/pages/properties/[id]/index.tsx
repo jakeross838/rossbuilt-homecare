@@ -463,9 +463,6 @@ export function PropertyDetailPage() {
             ) : (
               <p className="text-muted-foreground">No inspections yet</p>
             )}
-            <p className="text-sm text-muted-foreground mt-4">
-              Inspections module coming in Phase 6
-            </p>
           </CardContent>
         </Card>
 

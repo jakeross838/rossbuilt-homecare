@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -36,6 +36,17 @@ import {
 export default function InvoicesPage() {
   const [filters, setFilters] = useState<InvoiceFilters>({})
   const [showCreate, setShowCreate] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // Handle ?create=true query param from billing dashboard
+  useEffect(() => {
+    if (searchParams.get('create') === 'true') {
+      setShowCreate(true)
+      // Remove the param from URL
+      searchParams.delete('create')
+      setSearchParams(searchParams, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
 
   const { data: invoices, isLoading } = useInvoices(filters)
   const { data: summary } = useInvoiceSummary()

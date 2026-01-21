@@ -42,7 +42,7 @@ export const FINDING_STATUS_COLORS: Record<string, { bg: string; text: string; l
   fail: { bg: '#fee2e2', text: '#991b1b', label: 'Fail' },
   needs_attention: { bg: '#fef3c7', text: '#92400e', label: 'Needs Attention' },
   urgent: { bg: '#fecaca', text: '#b91c1c', label: 'Urgent' },
-  na: { bg: '#f3f4f6', text: '#6b7280', label: 'N/A' },
+  na: { bg: '#e2e8f0', text: '#475569', label: 'N/A' },
 } as const
 
 // Priority colors for recommendations

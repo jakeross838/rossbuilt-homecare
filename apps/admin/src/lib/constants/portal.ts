@@ -22,7 +22,7 @@ export const SERVICE_REQUEST_STATUS_CONFIG = {
   in_progress: { label: 'In Progress', color: 'bg-yellow-100 text-yellow-800', description: 'Being worked on' },
   scheduled: { label: 'Scheduled', color: 'bg-cyan-100 text-cyan-800', description: 'Work has been scheduled' },
   completed: { label: 'Completed', color: 'bg-green-100 text-green-800', description: 'Request completed' },
-  cancelled: { label: 'Cancelled', color: 'bg-gray-100 text-gray-600', description: 'Request cancelled' },
+  cancelled: { label: 'Cancelled', color: 'bg-gray-200 text-gray-700', description: 'Request cancelled' },
 } as const
 
 // Recommendation response options for client
@@ -51,8 +51,8 @@ export const CONDITION_DISPLAY = {
 
 // Priority display for clients
 export const PRIORITY_DISPLAY = {
-  low: { label: 'Low', color: 'bg-gray-100 text-gray-700' },
-  medium: { label: 'Medium', color: 'bg-blue-100 text-blue-700' },
-  high: { label: 'High', color: 'bg-orange-100 text-orange-700' },
-  urgent: { label: 'Urgent', color: 'bg-red-100 text-red-700' },
+  low: { label: 'Low', color: 'bg-slate-200 text-slate-800' },
+  medium: { label: 'Medium', color: 'bg-blue-100 text-blue-800' },
+  high: { label: 'High', color: 'bg-orange-100 text-orange-800' },
+  urgent: { label: 'Urgent', color: 'bg-red-100 text-red-800' },
 } as const

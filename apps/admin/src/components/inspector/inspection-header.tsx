@@ -1,5 +1,5 @@
 import { ArrowLeft, MapPin, Phone, Clock, Wifi, WifiOff } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -12,6 +12,7 @@ interface InspectionHeaderProps {
 }
 
 export function InspectionHeader({ inspection }: InspectionHeaderProps) {
+  const navigate = useNavigate()
   const { isOnline } = useOfflineStatus()
   const progress = calculateInspectionProgress(inspection)
 
@@ -19,12 +20,15 @@ export function InspectionHeader({ inspection }: InspectionHeaderProps) {
     <div className="bg-background border-b sticky top-0 z-10">
       {/* Top bar with back button and status */}
       <div className="flex items-center justify-between p-3 border-b">
-        <Link to="/inspector">
-          <Button variant="ghost" size="sm" className="gap-1">
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-        </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1"
+          onClick={() => navigate('/inspector')}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
 
         <div className="flex items-center gap-2">
           {/* Offline indicator */}
