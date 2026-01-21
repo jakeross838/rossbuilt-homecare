@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/auth-store'
 import { usePortalAuth } from '@/hooks/use-portal-auth'
+import { usePortalRealtimeSync } from '@/hooks/use-realtime-sync'
 
 const navItems = [
   { label: 'Dashboard', href: '/portal', icon: LayoutDashboard },
@@ -30,6 +31,9 @@ export function PortalLayout() {
   const { profile } = usePortalAuth()
   const signOut = useAuthStore((state) => state.signOut)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Enable real-time sync for portal data
+  usePortalRealtimeSync()
 
   const handleSignOut = async () => {
     await signOut()

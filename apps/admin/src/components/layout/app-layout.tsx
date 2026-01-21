@@ -5,10 +5,14 @@ import { Sidebar } from './sidebar'
 import { Header } from './header'
 import { Toaster } from '@/components/ui/toaster'
 import { useAuthStore } from '@/stores/auth-store'
+import { useGlobalRealtimeSync } from '@/hooks/use-realtime-sync'
 
 export function AppLayout() {
   const location = useLocation()
   const { user, isLoading } = useAuthStore()
+
+  // Enable real-time sync for all data tables
+  useGlobalRealtimeSync()
 
   // Show loading state during auth operations (sign in/out)
   if (isLoading) {
