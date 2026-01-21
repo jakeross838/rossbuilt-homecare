@@ -626,7 +626,7 @@ INSERT INTO recommendations (id, organization_id, inspection_id, property_id, ti
 -- INVOICES (Various statuses)
 -- =============================================================================
 
-INSERT INTO invoices (id, organization_id, client_id, invoice_number, invoice_type, status, issue_date, due_date, subtotal, tax_rate, tax_amount, total, notes) VALUES
+INSERT INTO invoices (id, organization_id, client_id, invoice_number, invoice_type, status, invoice_date, due_date, subtotal, tax_rate, tax_amount, total, balance_due, amount_paid, notes) VALUES
   (
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001',
     '00000000-0000-0000-0000-000000000001',
@@ -637,8 +637,10 @@ INSERT INTO invoices (id, organization_id, client_id, invoice_number, invoice_ty
     '2024-11-16',
     '2024-12-16',
     350.00,
-    7.0,
+    0.07,
     24.50,
+    374.50,
+    0.00,
     374.50,
     'Q4 2024 Comprehensive Inspection'
   ),
@@ -652,9 +654,11 @@ INSERT INTO invoices (id, organization_id, client_id, invoice_number, invoice_ty
     '2025-01-11',
     '2025-02-10',
     450.00,
-    7.0,
+    0.07,
     31.50,
     481.50,
+    481.50,
+    0.00,
     'January 2025 Monthly Inspection'
   ),
   (
@@ -667,21 +671,23 @@ INSERT INTO invoices (id, organization_id, client_id, invoice_number, invoice_ty
     '2025-01-19',
     '2025-02-18',
     200.00,
-    7.0,
+    0.07,
     14.00,
     214.00,
+    214.00,
+    0.00,
     'Semi-annual inspection fee'
   );
 
 -- Invoice line items
-INSERT INTO invoice_line_items (id, invoice_id, description, quantity, unit_price, total) VALUES
+INSERT INTO invoice_line_items (id, invoice_id, description, quantity, unit_price, amount) VALUES
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbb001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001', 'Comprehensive Quarterly Inspection', 1, 350.00, 350.00),
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbb002', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa002', 'Monthly Executive Inspection', 1, 450.00, 450.00),
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbb003', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa003', 'Semi-Annual Visual Inspection', 1, 200.00, 200.00);
 
 -- Payment for paid invoice
-INSERT INTO payments (id, organization_id, invoice_id, amount, payment_method, payment_date, reference_number) VALUES
-  ('cccccccc-cccc-cccc-cccc-ccccccccc001', '00000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001', 374.50, 'credit_card', '2024-11-20', 'CC-12345');
+INSERT INTO payments (id, organization_id, invoice_id, client_id, amount, payment_method, payment_date) VALUES
+  ('cccccccc-cccc-cccc-cccc-ccccccccc001', '00000000-0000-0000-0000-000000000001', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa001', '22222222-2222-2222-2222-222222222201', 374.50, 'card', '2024-11-20 10:00:00+00');
 
 -- =============================================================================
 -- SERVICE REQUESTS (From clients)
