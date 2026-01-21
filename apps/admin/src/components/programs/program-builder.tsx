@@ -160,7 +160,7 @@ export function ProgramBuilder({
         description: 'Program activated successfully!',
       })
       onSuccess?.()
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create program. Please try again.',

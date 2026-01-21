@@ -161,7 +161,7 @@ export default function OrganizationSettingsPage() {
         title: 'Organization updated',
         description: 'Your organization settings have been saved.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update organization settings.',
@@ -177,7 +177,7 @@ export default function OrganizationSettingsPage() {
         title: 'Settings updated',
         description: 'Business hours and scheduling settings have been saved.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update settings.',
@@ -196,7 +196,7 @@ export default function OrganizationSettingsPage() {
         title: 'Logo uploaded',
         description: 'Your organization logo has been updated.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to upload logo.',

@@ -57,7 +57,7 @@ type ProfileFormData = z.infer<typeof profileSchema>
 type PasswordFormData = z.infer<typeof passwordSchema>
 
 export default function ProfileSettingsPage() {
-  const { profile, user } = useAuthStore()
+  const { profile } = useAuthStore()
   const updateProfile = useUpdateProfile()
   const changePassword = useChangePassword()
   const uploadAvatar = useUploadAvatar()
@@ -103,7 +103,7 @@ export default function ProfileSettingsPage() {
         title: 'Profile updated',
         description: 'Your profile has been saved.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update profile.',
@@ -120,7 +120,7 @@ export default function ProfileSettingsPage() {
         title: 'Password changed',
         description: 'Your password has been updated successfully.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to change password.',
@@ -139,7 +139,7 @@ export default function ProfileSettingsPage() {
         title: 'Avatar uploaded',
         description: 'Your profile picture has been updated.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to upload avatar.',
@@ -151,7 +151,7 @@ export default function ProfileSettingsPage() {
   const handlePreferenceChange = async (key: string, value: boolean) => {
     try {
       await updatePreferences.mutateAsync({ [key]: value })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to update preference.',

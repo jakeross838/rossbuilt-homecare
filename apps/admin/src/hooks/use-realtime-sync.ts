@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
@@ -17,7 +17,21 @@ type TableName =
 
 interface RealtimeConfig {
   tables: TableName[]
-  onUpdate?: (table: TableName, payload: any) => void
+  onUpdate?: (table: TableName, payload: unknown) => void
+}
+
+// Map table names to query keys (static, no need for useMemo)
+const queryKeyMap: Record<TableName, string[][]> = {
+  clients: [['clients'], ['portal', 'dashboard']],
+  properties: [['properties'], ['portal', 'properties'], ['portal', 'dashboard']],
+  equipment: [['equipment'], ['portal', 'properties']],
+  work_orders: [['workOrders'], ['portal', 'properties'], ['portal', 'dashboard']],
+  inspections: [['inspections'], ['portal', 'inspections'], ['portal', 'dashboard']],
+  invoices: [['invoices'], ['portal', 'invoices'], ['portal', 'dashboard']],
+  service_requests: [['serviceRequests'], ['portal', 'requests'], ['portal', 'dashboard']],
+  vendors: [['vendors']],
+  reminders: [['reminders']],
+  calendar_events: [['calendar'], ['calendarEvents']],
 }
 
 /**
@@ -30,6 +44,18 @@ export function useRealtimeSync(config: RealtimeConfig) {
   const queryClient = useQueryClient()
   const orgId = profile?.organization_id
 
+  // Memoize the tables array to prevent unnecessary re-renders
+  const tablesList = useMemo(() => config.tables, [config.tables])
+  const onUpdateCallback = config.onUpdate
+
+  // Invalidate queries for a specific table
+  const invalidateTable = useCallback((table: TableName) => {
+    const keys = queryKeyMap[table] || [[table]]
+    keys.forEach((key) => {
+      queryClient.invalidateQueries({ queryKey: key })
+    })
+  }, [queryClient])
+
   useEffect(() => {
     if (!orgId) return
 
@@ -37,7 +63,7 @@ export function useRealtimeSync(config: RealtimeConfig) {
     const channel = supabase.channel(`realtime-sync-${orgId}`)
 
     // Subscribe to each table
-    config.tables.forEach((table) => {
+    tablesList.forEach((table) => {
       // Listen for INSERT events
       channel.on(
         'postgres_changes',
@@ -50,7 +76,7 @@ export function useRealtimeSync(config: RealtimeConfig) {
         (payload) => {
           console.log(`[Realtime] ${table} INSERT:`, payload.new)
           invalidateTable(table)
-          config.onUpdate?.(table, payload)
+          onUpdateCallback?.(table, payload)
         }
       )
 
@@ -66,7 +92,7 @@ export function useRealtimeSync(config: RealtimeConfig) {
         (payload) => {
           console.log(`[Realtime] ${table} UPDATE:`, payload.new)
           invalidateTable(table)
-          config.onUpdate?.(table, payload)
+          onUpdateCallback?.(table, payload)
         }
       )
 
@@ -82,7 +108,7 @@ export function useRealtimeSync(config: RealtimeConfig) {
         (payload) => {
           console.log(`[Realtime] ${table} DELETE:`, payload.old)
           invalidateTable(table)
-          config.onUpdate?.(table, payload)
+          onUpdateCallback?.(table, payload)
         }
       )
     })
@@ -97,29 +123,7 @@ export function useRealtimeSync(config: RealtimeConfig) {
       console.log('[Realtime] Unsubscribing from channel')
       supabase.removeChannel(channel)
     }
-  }, [orgId, config.tables.join(',')])
-
-  // Invalidate queries for a specific table
-  const invalidateTable = useCallback((table: TableName) => {
-    // Map table names to query keys
-    const queryKeyMap: Record<TableName, string[][]> = {
-      clients: [['clients'], ['portal', 'dashboard']],
-      properties: [['properties'], ['portal', 'properties'], ['portal', 'dashboard']],
-      equipment: [['equipment'], ['portal', 'properties']],
-      work_orders: [['workOrders'], ['portal', 'properties'], ['portal', 'dashboard']],
-      inspections: [['inspections'], ['portal', 'inspections'], ['portal', 'dashboard']],
-      invoices: [['invoices'], ['portal', 'invoices'], ['portal', 'dashboard']],
-      service_requests: [['serviceRequests'], ['portal', 'requests'], ['portal', 'dashboard']],
-      vendors: [['vendors']],
-      reminders: [['reminders']],
-      calendar_events: [['calendar'], ['calendarEvents']],
-    }
-
-    const keys = queryKeyMap[table] || [[table]]
-    keys.forEach((key) => {
-      queryClient.invalidateQueries({ queryKey: key })
-    })
-  }, [queryClient])
+  }, [orgId, tablesList, invalidateTable, onUpdateCallback])
 
   return { invalidateTable }
 }
@@ -129,20 +133,20 @@ export function useRealtimeSync(config: RealtimeConfig) {
  * Use this in the app layout to enable global real-time updates
  */
 export function useGlobalRealtimeSync() {
-  return useRealtimeSync({
-    tables: [
-      'clients',
-      'properties',
-      'equipment',
-      'work_orders',
-      'inspections',
-      'invoices',
-      'service_requests',
-      'vendors',
-      'reminders',
-      'calendar_events',
-    ],
-  })
+  const tables = useMemo<TableName[]>(() => [
+    'clients',
+    'properties',
+    'equipment',
+    'work_orders',
+    'inspections',
+    'invoices',
+    'service_requests',
+    'vendors',
+    'reminders',
+    'calendar_events',
+  ], [])
+
+  return useRealtimeSync({ tables })
 }
 
 /**
@@ -150,14 +154,14 @@ export function useGlobalRealtimeSync() {
  * Only subscribes to tables relevant to client portal
  */
 export function usePortalRealtimeSync() {
-  return useRealtimeSync({
-    tables: [
-      'properties',
-      'equipment',
-      'work_orders',
-      'inspections',
-      'invoices',
-      'service_requests',
-    ],
-  })
+  const tables = useMemo<TableName[]>(() => [
+    'properties',
+    'equipment',
+    'work_orders',
+    'inspections',
+    'invoices',
+    'service_requests',
+  ], [])
+
+  return useRealtimeSync({ tables })
 }

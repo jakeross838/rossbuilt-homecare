@@ -100,7 +100,7 @@ export function GenerateReportDialog({
         title: 'Download Started',
         description: 'Your report is being downloaded.',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Download Failed',
         description: 'Failed to download report',
