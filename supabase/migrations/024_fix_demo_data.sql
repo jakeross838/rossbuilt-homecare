@@ -18,7 +18,7 @@ DELETE FROM equipment WHERE property_id IN (SELECT id FROM properties WHERE orga
 DELETE FROM calendar_events WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
 DELETE FROM reminders WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
 DELETE FROM documents WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
-DELETE FROM property_keys WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
+DELETE FROM home_manuals WHERE property_id IN (SELECT id FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001');
 DELETE FROM properties WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 DELETE FROM clients WHERE organization_id = '00000000-0000-0000-0000-000000000001';
 
