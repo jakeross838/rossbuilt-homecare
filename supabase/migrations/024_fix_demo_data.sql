@@ -725,7 +725,7 @@ INSERT INTO service_requests (id, organization_id, property_id, client_id, reque
 
 INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, entity_id, entity_name, metadata, created_at) VALUES
   (
-    'ffffffff-ffff-ffff-ffff-fffffffffff01',
+    'ffffffff-ffff-ffff-ffff-ffffffffffff',
     '00000000-0000-0000-0000-000000000001',
     NULL,
     'created',
@@ -736,7 +736,7 @@ INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, ent
     NOW() - INTERVAL '2 hours'
   ),
   (
-    'ffffffff-ffff-ffff-ffff-fffffffffff02',
+    'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
     '00000000-0000-0000-0000-000000000001',
     NULL,
     'updated',
@@ -747,7 +747,7 @@ INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, ent
     NOW() - INTERVAL '30 minutes'
   ),
   (
-    'ffffffff-ffff-ffff-ffff-fffffffffff03',
+    'dddddddd-dddd-dddd-dddd-dddddddddddd',
     '00000000-0000-0000-0000-000000000001',
     NULL,
     'created',
