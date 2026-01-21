@@ -123,6 +123,7 @@ export async function syncPendingPhotos(): Promise<{
   let uploaded = 0
   let failed = 0
   const urls: Record<string, string[]> = {}
+  const inspectionPhotos: Record<string, Record<string, string[]>> = {} // inspectionId -> itemId -> urls
 
   for (const photo of allPhotos) {
     const url = await uploadPhoto(photo)
@@ -137,11 +138,65 @@ export async function syncPendingPhotos(): Promise<{
         urls[photo.itemId] = []
       }
       urls[photo.itemId].push(url)
+
+      // Track by inspection for database update
+      if (!inspectionPhotos[photo.inspectionId]) {
+        inspectionPhotos[photo.inspectionId] = {}
+      }
+      if (!inspectionPhotos[photo.inspectionId][photo.itemId]) {
+        inspectionPhotos[photo.inspectionId][photo.itemId] = []
+      }
+      inspectionPhotos[photo.inspectionId][photo.itemId].push(url)
     } else {
       // Failed - increment attempt counter
       photo.uploadAttempts++
       await db.put(STORE_NAME, photo)
       failed++
+    }
+  }
+
+  // Update inspection findings with uploaded photo URLs
+  for (const [inspectionId, itemPhotos] of Object.entries(inspectionPhotos)) {
+    try {
+      // Get current findings
+      const { data } = await supabase
+        .from('inspections')
+        .select('findings')
+        .eq('id', inspectionId)
+        .single()
+
+      if (data) {
+        const findings = (data.findings || {}) as Record<string, { photos?: string[]; [key: string]: unknown }>
+
+        // Add photos to each item's finding
+        for (const [itemId, photoUrls] of Object.entries(itemPhotos)) {
+          if (findings[itemId]) {
+            // Merge with existing photos
+            findings[itemId].photos = [
+              ...(findings[itemId].photos || []),
+              ...photoUrls,
+            ]
+          } else {
+            // Create a minimal finding entry with photos
+            findings[itemId] = {
+              status: 'pass', // Default status
+              photos: photoUrls,
+              completed_at: new Date().toISOString(),
+            }
+          }
+        }
+
+        // Update inspection with new findings
+        await supabase
+          .from('inspections')
+          .update({
+            findings,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', inspectionId)
+      }
+    } catch (err) {
+      console.error(`Failed to update findings for inspection ${inspectionId}:`, err)
     }
   }
 

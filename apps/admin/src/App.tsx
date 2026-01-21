@@ -46,7 +46,10 @@ import PortalDashboardPage from '@/pages/portal'
 import PortalPropertiesPage from '@/pages/portal/properties'
 import PortalPropertyDetailPage from '@/pages/portal/properties/[id]'
 import PortalRequestsPage from '@/pages/portal/requests'
+import PortalRequestDetailPage from '@/pages/portal/requests/[id]'
 import PortalInvoicesPage from '@/pages/portal/invoices'
+import PortalInspectionsPage from '@/pages/portal/inspections'
+import PortalInspectionDetailPage from '@/pages/portal/inspections/[id]'
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -96,9 +99,10 @@ function App() {
               <Route path="properties" element={<PortalPropertiesPage />} />
               <Route path="properties/:id" element={<PortalPropertyDetailPage />} />
               <Route path="requests" element={<PortalRequestsPage />} />
+              <Route path="requests/:id" element={<PortalRequestDetailPage />} />
               <Route path="invoices" element={<PortalInvoicesPage />} />
-              <Route path="inspections" element={<PlaceholderPage title="Inspections" />} />
-              <Route path="inspections/:id" element={<PlaceholderPage title="Inspection Detail" />} />
+              <Route path="inspections" element={<PortalInspectionsPage />} />
+              <Route path="inspections/:id" element={<PortalInspectionDetailPage />} />
             </Route>
 
             {/* Protected routes with AppLayout */}

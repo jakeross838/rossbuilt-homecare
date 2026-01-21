@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { format } from 'date-fns'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -31,6 +32,7 @@ import { Calendar, Clock, MapPin, Play, ClipboardList, CheckCircle } from 'lucid
 import { useToast } from '@/hooks/use-toast'
 import { useInspectors } from '@/hooks/use-inspectors'
 import { useAssignInspector, useCancelInspection } from '@/hooks/use-inspections'
+import { RescheduleInspectionDialog } from './reschedule-inspection-dialog'
 import type { CalendarInspection } from '@/lib/types/scheduling'
 import { INSPECTION_STATUS_COLORS, INSPECTION_TYPES } from '@/lib/constants/scheduling'
 
@@ -68,6 +70,7 @@ export function InspectionDetailSheet({
   const { data: inspectors } = useInspectors()
   const assignInspector = useAssignInspector()
   const cancelInspection = useCancelInspection()
+  const [showReschedule, setShowReschedule] = useState(false)
 
   if (!inspection) return null
 
@@ -244,10 +247,7 @@ export function InspectionDetailSheet({
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => {
-                  // TODO: Open reschedule dialog
-                  toast({ title: 'Coming soon', description: 'Reschedule functionality' })
-                }}
+                onClick={() => setShowReschedule(true)}
                 disabled={!isCancellable}
               >
                 Reschedule
@@ -281,6 +281,14 @@ export function InspectionDetailSheet({
             </div>
           </div>
         </div>
+
+        {/* Reschedule Dialog */}
+        <RescheduleInspectionDialog
+          open={showReschedule}
+          onOpenChange={setShowReschedule}
+          inspection={inspection}
+          onSuccess={() => onOpenChange(false)}
+        />
       </SheetContent>
     </Sheet>
   )

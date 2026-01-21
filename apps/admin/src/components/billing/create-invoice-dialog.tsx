@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Dialog,
@@ -68,6 +68,7 @@ export function CreateInvoiceDialog({
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors },
     reset,
   } = useForm<CreateInvoiceFormData>({
@@ -228,22 +229,28 @@ export function CreateInvoiceDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Client</Label>
-              <Select
-                value={watch('client_id')}
-                onValueChange={(value) => setValue('client_id', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select client" />
-                </SelectTrigger>
-                <SelectContent>
-                  {clients?.map((client) => (
-                    <SelectItem key={client.id} value={client.id}>
-                      {client.company_name ||
-                        `${client.first_name} ${client.last_name}`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="client_id"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select client" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clients?.map((client) => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.company_name ||
+                            `${client.first_name} ${client.last_name}`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors.client_id && (
                 <p className="text-sm text-destructive">{errors.client_id.message}</p>
               )}
@@ -251,23 +258,27 @@ export function CreateInvoiceDialog({
 
             <div className="space-y-2">
               <Label>Invoice Type</Label>
-              <Select
-                value={watch('invoice_type')}
-                onValueChange={(value: 'subscription' | 'service' | 'mixed') =>
-                  setValue('invoice_type', value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {INVOICE_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="invoice_type"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INVOICE_TYPES.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 

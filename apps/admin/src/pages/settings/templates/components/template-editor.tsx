@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useForm, useFieldArray, type Resolver } from 'react-hook-form'
+import { useForm, useFieldArray, Controller, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Trash2, GripVertical } from 'lucide-react'
 import {
@@ -212,22 +212,26 @@ export function TemplateEditor({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Tier *</Label>
-                <Select
-                  value={watch('tier')}
-                  onValueChange={(value) =>
-                    setValue('tier', value as InspectionTemplateFormData['tier'])
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select tier" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="visual">Visual</SelectItem>
-                    <SelectItem value="functional">Functional</SelectItem>
-                    <SelectItem value="comprehensive">Comprehensive</SelectItem>
-                    <SelectItem value="preventative">Preventative</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="tier"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select tier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="visual">Visual</SelectItem>
+                        <SelectItem value="functional">Functional</SelectItem>
+                        <SelectItem value="comprehensive">Comprehensive</SelectItem>
+                        <SelectItem value="preventative">Preventative</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
 
               <div className="space-y-2">
@@ -243,46 +247,58 @@ export function TemplateEditor({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Select
-                  value={watch('category') || 'none'}
-                  onValueChange={(value) =>
-                    setValue('category', value && value !== 'none' ? value : null)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {CATEGORY_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="category"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || 'none'}
+                      onValueChange={(value) =>
+                        field.onChange(value && value !== 'none' ? value : null)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {CATEGORY_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label>Feature Type</Label>
-                <Select
-                  value={watch('feature_type') || 'none'}
-                  onValueChange={(value) =>
-                    setValue('feature_type', value && value !== 'none' ? value : null)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select feature" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {FEATURE_TYPE_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="feature_type"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || 'none'}
+                      onValueChange={(value) =>
+                        field.onChange(value && value !== 'none' ? value : null)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select feature" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {FEATURE_TYPE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
             </div>
           </div>
@@ -406,6 +422,7 @@ function SectionEditor({
             sectionIndex={sectionIndex}
             itemIndex={itemIndex}
             register={register}
+            control={control}
             watch={watch}
             setValue={setValue}
             onRemove={() => removeItem(itemIndex)}
@@ -432,6 +449,7 @@ interface ItemEditorProps {
   sectionIndex: number
   itemIndex: number
   register: ReturnType<typeof useForm<InspectionTemplateFormData>>['register']
+  control: ReturnType<typeof useForm<InspectionTemplateFormData>>['control']
   watch: ReturnType<typeof useForm<InspectionTemplateFormData>>['watch']
   setValue: ReturnType<typeof useForm<InspectionTemplateFormData>>['setValue']
   onRemove: () => void
@@ -441,12 +459,12 @@ function ItemEditor({
   sectionIndex,
   itemIndex,
   register,
+  control,
   watch,
   setValue,
   onRemove,
 }: ItemEditorProps) {
   const itemPath = `sections.${sectionIndex}.items.${itemIndex}` as const
-  const itemType = watch(`${itemPath}.type`)
   const photoRequired = watch(`${itemPath}.photo_required`)
   const photoRecommended = watch(`${itemPath}.photo_recommended`)
 
@@ -460,23 +478,27 @@ function ItemEditor({
         />
 
         <div className="flex items-center gap-4 flex-wrap">
-          <Select
-            value={itemType || 'status'}
-            onValueChange={(value) =>
-              setValue(`${itemPath}.type`, value as 'status' | 'text' | 'number' | 'select' | 'photo')
-            }
-          >
-            <SelectTrigger className="w-40 h-8 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {ITEM_TYPE_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Controller
+            name={`${itemPath}.type`}
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={field.value || 'status'}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger className="w-40 h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ITEM_TYPE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
 
           <div className="flex items-center gap-2">
             <Checkbox

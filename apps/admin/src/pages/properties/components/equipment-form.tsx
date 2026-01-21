@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 
@@ -67,6 +67,7 @@ export function EquipmentForm({
     setValue,
     watch,
     reset,
+    control,
     formState: { errors },
   } = useForm<EquipmentFormData>({
     resolver: zodResolver(equipmentSchema),
@@ -155,18 +156,31 @@ export function EquipmentForm({
               <Label>
                 Category <span className="text-destructive">*</span>
               </Label>
-              <Select value={category} onValueChange={handleCategoryChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(EQUIPMENT_CATEGORIES).map(([key, cat]) => (
-                    <SelectItem key={key} value={key}>
-                      {cat.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="category"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || category}
+                    onValueChange={(value) => {
+                      field.onChange(value)
+                      setCategory(value)
+                      setValue('equipment_type', '')
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(EQUIPMENT_CATEGORIES).map(([key, cat]) => (
+                        <SelectItem key={key} value={key}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors.category && (
                 <p className="text-sm text-destructive">
                   {errors.category.message}
@@ -178,22 +192,28 @@ export function EquipmentForm({
               <Label>
                 Type <span className="text-destructive">*</span>
               </Label>
-              <Select
-                value={watch('equipment_type')}
-                onValueChange={(v) => setValue('equipment_type', v)}
-                disabled={!category}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {types.map((t) => (
-                    <SelectItem key={t.value} value={t.value}>
-                      {t.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="equipment_type"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={!category}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {types.map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors.equipment_type && (
                 <p className="text-sm text-destructive">
                   {errors.equipment_type.message}
@@ -296,21 +316,27 @@ export function EquipmentForm({
             </div>
             <div className="space-y-2">
               <Label htmlFor="fuel_type">Fuel Type</Label>
-              <Select
-                value={watch('fuel_type') || ''}
-                onValueChange={(v) => setValue('fuel_type', v)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {FUEL_TYPES.map((f) => (
-                    <SelectItem key={f.value} value={f.value}>
-                      {f.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="fuel_type"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || ''}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FUEL_TYPES.map((f) => (
+                        <SelectItem key={f.value} value={f.value}>
+                          {f.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
           </div>
 

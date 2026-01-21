@@ -440,6 +440,12 @@ export default function InvoiceDetailPage() {
         invoiceNumber={invoice.invoice_number}
         clientEmail={client?.email}
         clientName={clientName}
+        total={Number(invoice.total)}
+        dueDate={invoice.due_date}
+        lineItems={(invoice.line_items || []).map(item => ({
+          description: item.description,
+          amount: Number(item.amount),
+        }))}
       />
 
       <AlertDialog open={showVoid} onOpenChange={setShowVoid}>

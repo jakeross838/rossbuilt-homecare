@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import {
@@ -59,12 +59,13 @@ export function ScheduleInspectionDialog({
     },
   })
 
-  const selectedType = form.watch('inspection_type')
+  const { control, register, handleSubmit, formState: { errors }, reset, setValue, watch } = form
+  const selectedType = watch('inspection_type')
 
   // Reset form when dialog opens or initialDate changes
   useEffect(() => {
     if (open) {
-      form.reset({
+      reset({
         property_id: '',
         inspection_type: 'scheduled',
         scheduled_date: initialDate ? format(initialDate, 'yyyy-MM-dd') : '',
@@ -72,14 +73,14 @@ export function ScheduleInspectionDialog({
         estimated_duration_minutes: 60,
       })
     }
-  }, [open, initialDate, form])
+  }, [open, initialDate, reset])
 
   // Update duration when type changes (use tier-based defaults)
   const handleTypeChange = (value: string) => {
-    form.setValue('inspection_type', value as ScheduleInspectionInput['inspection_type'])
+    setValue('inspection_type', value as ScheduleInspectionInput['inspection_type'], { shouldValidate: true })
     // Default duration based on common tier for type
     const duration = value === 'preventative' ? 120 : 60
-    form.setValue('estimated_duration_minutes', duration)
+    setValue('estimated_duration_minutes', duration, { shouldValidate: true })
   }
 
   const onSubmit = async (data: ScheduleInspectionInput) => {
@@ -100,12 +101,8 @@ export function ScheduleInspectionDialog({
     }
   }
 
-  // Filter to properties with active programs
-  const activeProperties = properties?.filter(() => {
-    // In a full implementation, would check for active program
-    // For now, show all properties
-    return true
-  })
+  // Show all active properties
+  const activeProperties = properties
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -117,29 +114,35 @@ export function ScheduleInspectionDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Property Select */}
           <div className="space-y-2">
             <Label htmlFor="property_id">Property *</Label>
-            <Select
-              value={form.watch('property_id')}
-              onValueChange={(v) => form.setValue('property_id', v)}
-              disabled={loadingProperties}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select property" />
-              </SelectTrigger>
-              <SelectContent>
-                {activeProperties?.map((property) => (
-                  <SelectItem key={property.id} value={property.id}>
-                    {property.name} - {property.city}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {form.formState.errors.property_id && (
+            <Controller
+              name="property_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  disabled={loadingProperties}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select property" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {activeProperties?.map((property) => (
+                      <SelectItem key={property.id} value={property.id}>
+                        {property.name} - {property.city}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.property_id && (
               <p className="text-sm text-destructive">
-                {form.formState.errors.property_id.message}
+                {errors.property_id.message}
               </p>
             )}
           </div>
@@ -147,21 +150,32 @@ export function ScheduleInspectionDialog({
           {/* Inspection Type */}
           <div className="space-y-2">
             <Label htmlFor="inspection_type">Inspection Type</Label>
-            <Select
-              value={selectedType}
-              onValueChange={handleTypeChange}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {INSPECTION_TYPES_LIST.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="inspection_type"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={(v) => {
+                    field.onChange(v)
+                    // Update duration based on type
+                    const duration = v === 'preventative' ? 120 : 60
+                    setValue('estimated_duration_minutes', duration, { shouldValidate: true })
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INSPECTION_TYPES_LIST.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           {/* Date */}
@@ -169,11 +183,11 @@ export function ScheduleInspectionDialog({
             <Label htmlFor="scheduled_date">Date *</Label>
             <Input
               type="date"
-              {...form.register('scheduled_date')}
+              {...register('scheduled_date')}
             />
-            {form.formState.errors.scheduled_date && (
+            {errors.scheduled_date && (
               <p className="text-sm text-destructive">
-                {form.formState.errors.scheduled_date.message}
+                {errors.scheduled_date.message}
               </p>
             )}
           </div>
@@ -184,7 +198,7 @@ export function ScheduleInspectionDialog({
               <Label htmlFor="scheduled_time_start">Start Time</Label>
               <Input
                 type="time"
-                {...form.register('scheduled_time_start')}
+                {...register('scheduled_time_start')}
               />
             </div>
             <div className="space-y-2">
@@ -194,7 +208,7 @@ export function ScheduleInspectionDialog({
                 min={15}
                 max={480}
                 step={15}
-                {...form.register('estimated_duration_minutes', { valueAsNumber: true })}
+                {...register('estimated_duration_minutes', { valueAsNumber: true })}
               />
             </div>
           </div>
@@ -202,25 +216,31 @@ export function ScheduleInspectionDialog({
           {/* Inspector */}
           <div className="space-y-2">
             <Label htmlFor="inspector_id">Assign Inspector</Label>
-            <Select
-              value={form.watch('inspector_id') || 'unassigned'}
-              onValueChange={(v) => form.setValue('inspector_id', v && v !== 'unassigned' ? v : undefined)}
-              disabled={loadingInspectors}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Unassigned" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="unassigned">Unassigned</SelectItem>
-                {inspectors?.map((inspector) => (
-                  <SelectItem key={inspector.id} value={inspector.id}>
-                    {inspector.first_name && inspector.last_name
-                      ? `${inspector.first_name} ${inspector.last_name}`
-                      : inspector.email}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="inspector_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value || 'unassigned'}
+                  onValueChange={(v) => field.onChange(v === 'unassigned' ? '' : v)}
+                  disabled={loadingInspectors}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Unassigned" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unassigned">Unassigned</SelectItem>
+                    {inspectors?.map((inspector) => (
+                      <SelectItem key={inspector.id} value={inspector.id}>
+                        {inspector.first_name && inspector.last_name
+                          ? `${inspector.first_name} ${inspector.last_name}`
+                          : inspector.email}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           {/* Actions */}

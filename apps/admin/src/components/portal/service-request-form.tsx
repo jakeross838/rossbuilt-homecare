@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Upload, X, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -55,6 +55,7 @@ export function ServiceRequestForm({
     setValue,
     watch,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<CreateServiceRequestInput>({
     resolver: zodResolver(createServiceRequestSchema) as Resolver<CreateServiceRequestInput>,
@@ -136,21 +137,27 @@ export function ServiceRequestForm({
           {/* Property Selection */}
           <div className="space-y-2">
             <Label htmlFor="property_id">Property *</Label>
-            <Select
-              value={watch('property_id')}
-              onValueChange={(value) => setValue('property_id', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a property" />
-              </SelectTrigger>
-              <SelectContent>
-                {properties?.map((prop) => (
-                  <SelectItem key={prop.id} value={prop.id}>
-                    {prop.name} - {prop.address_line1}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="property_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a property" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {properties?.map((prop) => (
+                      <SelectItem key={prop.id} value={prop.id}>
+                        {prop.name} - {prop.address_line1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.property_id && (
               <p className="text-sm text-red-600">{errors.property_id.message}</p>
             )}
@@ -159,24 +166,30 @@ export function ServiceRequestForm({
           {/* Request Type */}
           <div className="space-y-2">
             <Label htmlFor="request_type">Request Type *</Label>
-            <Select
-              value={selectedType}
-              onValueChange={(value) => setValue('request_type', value as typeof selectedType)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="What kind of request?" />
-              </SelectTrigger>
-              <SelectContent>
-                {SERVICE_REQUEST_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    <div>
-                      <p className="font-medium">{type.label}</p>
-                      <p className="text-xs text-gray-500">{type.description}</p>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="request_type"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="What kind of request?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SERVICE_REQUEST_TYPES.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        <div>
+                          <p className="font-medium">{type.label}</p>
+                          <p className="text-xs text-gray-500">{type.description}</p>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           {/* Emergency Warning */}
@@ -193,21 +206,27 @@ export function ServiceRequestForm({
           {/* Priority */}
           <div className="space-y-2">
             <Label htmlFor="priority">Priority</Label>
-            <Select
-              value={watch('priority')}
-              onValueChange={(value) => setValue('priority', value as 'low' | 'medium' | 'high' | 'urgent')}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(PRIORITY_DISPLAY).map(([value, config]) => (
-                  <SelectItem key={value} value={value}>
-                    {config.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="priority"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(PRIORITY_DISPLAY).map(([value, config]) => (
+                      <SelectItem key={value} value={value}>
+                        {config.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           {/* Title */}

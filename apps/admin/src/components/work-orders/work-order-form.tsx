@@ -102,7 +102,7 @@ export function WorkOrderForm({
                 <FormLabel>Category</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -130,7 +130,7 @@ export function WorkOrderForm({
                 <FormLabel>Priority</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>

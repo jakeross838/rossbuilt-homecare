@@ -169,29 +169,35 @@ export default function InspectionsPage() {
       completion_percentage: 0,
     }
 
+    // Count items with actual findings (evaluated items)
+    let evaluatedItems = 0
     for (const finding of Object.values(findings)) {
       summary.total_items++
-      switch (finding.status) {
-        case 'pass':
-          summary.passed++
-          break
-        case 'fail':
-          summary.failed++
-          break
-        case 'needs_attention':
-          summary.needs_attention++
-          break
-        case 'urgent':
-          summary.urgent++
-          break
-        case 'na':
-          summary.not_applicable++
-          break
+      if (finding.status) {
+        evaluatedItems++
+        switch (finding.status) {
+          case 'pass':
+            summary.passed++
+            break
+          case 'fail':
+            summary.failed++
+            break
+          case 'needs_attention':
+            summary.needs_attention++
+            break
+          case 'urgent':
+            summary.urgent++
+            break
+          case 'na':
+            summary.not_applicable++
+            break
+        }
       }
     }
 
+    // Completion is evaluated items / total items in the findings
     summary.completion_percentage =
-      summary.total_items > 0 ? Math.round((summary.total_items / summary.total_items) * 100) : 0
+      summary.total_items > 0 ? Math.round((evaluatedItems / summary.total_items) * 100) : 0
 
     return summary
   }
