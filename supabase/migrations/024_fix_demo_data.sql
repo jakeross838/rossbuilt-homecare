@@ -723,7 +723,7 @@ INSERT INTO service_requests (id, organization_id, property_id, client_id, reque
 -- ACTIVITY LOG (Recent activities)
 -- =============================================================================
 
-INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, entity_id, details, created_at) VALUES
+INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, entity_id, entity_name, metadata, created_at) VALUES
   (
     'ffffffff-ffff-ffff-ffff-fffffffffff01',
     '00000000-0000-0000-0000-000000000001',
@@ -731,7 +731,8 @@ INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, ent
     'created',
     'inspection',
     '77777777-7777-7777-7777-777777777704',
-    '{"title": "HVAC Inspection scheduled for Martinez Beach House"}'::jsonb,
+    'HVAC Inspection - Martinez Beach House',
+    '{"property_name": "Martinez Beach House"}'::jsonb,
     NOW() - INTERVAL '2 hours'
   ),
   (
@@ -741,6 +742,7 @@ INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, ent
     'updated',
     'inspection',
     '77777777-7777-7777-7777-777777777704',
+    'HVAC Inspection - Martinez Beach House',
     '{"status": "in_progress", "previous_status": "scheduled"}'::jsonb,
     NOW() - INTERVAL '30 minutes'
   ),
@@ -751,36 +753,9 @@ INSERT INTO activity_log (id, organization_id, user_id, action, entity_type, ent
     'created',
     'work_order',
     '88888888-8888-8888-8888-888888888802',
-    '{"title": "HVAC Filter Replacement created for Martinez Beach House"}'::jsonb,
+    'HVAC Filter Replacement - Urgent',
+    '{"property_name": "Martinez Beach House"}'::jsonb,
     NOW() - INTERVAL '1 day'
   );
 
--- =============================================================================
--- NOTIFICATIONS (For dashboard)
--- =============================================================================
-
-INSERT INTO notifications (id, organization_id, user_id, type, title, message, entity_type, entity_id, is_read, created_at) VALUES
-  (
-    '11111111-0000-0000-0000-000000000001',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
-    'inspection',
-    'Inspection In Progress',
-    'HVAC inspection started at Martinez Beach House',
-    'inspection',
-    '77777777-7777-7777-7777-777777777704',
-    false,
-    NOW() - INTERVAL '30 minutes'
-  ),
-  (
-    '11111111-0000-0000-0000-000000000002',
-    '00000000-0000-0000-0000-000000000001',
-    NULL,
-    'work_order',
-    'Work Order Assigned',
-    'Generator Annual Service assigned to Gulf Coast Electric',
-    'work_order',
-    '88888888-8888-8888-8888-888888888805',
-    true,
-    NOW() - INTERVAL '3 days'
-  );
+-- Note: Skipping notifications INSERT as it requires valid user_id (NOT NULL)
