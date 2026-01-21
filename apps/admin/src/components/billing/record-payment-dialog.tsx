@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Dialog,
@@ -46,6 +46,7 @@ export function RecordPaymentDialog({
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors },
     reset,
   } = useForm<RecordPaymentFormData>({
@@ -120,23 +121,27 @@ export function RecordPaymentDialog({
 
           <div className="space-y-2">
             <Label>Payment Method</Label>
-            <Select
-              value={paymentMethod}
-              onValueChange={(value: RecordPaymentFormData['payment_method']) =>
-                setValue('payment_method', value)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PAYMENT_METHODS.map((method) => (
-                  <SelectItem key={method.value} value={method.value}>
-                    {method.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="payment_method"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PAYMENT_METHODS.map((method) => (
+                      <SelectItem key={method.value} value={method.value}>
+                        {method.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           <div className="space-y-2">

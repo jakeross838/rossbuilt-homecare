@@ -243,18 +243,10 @@ export function useCreateInvoice() {
         data.discount_amount || 0
       )
 
-      // Generate invoice number using sequence
-      const { data: seqResult, error: seqError } = await supabase
-        .rpc('nextval', { sequence_name: 'invoice_seq' })
-
-      let invoiceNumber: string
-      if (seqError) {
-        // Fallback to timestamp-based number if sequence fails
-        const timestamp = Date.now().toString().slice(-6)
-        invoiceNumber = `INV-${timestamp}`
-      } else {
-        invoiceNumber = `INV-${(seqResult as number).toString().padStart(5, '0')}`
-      }
+      // Generate unique invoice number (year-random format for uniqueness)
+      const year = new Date().getFullYear()
+      const random = Math.random().toString(36).substring(2, 8).toUpperCase()
+      const invoiceNumber = `INV-${year}-${random}`
 
       // Create invoice
       const invoiceInsert: InvoiceInsert = {

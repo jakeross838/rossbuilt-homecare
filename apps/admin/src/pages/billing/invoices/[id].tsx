@@ -243,12 +243,12 @@ export default function InvoiceDetailPage() {
                             </p>
                           )}
                         </td>
-                        <td className="p-3 text-right">{item.quantity}</td>
+                        <td className="p-3 text-right">{item.quantity ?? 1}</td>
                         <td className="p-3 text-right">
-                          {formatCurrency(Number(item.unit_price))}
+                          {formatCurrency(Number(item.unit_price ?? 0))}
                         </td>
                         <td className="p-3 text-right font-medium">
-                          {formatCurrency(Number(item.amount))}
+                          {formatCurrency(Number(item.amount ?? 0))}
                         </td>
                       </tr>
                     ))}
@@ -261,15 +261,15 @@ export default function InvoiceDetailPage() {
                 <div className="w-64 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal</span>
-                    <span>{formatCurrency(Number(invoice.subtotal))}</span>
+                    <span>{formatCurrency(Number(invoice.subtotal ?? 0))}</span>
                   </div>
-                  {Number(invoice.tax_amount) > 0 && (
+                  {Number(invoice.tax_amount ?? 0) > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span>Tax ({(Number(invoice.tax_rate) * 100).toFixed(1)}%)</span>
-                      <span>{formatCurrency(Number(invoice.tax_amount))}</span>
+                      <span>Tax ({(Number(invoice.tax_rate ?? 0) * 100).toFixed(1)}%)</span>
+                      <span>{formatCurrency(Number(invoice.tax_amount ?? 0))}</span>
                     </div>
                   )}
-                  {Number(invoice.discount_amount) > 0 && (
+                  {Number(invoice.discount_amount ?? 0) > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
                       <span>
                         Discount
@@ -277,23 +277,23 @@ export default function InvoiceDetailPage() {
                           <span className="text-xs"> ({invoice.discount_description})</span>
                         )}
                       </span>
-                      <span>-{formatCurrency(Number(invoice.discount_amount))}</span>
+                      <span>-{formatCurrency(Number(invoice.discount_amount ?? 0))}</span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
-                    <span>{formatCurrency(Number(invoice.total))}</span>
+                    <span>{formatCurrency(Number(invoice.total ?? 0))}</span>
                   </div>
-                  {Number(invoice.amount_paid) > 0 && (
+                  {Number(invoice.amount_paid ?? 0) > 0 && (
                     <>
                       <div className="flex justify-between text-sm text-green-600">
                         <span>Paid</span>
-                        <span>-{formatCurrency(Number(invoice.amount_paid))}</span>
+                        <span>-{formatCurrency(Number(invoice.amount_paid ?? 0))}</span>
                       </div>
                       <div className="flex justify-between font-bold text-lg">
                         <span>Balance Due</span>
-                        <span>{formatCurrency(Number(invoice.balance_due))}</span>
+                        <span>{formatCurrency(Number(invoice.balance_due ?? 0))}</span>
                       </div>
                     </>
                   )}
@@ -336,7 +336,7 @@ export default function InvoiceDetailPage() {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold">
-                {formatCurrency(Number(invoice.balance_due))}
+                {formatCurrency(Number(invoice.balance_due ?? 0))}
               </p>
               {invoice.status !== 'paid' && invoice.status !== 'void' && (
                 <p className={`text-sm mt-1 ${overdue ? 'text-destructive' : 'text-muted-foreground'}`}>
@@ -371,7 +371,7 @@ export default function InvoiceDetailPage() {
                       >
                         <div>
                           <p className="font-medium">
-                            {formatCurrency(Number(payment.amount))}
+                            {formatCurrency(Number(payment.amount ?? 0))}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {method?.label || payment.payment_method}
@@ -430,7 +430,7 @@ export default function InvoiceDetailPage() {
         onOpenChange={setShowPayment}
         invoiceId={invoice.id}
         invoiceNumber={invoice.invoice_number}
-        balanceDue={Number(invoice.balance_due)}
+        balanceDue={Number(invoice.balance_due ?? 0)}
       />
 
       <SendInvoiceDialog
@@ -440,11 +440,11 @@ export default function InvoiceDetailPage() {
         invoiceNumber={invoice.invoice_number}
         clientEmail={client?.email}
         clientName={clientName}
-        total={Number(invoice.total)}
+        total={Number(invoice.total ?? 0)}
         dueDate={invoice.due_date}
         lineItems={(invoice.line_items || []).map(item => ({
           description: item.description,
-          amount: Number(item.amount),
+          amount: Number(item.amount ?? 0),
         }))}
       />
 
