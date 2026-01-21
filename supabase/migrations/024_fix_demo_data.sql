@@ -343,45 +343,51 @@ INSERT INTO vendors (id, organization_id, company_name, contact_first_name, cont
 -- PROGRAMS (Service programs for properties)
 -- =============================================================================
 
-INSERT INTO programs (id, organization_id, property_id, name, tier, frequency, status, start_date, next_inspection_date, price_per_inspection, notes) VALUES
+INSERT INTO programs (id, organization_id, property_id, client_id, inspection_frequency, inspection_tier, base_fee, tier_fee, monthly_total, status, billing_start_date, notes, activated_at) VALUES
   (
     '66666666-6666-6666-6666-666666666601',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333301',
-    'Premium Annual Care',
-    'comprehensive',
+    '22222222-2222-2222-2222-222222222201',
     'quarterly',
+    'comprehensive',
+    200.00,
+    150.00,
+    350.00,
     'active',
     '2024-01-01',
-    '2025-02-15',
-    350.00,
-    'Full quarterly inspections with HVAC and pool checks.'
+    'Full quarterly inspections with HVAC and pool checks.',
+    '2024-01-01 00:00:00+00'
   ),
   (
     '66666666-6666-6666-6666-666666666602',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333302',
-    'Executive Home Watch',
-    'comprehensive',
+    '22222222-2222-2222-2222-222222222202',
     'monthly',
+    'comprehensive',
+    300.00,
+    150.00,
+    450.00,
     'active',
     '2023-06-01',
-    '2025-02-01',
-    450.00,
-    'Monthly comprehensive inspections for luxury property.'
+    'Monthly comprehensive inspections for luxury property.',
+    '2023-06-01 00:00:00+00'
   ),
   (
     '66666666-6666-6666-6666-666666666603',
     '00000000-0000-0000-0000-000000000001',
     '33333333-3333-3333-3333-333333333303',
-    'Standard Care',
-    'visual',
+    '22222222-2222-2222-2222-222222222203',
     'semi_annual',
+    'visual',
+    150.00,
+    50.00,
+    200.00,
     'active',
     '2024-06-01',
-    '2025-06-01',
-    200.00,
-    'Twice yearly visual inspection.'
+    'Twice yearly visual inspection.',
+    '2024-06-01 00:00:00+00'
   );
 
 -- =============================================================================
