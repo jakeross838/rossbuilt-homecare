@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 1 of 4 (Permission Infrastructure) - **v1.3 MILESTONE IN PROGRESS**
-Plan: 01-01 of 4 (Permission System Setup)
+Plan: 01-02 of 4 (Route Protection)
 Status: In progress
-Last activity: 2026-01-23 - Completed PLAN-01-01.md
+Last activity: 2026-01-23 - Completed PLAN-01-02.md
 
-Progress: █░░░░░░░░░ 25% (v1.3 Phase 1 - Plan 1 of 4 complete)
+Progress: ██░░░░░░░░ 50% (v1.3 Phase 1 - Plan 2 of 4 complete)
 
 ### Milestone v1.3: Role-Based Permissions
 
@@ -27,13 +27,13 @@ Progress: █░░░░░░░░░ 25% (v1.3 Phase 1 - Plan 1 of 4 complet
 | Plan | Name | Wave | Status |
 |------|------|------|--------|
 | 01-01 | Permission System Setup | 1 | **Complete** |
-| 01-02 | Route Protection | 2 | Pending |
+| 01-02 | Route Protection | 2 | **Complete** |
 | 01-03 | Sidebar Navigation Filtering | 3 | Pending |
 | 01-04 | Permission Integration (Checkpoint) | 4 | Pending |
 
 **Wave Structure:**
 - Wave 1: 01-01 (no dependencies) - Complete
-- Wave 2: 01-02 (depends on 01-01) - Pending
+- Wave 2: 01-02 (depends on 01-01) - Complete
 - Wave 3: 01-03 (depends on 01-02) - Pending
 - Wave 4: 01-04 (checkpoint - depends on 01-03) - Pending
 
@@ -505,38 +505,38 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed PLAN-01-01.md (Permission System Setup)
+Stopped at: Completed PLAN-01-02.md (Route Protection)
 Resume file: None
 
 ### Recent Activity (2026-01-23)
 
-**Phase 1 Plan 01-01: Permission System Setup Completed:**
-- Installed @casl/ability, @casl/react, jwt-decode dependencies
-- Created role type definitions and mapping (Admin, Client, Tech)
-- Created permission matrix for 13 pages
-- Created CASL ability factory with role-based permissions
-- Created PermissionProvider component
-- Created usePermissions hook
-- Created index exports for lib/permissions
+**Phase 1 Plan 01-02: Route Protection Completed:**
+- Created PermissionGuard component for route protection
+- Created guards index export
+- Updated AppLayout with permission checking
+- Updated Sidebar with permission-based nav filtering
+- Wrapped App.tsx with PermissionProvider
+- Updated providers index export
+- Fixed formatCurrency import in portal/plans page (blocking issue)
 
 **Commits:**
-- dd8b9a8: chore(01-01): install CASL and jwt-decode dependencies
-- 15a1b9b: feat(01-01): create role type definitions
-- 0144622: feat(01-01): create permission matrix
-- 45062c4: feat(01-01): create CASL ability factory
-- 730f4c3: feat(01-01): create permission provider
-- 97bc5ce: feat(01-01): create permission hook
-- c2b9cc0: feat(01-01): create permission index exports
+- ef431c6: feat(01-02): create permission guard component
+- d98b0fc: feat(01-02): create guards index export
+- e36baf1: feat(01-02): add permission checking to app layout
+- 4516506: feat(01-02): filter sidebar navigation by permissions
+- 56f86a1: feat(01-02): wrap app with permission provider
+- a41fad6: feat(01-02): add permission provider to exports
+- bbdcfa3: fix(01-02): correct formatCurrency import path
 
 **Build Status:**
-- ✅ TypeScript: No errors
+- ✅ Build: Successful
 - ✅ All verification checks passed
 
 ## Project Status
 
 **Milestone v1.3: Role-Based Permissions - IN PROGRESS**
 
-Plan 01-01 complete. Next: Plan 01-02 (Route Protection)
+Plan 01-02 complete. Next: Plan 01-03 (Sidebar Navigation Filtering)
 
 ## Phase 13 Summary (COMPLETE)
 
