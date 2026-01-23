@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -24,35 +24,54 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useUIStore } from '@/stores/ui-store'
 import { VersionDisplay } from './version-display'
+import { usePermissions } from '@/hooks/use-permissions'
+import type { PageSubject } from '@/lib/permissions/matrix'
 
 interface NavItem {
   title: string
   href: string
   icon: React.ComponentType<{ className?: string }>
+  /** Permission subject for this nav item */
+  permission: PageSubject
 }
 
-const navItems: NavItem[] = [
-  { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { title: 'Calendar', href: '/calendar', icon: Calendar },
-  { title: 'Clients', href: '/clients', icon: Users },
-  { title: 'Properties', href: '/properties', icon: Building2 },
-  { title: 'Inspections', href: '/inspections', icon: ClipboardCheck },
-  { title: 'Work Orders', href: '/work-orders', icon: Wrench },
-  { title: 'Billing', href: '/billing', icon: Receipt },
-  { title: 'Vendors', href: '/vendors', icon: Truck },
-  { title: 'Reports', href: '/reports', icon: BarChart3 },
-  { title: 'Activity', href: '/activity', icon: Activity },
+/**
+ * All navigation items with their permission requirements
+ */
+const allNavItems: NavItem[] = [
+  { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, permission: 'dashboard' },
+  { title: 'Calendar', href: '/calendar', icon: Calendar, permission: 'calendar' },
+  { title: 'Clients', href: '/clients', icon: Users, permission: 'clients' },
+  { title: 'Properties', href: '/properties', icon: Building2, permission: 'properties' },
+  { title: 'Inspections', href: '/inspections', icon: ClipboardCheck, permission: 'inspections' },
+  { title: 'Work Orders', href: '/work-orders', icon: Wrench, permission: 'work-orders' },
+  { title: 'Billing', href: '/billing', icon: Receipt, permission: 'billing' },
+  { title: 'Vendors', href: '/vendors', icon: Truck, permission: 'vendors' },
+  { title: 'Reports', href: '/reports', icon: BarChart3, permission: 'reports' },
+  { title: 'Activity', href: '/activity', icon: Activity, permission: 'activity' },
 ]
 
-const bottomNavItems: NavItem[] = [
-  { title: 'Templates', href: '/settings/templates', icon: FileText },
-  { title: 'Pricing', href: '/settings/pricing', icon: DollarSign },
-  { title: 'Settings', href: '/settings', icon: Settings },
+const allBottomNavItems: NavItem[] = [
+  { title: 'Templates', href: '/settings/templates', icon: FileText, permission: 'settings' },
+  { title: 'Pricing', href: '/settings/pricing', icon: DollarSign, permission: 'settings' },
+  { title: 'Settings', href: '/settings', icon: Settings, permission: 'settings' },
 ]
 
 export function Sidebar() {
   const location = useLocation()
   const { sidebarOpen, sidebarCollapsed, toggleSidebarCollapsed, setSidebarOpen } = useUIStore()
+  const { canAccess, isLoading } = usePermissions()
+
+  // Filter navigation items based on permissions
+  const navItems = useMemo(() => {
+    if (isLoading) return []
+    return allNavItems.filter((item) => canAccess(item.permission))
+  }, [canAccess, isLoading])
+
+  const bottomNavItems = useMemo(() => {
+    if (isLoading) return []
+    return allBottomNavItems.filter((item) => canAccess(item.permission))
+  }, [canAccess, isLoading])
 
   // Close mobile sidebar on navigation
   useEffect(() => {
