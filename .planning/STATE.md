@@ -5,14 +5,43 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 14 — Testing & Launch (FINAL)
+**Current focus:** Phase 1 — Permission Infrastructure (v1.3)
 
 ## Current Position
 
-Phase: 20 of 20 (Test Coverage & Error Handling) - **v1.2 MILESTONE COMPLETE**
-Plan: Complete
-Status: ✅ COMPLETE
-Last activity: 2026-01-21 - Milestone v1.2 completed
+Phase: 1 of 4 (Permission Infrastructure) - **v1.3 MILESTONE IN PROGRESS**
+Plan: 01-01 of 4 (Permission System Setup)
+Status: In progress
+Last activity: 2026-01-23 - Completed PLAN-01-01.md
+
+Progress: █░░░░░░░░░ 25% (v1.3 Phase 1 - Plan 1 of 4 complete)
+
+### Milestone v1.3: Role-Based Permissions
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| 1     | 🔄 In Progress | Permission Infrastructure |
+
+### Phase 1 Plans (Permission Infrastructure)
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 01-01 | Permission System Setup | 1 | **Complete** |
+| 01-02 | Route Protection | 2 | Pending |
+| 01-03 | Sidebar Navigation Filtering | 3 | Pending |
+| 01-04 | Permission Integration (Checkpoint) | 4 | Pending |
+
+**Wave Structure:**
+- Wave 1: 01-01 (no dependencies) - Complete
+- Wave 2: 01-02 (depends on 01-01) - Pending
+- Wave 3: 01-03 (depends on 01-02) - Pending
+- Wave 4: 01-04 (checkpoint - depends on 01-03) - Pending
+
+---
+
+### Previous Milestones
+
+#### Milestone v1.2: Quality & Performance ✅
 
 Progress: ██████████ 100% (v1.0/v1.1/v1.2 ALL COMPLETE)
 
@@ -475,52 +504,39 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-01-21
-Stopped at: Milestone v1.2 COMPLETE
+Last session: 2026-01-23
+Stopped at: Completed PLAN-01-01.md (Permission System Setup)
 Resume file: None
 
-### Recent Activity (2026-01-21)
+### Recent Activity (2026-01-23)
 
-**Phase 18: Code Audit Completed:**
-- Ran comprehensive TypeScript build check
-- Ran ESLint across entire codebase
-- Verified database schema alignment
-- Tested inspection checklist flow
-- Verified all hooks and API calls
+**Phase 1 Plan 01-01: Permission System Setup Completed:**
+- Installed @casl/ability, @casl/react, jwt-decode dependencies
+- Created role type definitions and mapping (Admin, Client, Tech)
+- Created permission matrix for 13 pages
+- Created CASL ability factory with role-based permissions
+- Created PermissionProvider component
+- Created usePermissions hook
+- Created index exports for lib/permissions
 
-**Bugs Fixed:**
-1. `use-inspector-schedule.ts` - Fixed missing access_codes in inspection detail
-2. `schedule-inspection-dialog.tsx` - Removed unused variables
-3. `App.tsx` - Removed unused PlaceholderPage component
-
-**Phase 19: Performance Optimization Completed:**
-- Created `lib/pdf/index.ts` wrapper for lazy-loading PDF library
-- Implemented React.lazy() for all page components
-- Added Suspense boundaries with PageLoader fallback
-- Verified manual chunks in vite.config.ts
-
-**Phase 20: Error Handling Completed:**
-- Added PageErrorBoundary to Inspector routes (/inspector/*)
-- Added PageErrorBoundary to Portal routes (/portal/*)
-- Global ErrorBoundary already wraps entire app
+**Commits:**
+- dd8b9a8: chore(01-01): install CASL and jwt-decode dependencies
+- 15a1b9b: feat(01-01): create role type definitions
+- 0144622: feat(01-01): create permission matrix
+- 45062c4: feat(01-01): create CASL ability factory
+- 730f4c3: feat(01-01): create permission provider
+- 97bc5ce: feat(01-01): create permission hook
+- c2b9cc0: feat(01-01): create permission index exports
 
 **Build Status:**
-- ✅ Production build: 37.98s
 - ✅ TypeScript: No errors
-- ✅ 121 chunks precached (~3.4 MB total)
-- ✅ Code splitting active for all routes
+- ✅ All verification checks passed
 
 ## Project Status
 
-**🎉 HOME CARE OS - PROJECT COMPLETE 🎉**
+**Milestone v1.3: Role-Based Permissions - IN PROGRESS**
 
-All 14 phases (82 plans) have been successfully executed.
-
-The application is ready for production deployment:
-1. Run `npm run build` in apps/admin to verify production build
-2. Deploy to Vercel using the configuration in vercel.json
-3. Configure environment variables per DEPLOYMENT.md
-4. Set up Supabase Edge Function secrets
+Plan 01-01 complete. Next: Plan 01-02 (Route Protection)
 
 ## Phase 13 Summary (COMPLETE)
 
