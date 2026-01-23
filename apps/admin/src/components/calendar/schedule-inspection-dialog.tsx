@@ -198,7 +198,7 @@ export function ScheduleInspectionDialog({
                 type="number"
                 min={15}
                 max={480}
-                step={15}
+                step={1}
                 {...register('estimated_duration_minutes', { valueAsNumber: true })}
               />
             </div>

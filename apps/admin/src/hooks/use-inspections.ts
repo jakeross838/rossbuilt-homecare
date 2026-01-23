@@ -194,6 +194,48 @@ export function useScheduleInspection() {
       if (userError) throw userError
       if (!userData.organization_id) throw new Error('User has no organization')
 
+      // Default checklist template for new inspections
+      const defaultChecklist = {
+        sections: [
+          {
+            id: 'exterior',
+            title: 'Exterior',
+            items: [
+              { id: 'roof', label: 'Roof condition', type: 'status' },
+              { id: 'gutters', label: 'Gutters and downspouts', type: 'status' },
+              { id: 'siding', label: 'Siding/exterior walls', type: 'status' },
+              { id: 'windows_ext', label: 'Windows and screens', type: 'status' },
+              { id: 'doors_ext', label: 'Entry doors', type: 'status' },
+              { id: 'landscaping', label: 'Landscaping', type: 'status' },
+              { id: 'driveway', label: 'Driveway/walkways', type: 'status' },
+            ],
+          },
+          {
+            id: 'interior',
+            title: 'Interior',
+            items: [
+              { id: 'hvac', label: 'HVAC operation', type: 'status' },
+              { id: 'plumbing', label: 'Plumbing (run water, check for leaks)', type: 'status' },
+              { id: 'electrical', label: 'Electrical (lights, outlets)', type: 'status' },
+              { id: 'smoke_detectors', label: 'Smoke/CO detectors', type: 'status' },
+              { id: 'water_heater', label: 'Water heater', type: 'status' },
+              { id: 'appliances', label: 'Kitchen appliances', type: 'status' },
+              { id: 'floors', label: 'Flooring condition', type: 'status' },
+            ],
+          },
+          {
+            id: 'security',
+            title: 'Security',
+            items: [
+              { id: 'locks', label: 'Door locks functional', type: 'status' },
+              { id: 'alarm', label: 'Alarm system', type: 'status' },
+              { id: 'cameras', label: 'Security cameras', type: 'status' },
+              { id: 'motion_lights', label: 'Motion lights', type: 'status' },
+            ],
+          },
+        ],
+      }
+
       const insertData: InsertTables<'inspections'> = {
         organization_id: userData.organization_id,
         property_id: input.property_id,
@@ -205,7 +247,7 @@ export function useScheduleInspection() {
         scheduled_time_end: input.scheduled_time_end || null,
         estimated_duration_minutes: input.estimated_duration_minutes || null,
         status: 'scheduled',
-        checklist: {},
+        checklist: defaultChecklist,
       }
 
       const { data, error } = await supabase
