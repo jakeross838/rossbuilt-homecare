@@ -9,6 +9,8 @@ import {
   Menu,
   X,
   User,
+  Calendar,
+  FileText,
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -20,6 +22,8 @@ import { usePortalRealtimeSync } from '@/hooks/use-realtime-sync'
 const navItems = [
   { label: 'Dashboard', href: '/portal', icon: LayoutDashboard },
   { label: 'Properties', href: '/portal/properties', icon: Home },
+  { label: 'Calendar', href: '/portal/calendar', icon: Calendar },
+  { label: 'Plans', href: '/portal/plans', icon: FileText },
   { label: 'Inspections', href: '/portal/inspections', icon: ClipboardCheck },
   { label: 'Requests', href: '/portal/requests', icon: MessageSquare },
   { label: 'Invoices', href: '/portal/invoices', icon: Receipt },

@@ -136,8 +136,10 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
           id,
           scheduled_date,
           inspection_type,
-          property:properties(name),
-          client:properties(client:clients(first_name, last_name, company_name)),
+          property:properties(
+            name,
+            client:clients(first_name, last_name, company_name)
+          ),
           inspector:users!inspector_id(first_name, last_name)
         `)
         .eq('organization_id', orgId)
@@ -150,10 +152,12 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
       if (error) throw error
 
       return (data || []).map((insp) => {
-        const property = insp.property as unknown as { name: string } | null
-        const clientData = insp.client as unknown as { client: { first_name: string; last_name: string; company_name?: string } } | null
+        const property = insp.property as unknown as {
+          name: string
+          client: { first_name: string; last_name: string; company_name?: string } | null
+        } | null
         const inspector = insp.inspector as unknown as { first_name: string; last_name: string } | null
-        const client = clientData?.client
+        const client = property?.client
 
         return {
           id: insp.id,

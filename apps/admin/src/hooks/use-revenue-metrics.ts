@@ -103,11 +103,33 @@ export function useRevenueMetrics(options: UseRevenueMetricsOptions = {}) {
               clientId: client.id,
               clientName: client.company_name || `${client.first_name} ${client.last_name}`,
               totalRevenue: inv.total || 0,
-              propertyCount: 1, // Would need additional query for accurate count
+              propertyCount: 0, // Will be populated below
             })
           }
         }
       })
+
+      // Fetch actual property counts for each client
+      const clientIds = Array.from(clientMap.keys())
+      if (clientIds.length > 0) {
+        const { data: propertyCounts } = await supabase
+          .from('properties')
+          .select('client_id')
+          .eq('organization_id', orgId)
+          .in('client_id', clientIds)
+
+        if (propertyCounts) {
+          const countMap = propertyCounts.reduce((acc, prop) => {
+            acc[prop.client_id] = (acc[prop.client_id] || 0) + 1
+            return acc
+          }, {} as Record<string, number>)
+
+          clientMap.forEach((clientRevenue) => {
+            clientRevenue.propertyCount = countMap[clientRevenue.clientId] || 0
+          })
+        }
+      }
+
       const byClient = Array.from(clientMap.values())
         .sort((a, b) => b.totalRevenue - a.totalRevenue)
         .slice(0, 10)
@@ -184,10 +206,10 @@ export function useInvoicesByStatus(options: UseRevenueMetricsOptions = {}) {
 
       const { data, error } = await supabase
         .from('invoices')
-        .select('id, status')
+        .select('id, status, created_at')
         .eq('organization_id', orgId)
-        .gte('invoice_date', range.start.toISOString())
-        .lte('invoice_date', range.end.toISOString())
+        .gte('created_at', range.start.toISOString())
+        .lte('created_at', range.end.toISOString())
 
       if (error) throw error
 

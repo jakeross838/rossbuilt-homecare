@@ -111,12 +111,22 @@ export function ProgramBuilder({
     defaultValues: programDefaults(propertyId, clientId),
   })
 
-  const { watch, setValue, handleSubmit } = form
-  const values = watch()
+  const { watch, setValue, handleSubmit, getValues } = form
+
+  // Watch specific fields to avoid infinite re-renders
+  const inspectionFrequency = watch('inspection_frequency')
+  const inspectionTier = watch('inspection_tier')
+  const addonDigitalManual = watch('addon_digital_manual')
+  const addonWarrantyTracking = watch('addon_warranty_tracking')
+  const addonEmergencyResponse = watch('addon_emergency_response')
+  const addonHurricaneMonitoring = watch('addon_hurricane_monitoring')
+  const preferredDayOfWeek = watch('preferred_day_of_week')
+  const preferredTimeSlot = watch('preferred_time_slot')
+  const preferredInspectorId = watch('preferred_inspector_id')
 
   // Find selected tier for expanded details display
   const selectedTier = INSPECTION_TIERS.find(
-    (t) => t.value === values.inspection_tier
+    (t) => t.value === inspectionTier
   )
 
   // Recalculate pricing when selections change
@@ -124,25 +134,25 @@ export function ProgramBuilder({
     if (pricingConfig) {
       const newPricing = calculateProgramPrice(
         pricingConfig,
-        values.inspection_frequency,
-        values.inspection_tier,
+        inspectionFrequency,
+        inspectionTier,
         {
-          digital_manual: values.addon_digital_manual ?? false,
-          warranty_tracking: values.addon_warranty_tracking ?? false,
-          emergency_response: values.addon_emergency_response ?? false,
-          hurricane_monitoring: values.addon_hurricane_monitoring ?? false,
+          digital_manual: addonDigitalManual ?? false,
+          warranty_tracking: addonWarrantyTracking ?? false,
+          emergency_response: addonEmergencyResponse ?? false,
+          hurricane_monitoring: addonHurricaneMonitoring ?? false,
         }
       )
       setPricing(newPricing)
     }
   }, [
     pricingConfig,
-    values.inspection_frequency,
-    values.inspection_tier,
-    values.addon_digital_manual,
-    values.addon_warranty_tracking,
-    values.addon_emergency_response,
-    values.addon_hurricane_monitoring,
+    inspectionFrequency,
+    inspectionTier,
+    addonDigitalManual,
+    addonWarrantyTracking,
+    addonEmergencyResponse,
+    addonHurricaneMonitoring,
   ])
 
   // Form submission
@@ -203,7 +213,7 @@ export function ProgramBuilder({
         </CardHeader>
         <CardContent>
           <RadioGroup
-            value={values.inspection_frequency}
+            value={inspectionFrequency}
             onValueChange={(v) =>
               setValue('inspection_frequency', v as ProgramFormData['inspection_frequency'])
             }
@@ -215,7 +225,7 @@ export function ProgramBuilder({
                 htmlFor={freq.value}
                 className={cn(
                   'flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer hover:bg-muted/50 transition-colors',
-                  values.inspection_frequency === freq.value
+                  inspectionFrequency === freq.value
                     ? 'border-primary bg-primary/5'
                     : 'border-muted'
                 )}
@@ -261,7 +271,7 @@ export function ProgramBuilder({
         </CardHeader>
         <CardContent>
           <RadioGroup
-            value={values.inspection_tier}
+            value={inspectionTier}
             onValueChange={(v) =>
               setValue('inspection_tier', v as ProgramFormData['inspection_tier'])
             }
@@ -273,7 +283,7 @@ export function ProgramBuilder({
                 htmlFor={`tier-${tier.value}`}
                 className={cn(
                   'flex flex-col rounded-md border-2 p-4 cursor-pointer hover:bg-muted/50 transition-colors',
-                  values.inspection_tier === tier.value
+                  inspectionTier === tier.value
                     ? 'border-primary bg-primary/5'
                     : 'border-muted'
                 )}
@@ -362,9 +372,24 @@ export function ProgramBuilder({
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
             {PROGRAM_ADDONS.map((addon) => {
+              // Get the current value directly based on addon type
+              const isChecked = (() => {
+                switch (addon.value) {
+                  case 'digital_manual':
+                    return addonDigitalManual ?? false
+                  case 'warranty_tracking':
+                    return addonWarrantyTracking ?? false
+                  case 'emergency_response':
+                    return addonEmergencyResponse ?? false
+                  case 'hurricane_monitoring':
+                    return addonHurricaneMonitoring ?? false
+                  default:
+                    return false
+                }
+              })()
+
               const fieldName =
                 `addon_${addon.value}` as keyof ProgramFormData
-              const isChecked = (values[fieldName] as boolean) ?? false
               const price =
                 pricingConfig?.addon_pricing[
                   addon.value as keyof typeof pricingConfig.addon_pricing
@@ -426,7 +451,7 @@ export function ProgramBuilder({
             <div className="space-y-2">
               <Label>Preferred Day</Label>
               <Select
-                value={values.preferred_day_of_week?.toString() ?? 'any'}
+                value={preferredDayOfWeek?.toString() ?? 'any'}
                 onValueChange={(v) =>
                   setValue(
                     'preferred_day_of_week',
@@ -452,7 +477,7 @@ export function ProgramBuilder({
             <div className="space-y-2">
               <Label>Preferred Time</Label>
               <Select
-                value={values.preferred_time_slot ?? 'anytime'}
+                value={preferredTimeSlot ?? 'anytime'}
                 onValueChange={(v) =>
                   setValue(
                     'preferred_time_slot',
@@ -477,7 +502,7 @@ export function ProgramBuilder({
             <div className="space-y-2">
               <Label>Preferred Inspector</Label>
               <Select
-                value={values.preferred_inspector_id ?? 'any'}
+                value={preferredInspectorId ?? 'any'}
                 onValueChange={(v) =>
                   setValue('preferred_inspector_id', v && v !== 'any' ? v : null)
                 }
@@ -511,7 +536,7 @@ export function ProgramBuilder({
                 Base Fee (
                 {
                   INSPECTION_FREQUENCIES.find(
-                    (f) => f.value === values.inspection_frequency
+                    (f) => f.value === inspectionFrequency
                   )?.label
                 }
                 )
@@ -523,7 +548,7 @@ export function ProgramBuilder({
                 Tier (
                 {
                   INSPECTION_TIERS.find(
-                    (t) => t.value === values.inspection_tier
+                    (t) => t.value === inspectionTier
                   )?.label
                 }
                 )

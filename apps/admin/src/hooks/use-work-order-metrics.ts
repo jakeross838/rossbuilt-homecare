@@ -108,14 +108,14 @@ export function useWorkOrderMetrics(options: UseWorkOrderMetricsOptions = {}) {
           const existing = vendorMap.get(vendor.id)
           if (existing) {
             if (wo.status === 'completed') existing.completedJobs++
-            existing.totalRevenue += wo.actual_cost || 0
+            existing.totalCost += wo.actual_cost || 0
           } else {
             vendorMap.set(vendor.id, {
               vendorId: vendor.id,
               vendorName: vendor.company_name,
               completedJobs: wo.status === 'completed' ? 1 : 0,
               averageRating: vendor.average_rating || 0,
-              totalRevenue: wo.actual_cost || 0,
+              totalCost: wo.actual_cost || 0,
             })
           }
         }

@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import type { InspectorInspection, InspectorDaySchedule } from '@/lib/types/inspector'
+import { getPendingFindings } from '@/lib/offline/db'
+import type { InspectorInspection, InspectorDaySchedule, ChecklistItemFinding } from '@/lib/types/inspector'
 
 // Helper to check if user is authenticated with a valid session
 function useIsAuthenticated() {
@@ -224,6 +225,22 @@ export function useInspectorInspection(inspectionId: string | undefined) {
         } | null
       } | null
 
+      // Merge server findings with locally pending findings
+      // This ensures progress shows correctly even if sync is delayed
+      const serverFindings = (data.findings || {}) as Record<string, ChecklistItemFinding>
+      let mergedFindings = { ...serverFindings }
+
+      try {
+        const pendingFindings = await getPendingFindings(inspectionId)
+        for (const { item_id, finding } of pendingFindings) {
+          // Pending findings take priority (they're more recent)
+          mergedFindings[item_id] = finding
+        }
+      } catch (e) {
+        // IndexedDB may not be available, continue with server findings only
+        console.warn('Could not load pending findings from IndexedDB:', e)
+      }
+
       return {
         id: data.id,
         property_id: data.property_id,
@@ -237,7 +254,7 @@ export function useInspectorInspection(inspectionId: string | undefined) {
         actual_start_at: data.actual_start_at,
         actual_end_at: data.actual_end_at,
         checklist: data.checklist as unknown as InspectorInspection['checklist'],
-        findings: data.findings as unknown as InspectorInspection['findings'],
+        findings: mergedFindings,
         overall_condition: data.overall_condition,
         summary: data.summary,
         weather_conditions: data.weather_conditions as unknown as InspectorInspection['weather_conditions'],

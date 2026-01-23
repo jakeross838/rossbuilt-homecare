@@ -65,6 +65,8 @@ const PortalRequestDetailPage = lazy(() => import('@/pages/portal/requests/[id]'
 const PortalInvoicesPage = lazy(() => import('@/pages/portal/invoices'))
 const PortalInspectionsPage = lazy(() => import('@/pages/portal/inspections'))
 const PortalInspectionDetailPage = lazy(() => import('@/pages/portal/inspections/[id]'))
+const PortalCalendarPage = lazy(() => import('@/pages/portal/calendar'))
+const PortalPlansPage = lazy(() => import('@/pages/portal/plans'))
 
 // Create a query client instance
 const queryClient = new QueryClient({
@@ -105,6 +107,8 @@ function App() {
               <Route index element={<Suspense fallback={<PageLoader />}><PortalDashboardPage /></Suspense>} />
               <Route path="properties" element={<Suspense fallback={<PageLoader />}><PortalPropertiesPage /></Suspense>} />
               <Route path="properties/:id" element={<Suspense fallback={<PageLoader />}><PortalPropertyDetailPage /></Suspense>} />
+              <Route path="calendar" element={<Suspense fallback={<PageLoader />}><PortalCalendarPage /></Suspense>} />
+              <Route path="plans" element={<Suspense fallback={<PageLoader />}><PortalPlansPage /></Suspense>} />
               <Route path="requests" element={<Suspense fallback={<PageLoader />}><PortalRequestsPage /></Suspense>} />
               <Route path="requests/:id" element={<Suspense fallback={<PageLoader />}><PortalRequestDetailPage /></Suspense>} />
               <Route path="invoices" element={<Suspense fallback={<PageLoader />}><PortalInvoicesPage /></Suspense>} />

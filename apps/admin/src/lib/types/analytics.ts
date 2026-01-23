@@ -60,7 +60,7 @@ export interface VendorPerformanceMetric {
   vendorName: string
   completedJobs: number
   averageRating: number
-  totalRevenue: number
+  totalCost: number
 }
 
 // Revenue metrics
