@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "build": 3,
+  "lastUpdated": "2026-01-23T15:45:45.696Z",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "build": 3,
+      "message": "Added automatic invoice generation when customer plan changes",
+      "timestamp": "2026-01-23T15:45:45.696Z"
+    },
+    {
+      "version": "1.0.0",
+      "build": 2,
+      "message": "Initial version tracking system setup",
+      "timestamp": "2026-01-23T13:16:35.046Z"
+    }
+  ]
+}

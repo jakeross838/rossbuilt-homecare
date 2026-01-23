@@ -36,7 +36,7 @@ import {
   type PropertyFeatures,
 } from '@/lib/validations/property'
 import { EquipmentList } from '../components/equipment-list'
-import { ProgramBuilder, ProgramStatusCard } from '@/components/programs'
+import { ProgramBuilder, ProgramStatusCard, EditProgramDialog } from '@/components/programs'
 import { usePropertyProgram } from '@/hooks/use-programs'
 import { useGenerateChecklist } from '@/hooks/use-checklist'
 import { ChecklistPreview } from '@/components/inspections'
@@ -59,6 +59,9 @@ export function PropertyDetailPage() {
 
   // State for showing/hiding sensitive codes
   const [showCodes, setShowCodes] = useState(false)
+
+  // State for edit program dialog
+  const [editProgramOpen, setEditProgramOpen] = useState(false)
 
   if (isLoading) {
     return (
@@ -514,7 +517,19 @@ export function PropertyDetailPage() {
           {programLoading ? (
             <Skeleton className="h-48" />
           ) : program && ['active', 'pending', 'paused'].includes(program.status || '') ? (
-            <ProgramStatusCard propertyId={id} />
+            <>
+              <ProgramStatusCard
+                propertyId={id}
+                onEdit={() => setEditProgramOpen(true)}
+              />
+              {program && (
+                <EditProgramDialog
+                  program={program}
+                  open={editProgramOpen}
+                  onOpenChange={setEditProgramOpen}
+                />
+              )}
+            </>
           ) : (
             <ProgramBuilder
               propertyId={id}

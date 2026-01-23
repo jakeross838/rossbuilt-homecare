@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useUIStore } from '@/stores/ui-store'
+import { VersionDisplay } from './version-display'
 
 interface NavItem {
   title: string
@@ -160,6 +161,10 @@ export function Sidebar() {
             </li>
           ))}
         </ul>
+
+        {/* Version display */}
+        <Separator className="my-4" />
+        <VersionDisplay collapsed={!isMobile && sidebarCollapsed} />
 
         {/* Collapse toggle - desktop only */}
         {!isMobile && (

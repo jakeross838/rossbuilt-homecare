@@ -9,7 +9,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:gen-types": "supabase gen types typescript --project-id qzbmnbinhxzkcwfjnmtb > src/types/database.ts"
+    "db:gen-types": "supabase gen types typescript --project-id qzbmnbinhxzkcwfjnmtb > src/types/database.ts",
+    "version:bump": "node scripts/increment-version.js",
+    "version:set": "node scripts/set-version.js",
+    "version:show": "node -e \"console.log(JSON.stringify(require('./apps/admin/public/version.json'), null, 2))\""
   },
   "dependencies": {},
   "devDependencies": {}
