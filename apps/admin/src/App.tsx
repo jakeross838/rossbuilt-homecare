@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 
 import { AuthProvider } from '@/components/providers/auth-provider'
+import { PermissionProvider } from '@/components/providers/permission-provider'
 import { ErrorBoundary, PageErrorBoundary } from '@/components/shared/error-boundary'
 import { AppLayout } from '@/components/layout/app-layout'
 
@@ -82,105 +83,107 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ErrorBoundary>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<LoginPage />} />
+        <PermissionProvider>
+          <ErrorBoundary>
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<LoginPage />} />
 
-            {/* Inspector routes (standalone mobile PWA - no AppLayout) */}
-            <Route path="/inspector" element={<PageErrorBoundary><Suspense fallback={<PageLoader />}><InspectorDashboard /></Suspense></PageErrorBoundary>} />
-            <Route path="/inspector/inspection/:id" element={<PageErrorBoundary><Suspense fallback={<PageLoader />}><InspectionPage /></Suspense></PageErrorBoundary>} />
+              {/* Inspector routes (standalone mobile PWA - no AppLayout) */}
+              <Route path="/inspector" element={<PageErrorBoundary><Suspense fallback={<PageLoader />}><InspectorDashboard /></Suspense></PageErrorBoundary>} />
+              <Route path="/inspector/inspection/:id" element={<PageErrorBoundary><Suspense fallback={<PageLoader />}><InspectionPage /></Suspense></PageErrorBoundary>} />
 
-            {/* Client Portal Routes */}
-            <Route path="/portal/login" element={<Suspense fallback={<PageLoader />}><PortalLoginPage /></Suspense>} />
-            <Route
-              path="/portal"
-              element={
-                <PageErrorBoundary>
-                  <PortalAuthGuard>
-                    <PortalLayout />
-                  </PortalAuthGuard>
-                </PageErrorBoundary>
-              }
-            >
-              <Route index element={<Suspense fallback={<PageLoader />}><PortalDashboardPage /></Suspense>} />
-              <Route path="properties" element={<Suspense fallback={<PageLoader />}><PortalPropertiesPage /></Suspense>} />
-              <Route path="properties/:id" element={<Suspense fallback={<PageLoader />}><PortalPropertyDetailPage /></Suspense>} />
-              <Route path="calendar" element={<Suspense fallback={<PageLoader />}><PortalCalendarPage /></Suspense>} />
-              <Route path="plans" element={<Suspense fallback={<PageLoader />}><PortalPlansPage /></Suspense>} />
-              <Route path="requests" element={<Suspense fallback={<PageLoader />}><PortalRequestsPage /></Suspense>} />
-              <Route path="requests/:id" element={<Suspense fallback={<PageLoader />}><PortalRequestDetailPage /></Suspense>} />
-              <Route path="invoices" element={<Suspense fallback={<PageLoader />}><PortalInvoicesPage /></Suspense>} />
-              <Route path="inspections" element={<Suspense fallback={<PageLoader />}><PortalInspectionsPage /></Suspense>} />
-              <Route path="inspections/:id" element={<Suspense fallback={<PageLoader />}><PortalInspectionDetailPage /></Suspense>} />
-            </Route>
+              {/* Client Portal Routes */}
+              <Route path="/portal/login" element={<Suspense fallback={<PageLoader />}><PortalLoginPage /></Suspense>} />
+              <Route
+                path="/portal"
+                element={
+                  <PageErrorBoundary>
+                    <PortalAuthGuard>
+                      <PortalLayout />
+                    </PortalAuthGuard>
+                  </PageErrorBoundary>
+                }
+              >
+                <Route index element={<Suspense fallback={<PageLoader />}><PortalDashboardPage /></Suspense>} />
+                <Route path="properties" element={<Suspense fallback={<PageLoader />}><PortalPropertiesPage /></Suspense>} />
+                <Route path="properties/:id" element={<Suspense fallback={<PageLoader />}><PortalPropertyDetailPage /></Suspense>} />
+                <Route path="calendar" element={<Suspense fallback={<PageLoader />}><PortalCalendarPage /></Suspense>} />
+                <Route path="plans" element={<Suspense fallback={<PageLoader />}><PortalPlansPage /></Suspense>} />
+                <Route path="requests" element={<Suspense fallback={<PageLoader />}><PortalRequestsPage /></Suspense>} />
+                <Route path="requests/:id" element={<Suspense fallback={<PageLoader />}><PortalRequestDetailPage /></Suspense>} />
+                <Route path="invoices" element={<Suspense fallback={<PageLoader />}><PortalInvoicesPage /></Suspense>} />
+                <Route path="inspections" element={<Suspense fallback={<PageLoader />}><PortalInspectionsPage /></Suspense>} />
+                <Route path="inspections/:id" element={<Suspense fallback={<PageLoader />}><PortalInspectionDetailPage /></Suspense>} />
+              </Route>
 
-            {/* Protected routes with AppLayout */}
-            <Route element={<AppLayout />}>
-              {/* Redirect root to dashboard */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              {/* Protected routes with AppLayout - permission checking done in AppLayout */}
+              <Route element={<AppLayout />}>
+                {/* Redirect root to dashboard */}
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-              {/* Dashboard */}
-              <Route path="/dashboard" element={<DashboardPage />} />
+                {/* Dashboard */}
+                <Route path="/dashboard" element={<DashboardPage />} />
 
-              {/* Clients */}
-              <Route path="/clients" element={<Suspense fallback={<PageLoader />}><ClientsPage /></Suspense>} />
-              <Route path="/clients/new" element={<Suspense fallback={<PageLoader />}><NewClientPage /></Suspense>} />
-              <Route path="/clients/:id" element={<Suspense fallback={<PageLoader />}><ClientDetailPage /></Suspense>} />
-              <Route path="/clients/:id/edit" element={<Suspense fallback={<PageLoader />}><EditClientPage /></Suspense>} />
+                {/* Clients */}
+                <Route path="/clients" element={<Suspense fallback={<PageLoader />}><ClientsPage /></Suspense>} />
+                <Route path="/clients/new" element={<Suspense fallback={<PageLoader />}><NewClientPage /></Suspense>} />
+                <Route path="/clients/:id" element={<Suspense fallback={<PageLoader />}><ClientDetailPage /></Suspense>} />
+                <Route path="/clients/:id/edit" element={<Suspense fallback={<PageLoader />}><EditClientPage /></Suspense>} />
 
-              {/* Properties */}
-              <Route path="/properties" element={<Suspense fallback={<PageLoader />}><PropertiesPage /></Suspense>} />
-              <Route path="/properties/new" element={<Suspense fallback={<PageLoader />}><NewPropertyPage /></Suspense>} />
-              <Route path="/properties/:id" element={<Suspense fallback={<PageLoader />}><PropertyDetailPage /></Suspense>} />
-              <Route path="/properties/:id/edit" element={<Suspense fallback={<PageLoader />}><EditPropertyPage /></Suspense>} />
+                {/* Properties */}
+                <Route path="/properties" element={<Suspense fallback={<PageLoader />}><PropertiesPage /></Suspense>} />
+                <Route path="/properties/new" element={<Suspense fallback={<PageLoader />}><NewPropertyPage /></Suspense>} />
+                <Route path="/properties/:id" element={<Suspense fallback={<PageLoader />}><PropertyDetailPage /></Suspense>} />
+                <Route path="/properties/:id/edit" element={<Suspense fallback={<PageLoader />}><EditPropertyPage /></Suspense>} />
 
-              {/* Calendar */}
-              <Route path="/calendar" element={<Suspense fallback={<PageLoader />}><CalendarPage /></Suspense>} />
+                {/* Calendar */}
+                <Route path="/calendar" element={<Suspense fallback={<PageLoader />}><CalendarPage /></Suspense>} />
 
-              {/* Inspections */}
-              <Route path="/inspections" element={<Suspense fallback={<PageLoader />}><InspectionsPage /></Suspense>} />
-              <Route path="/inspections/:id/report" element={<Suspense fallback={<PageLoader />}><InspectionReportPage /></Suspense>} />
+                {/* Inspections */}
+                <Route path="/inspections" element={<Suspense fallback={<PageLoader />}><InspectionsPage /></Suspense>} />
+                <Route path="/inspections/:id/report" element={<Suspense fallback={<PageLoader />}><InspectionReportPage /></Suspense>} />
 
-              {/* Work Orders */}
-              <Route path="/work-orders" element={<Suspense fallback={<PageLoader />}><WorkOrdersPage /></Suspense>} />
-              <Route path="/work-orders/new" element={<Suspense fallback={<PageLoader />}><NewWorkOrderPage /></Suspense>} />
-              <Route path="/work-orders/:id" element={<Suspense fallback={<PageLoader />}><WorkOrderDetailPage /></Suspense>} />
+                {/* Work Orders */}
+                <Route path="/work-orders" element={<Suspense fallback={<PageLoader />}><WorkOrdersPage /></Suspense>} />
+                <Route path="/work-orders/new" element={<Suspense fallback={<PageLoader />}><NewWorkOrderPage /></Suspense>} />
+                <Route path="/work-orders/:id" element={<Suspense fallback={<PageLoader />}><WorkOrderDetailPage /></Suspense>} />
 
-              {/* Billing */}
-              <Route path="/billing" element={<Suspense fallback={<PageLoader />}><BillingDashboard /></Suspense>} />
-              <Route path="/billing/invoices" element={<Suspense fallback={<PageLoader />}><InvoicesPage /></Suspense>} />
-              <Route path="/billing/invoices/:id" element={<Suspense fallback={<PageLoader />}><InvoiceDetailPage /></Suspense>} />
+                {/* Billing */}
+                <Route path="/billing" element={<Suspense fallback={<PageLoader />}><BillingDashboard /></Suspense>} />
+                <Route path="/billing/invoices" element={<Suspense fallback={<PageLoader />}><InvoicesPage /></Suspense>} />
+                <Route path="/billing/invoices/:id" element={<Suspense fallback={<PageLoader />}><InvoiceDetailPage /></Suspense>} />
 
-              {/* Vendors */}
-              <Route path="/vendors" element={<Suspense fallback={<PageLoader />}><VendorsPage /></Suspense>} />
-              <Route path="/vendors/new" element={<Suspense fallback={<PageLoader />}><NewVendorPage /></Suspense>} />
-              <Route path="/vendors/:id" element={<Suspense fallback={<PageLoader />}><VendorDetailPage /></Suspense>} />
+                {/* Vendors */}
+                <Route path="/vendors" element={<Suspense fallback={<PageLoader />}><VendorsPage /></Suspense>} />
+                <Route path="/vendors/new" element={<Suspense fallback={<PageLoader />}><NewVendorPage /></Suspense>} />
+                <Route path="/vendors/:id" element={<Suspense fallback={<PageLoader />}><VendorDetailPage /></Suspense>} />
 
-              {/* Reports */}
-              <Route path="/reports" element={<Suspense fallback={<PageLoader />}><ReportsPage /></Suspense>} />
+                {/* Reports */}
+                <Route path="/reports" element={<Suspense fallback={<PageLoader />}><ReportsPage /></Suspense>} />
 
-              {/* Notifications */}
-              <Route path="/notifications" element={<Suspense fallback={<PageLoader />}><NotificationsPage /></Suspense>} />
+                {/* Notifications */}
+                <Route path="/notifications" element={<Suspense fallback={<PageLoader />}><NotificationsPage /></Suspense>} />
 
-              {/* Activity */}
-              <Route path="/activity" element={<Suspense fallback={<PageLoader />}><ActivityPage /></Suspense>} />
+                {/* Activity */}
+                <Route path="/activity" element={<Suspense fallback={<PageLoader />}><ActivityPage /></Suspense>} />
 
-              {/* Settings */}
-              <Route path="/settings" element={<Suspense fallback={<PageLoader />}><SettingsPage /></Suspense>} />
-              <Route path="/settings/organization" element={<Suspense fallback={<PageLoader />}><OrganizationSettingsPage /></Suspense>} />
-              <Route path="/settings/profile" element={<Suspense fallback={<PageLoader />}><ProfileSettingsPage /></Suspense>} />
-              <Route path="/settings/pricing" element={<Suspense fallback={<PageLoader />}><PricingSettingsPage /></Suspense>} />
-              <Route path="/settings/templates" element={<Suspense fallback={<PageLoader />}><TemplatesPage /></Suspense>} />
-              <Route path="/settings/notifications" element={<Suspense fallback={<PageLoader />}><NotificationSettingsPage /></Suspense>} />
-            </Route>
+                {/* Settings */}
+                <Route path="/settings" element={<Suspense fallback={<PageLoader />}><SettingsPage /></Suspense>} />
+                <Route path="/settings/organization" element={<Suspense fallback={<PageLoader />}><OrganizationSettingsPage /></Suspense>} />
+                <Route path="/settings/profile" element={<Suspense fallback={<PageLoader />}><ProfileSettingsPage /></Suspense>} />
+                <Route path="/settings/pricing" element={<Suspense fallback={<PageLoader />}><PricingSettingsPage /></Suspense>} />
+                <Route path="/settings/templates" element={<Suspense fallback={<PageLoader />}><TemplatesPage /></Suspense>} />
+                <Route path="/settings/notifications" element={<Suspense fallback={<PageLoader />}><NotificationSettingsPage /></Suspense>} />
+              </Route>
 
-            {/* Catch all - redirect to dashboard */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </BrowserRouter>
-        </ErrorBoundary>
+              {/* Catch all - redirect to dashboard */}
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </BrowserRouter>
+          </ErrorBoundary>
+        </PermissionProvider>
       </AuthProvider>
     </QueryClientProvider>
   )
