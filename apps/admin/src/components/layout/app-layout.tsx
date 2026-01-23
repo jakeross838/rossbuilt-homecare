@@ -6,13 +6,18 @@ import { Header } from './header'
 import { Toaster } from '@/components/ui/toaster'
 import { useAuthStore } from '@/stores/auth-store'
 import { useGlobalRealtimeSync } from '@/hooks/use-realtime-sync'
+import { usePermissions } from '@/hooks/use-permissions'
+import { routeToPageSubject } from '@/lib/permissions/matrix'
 
 export function AppLayout() {
   const location = useLocation()
-  const { user, isLoading } = useAuthStore()
+  const { user, isLoading: authLoading } = useAuthStore()
+  const { isLoading: permLoading, canAccessRoute, getRedirectPath, isClient } = usePermissions()
 
   // Enable real-time sync for all data tables
   useGlobalRealtimeSync()
+
+  const isLoading = authLoading || permLoading
 
   // Show loading state during auth operations (sign in/out)
   if (isLoading) {
@@ -29,6 +34,21 @@ export function AppLayout() {
   // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />
+  }
+
+  // Redirect clients to the portal (they shouldn't be in admin layout)
+  if (isClient) {
+    return <Navigate to="/portal" replace />
+  }
+
+  // Check if user can access current route
+  const pageSubject = routeToPageSubject(location.pathname)
+  if (pageSubject && !canAccessRoute(location.pathname)) {
+    const redirectTo = getRedirectPath()
+    console.warn(
+      `[AppLayout] Unauthorized access: ${location.pathname}, redirecting to: ${redirectTo}`
+    )
+    return <Navigate to={redirectTo} replace />
   }
 
   return (
