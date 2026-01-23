@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { usePortalProperties } from '@/hooks/use-portal-dashboard'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency } from '@/lib/helpers/billing'
 import { format } from 'date-fns'
 
 const tierLabels: Record<string, string> = {
