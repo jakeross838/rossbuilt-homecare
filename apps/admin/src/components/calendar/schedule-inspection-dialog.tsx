@@ -116,17 +116,29 @@ export function ScheduleInspectionDialog({
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
-                  disabled={loadingProperties}
+                  disabled={loadingProperties || !activeProperties?.length}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select property" />
+                    <SelectValue placeholder={
+                      loadingProperties
+                        ? "Loading properties..."
+                        : !activeProperties?.length
+                        ? "No properties available"
+                        : "Select property"
+                    } />
                   </SelectTrigger>
                   <SelectContent>
-                    {activeProperties?.map((property) => (
-                      <SelectItem key={property.id} value={property.id}>
-                        {property.name} - {property.city}
-                      </SelectItem>
-                    ))}
+                    {activeProperties?.length ? (
+                      activeProperties.map((property) => (
+                        <SelectItem key={property.id} value={property.id}>
+                          {property.name} - {property.city}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                        No properties found. Add a property first.
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
               )}
@@ -134,6 +146,11 @@ export function ScheduleInspectionDialog({
             {errors.property_id && (
               <p className="text-sm text-destructive">
                 {errors.property_id.message}
+              </p>
+            )}
+            {!loadingProperties && !activeProperties?.length && (
+              <p className="text-sm text-amber-600">
+                No properties found. Please add a client with a property first, or check your account settings.
               </p>
             )}
           </div>
