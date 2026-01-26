@@ -21,6 +21,7 @@ export const portalKeys = {
 
 /**
  * Hook to fetch client portal dashboard summary
+ * Only counts data for properties assigned to the current user
  */
 export function usePortalDashboard() {
   const profile = useAuthStore((state) => state.profile)
@@ -28,39 +29,67 @@ export function usePortalDashboard() {
   return useQuery({
     queryKey: portalKeys.dashboard(),
     queryFn: async (): Promise<PortalDashboardSummary> => {
-      // Get properties count
+      if (!profile?.id) {
+        throw new Error('User not authenticated')
+      }
+
+      // First, get the property IDs assigned to this user
+      const { data: assignments } = await supabase
+        .from('user_property_assignments')
+        .select('property_id')
+        .eq('user_id', profile.id)
+
+      const assignedPropertyIds = assignments?.map((a) => a.property_id) || []
+
+      // If no assignments, return zeros
+      if (assignedPropertyIds.length === 0) {
+        return {
+          properties_count: 0,
+          upcoming_inspections: 0,
+          open_service_requests: 0,
+          pending_approvals: 0,
+          outstanding_balance: 0,
+        }
+      }
+
+      // Get properties count (only assigned)
       const { count: propertiesCount } = await supabase
         .from('properties')
         .select('*', { count: 'exact', head: true })
+        .in('id', assignedPropertyIds)
         .eq('is_active', true)
 
-      // Get upcoming inspections (next 30 days)
+      // Get upcoming inspections (next 30 days) for assigned properties
       const thirtyDaysFromNow = new Date()
       thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
 
       const { count: upcomingInspections } = await supabase
         .from('inspections')
         .select('*', { count: 'exact', head: true })
+        .in('property_id', assignedPropertyIds)
         .eq('status', 'scheduled')
         .gte('scheduled_date', new Date().toISOString())
         .lte('scheduled_date', thirtyDaysFromNow.toISOString())
 
-      // Get open service requests
+      // Get open service requests for assigned properties
       const { count: openRequests } = await supabase
         .from('service_requests')
         .select('*', { count: 'exact', head: true })
+        .in('property_id', assignedPropertyIds)
         .in('status', ['new', 'acknowledged', 'in_progress', 'scheduled'])
 
-      // Get pending recommendations
+      // Get pending recommendations for assigned properties
       const { count: pendingApprovals } = await supabase
         .from('recommendations')
         .select('*', { count: 'exact', head: true })
+        .in('property_id', assignedPropertyIds)
         .eq('status', 'pending')
 
-      // Get outstanding balance from invoices
+      // Get outstanding balance from invoices for assigned properties
       const { data: invoices } = await supabase
         .from('invoices')
         .select('balance_due')
+        .in('property_id', assignedPropertyIds)
         .in('status', ['sent', 'viewed', 'partial', 'overdue'])
 
       const outstandingBalance = invoices?.reduce(
@@ -83,6 +112,7 @@ export function usePortalDashboard() {
 
 /**
  * Hook to fetch client's properties for portal
+ * Only returns properties assigned to the current user via user_property_assignments
  */
 export function usePortalProperties() {
   const profile = useAuthStore((state) => state.profile)
@@ -90,7 +120,28 @@ export function usePortalProperties() {
   return useQuery({
     queryKey: portalKeys.properties(),
     queryFn: async (): Promise<PortalProperty[]> => {
-      // Fetch properties with related counts
+      if (!profile?.id) {
+        throw new Error('User not authenticated')
+      }
+
+      // First, get the property IDs assigned to this user
+      const { data: assignments, error: assignmentError } = await supabase
+        .from('user_property_assignments')
+        .select('property_id')
+        .eq('user_id', profile.id)
+
+      if (assignmentError) {
+        throw assignmentError
+      }
+
+      // If no assignments, return empty array
+      if (!assignments || assignments.length === 0) {
+        return []
+      }
+
+      const assignedPropertyIds = assignments.map((a) => a.property_id)
+
+      // Fetch only the assigned properties
       const { data: properties, error } = await supabase
         .from('properties')
         .select(`
@@ -101,15 +152,15 @@ export function usePortalProperties() {
           state,
           zip,
           primary_photo_url,
-          programs!inner (
+          programs (
             id,
-            tier,
-            frequency,
+            inspection_tier,
+            inspection_frequency,
             status,
-            monthly_price,
-            next_inspection_date
+            monthly_total
           )
         `)
+        .in('id', assignedPropertyIds)
         .eq('is_active', true)
         .order('name')
 
@@ -151,6 +202,17 @@ export function usePortalProperties() {
 
           const program = Array.isArray(prop.programs) ? prop.programs[0] : prop.programs
 
+          // Get next scheduled inspection for this property
+          const { data: nextInspection } = await supabase
+            .from('inspections')
+            .select('scheduled_date')
+            .eq('property_id', prop.id)
+            .eq('status', 'scheduled')
+            .gte('scheduled_date', new Date().toISOString())
+            .order('scheduled_date', { ascending: true })
+            .limit(1)
+            .single()
+
           return {
             id: prop.id,
             name: prop.name,
@@ -161,11 +223,11 @@ export function usePortalProperties() {
             primary_photo_url: prop.primary_photo_url,
             program: program ? {
               id: program.id,
-              tier: program.tier,
-              frequency: program.frequency,
+              tier: program.inspection_tier,
+              frequency: program.inspection_frequency,
               status: program.status,
-              monthly_price: program.monthly_price,
-              next_inspection_date: program.next_inspection_date,
+              monthly_price: program.monthly_total,
+              next_inspection_date: nextInspection?.scheduled_date || null,
             } : null,
             equipment_count: equipmentCount || 0,
             open_work_order_count: openWorkOrders || 0,
