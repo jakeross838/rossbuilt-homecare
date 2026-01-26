@@ -224,6 +224,10 @@ export function useUpdateProgram() {
       queryClient.invalidateQueries({
         queryKey: programKeys.property(data.property_id),
       })
+      // Also invalidate portal properties to refresh plans page
+      queryClient.invalidateQueries({
+        queryKey: ['portal', 'properties'],
+      })
     },
   })
 }
