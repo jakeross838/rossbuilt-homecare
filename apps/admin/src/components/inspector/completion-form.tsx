@@ -46,8 +46,9 @@ export function CompletionForm({
   const [humidity, setHumidity] = useState<string>('')
   const [weatherConditions, setWeatherConditions] = useState('')
 
-  const isComplete = progress.completed === progress.total
-  const canComplete = isComplete && isOnline && summary.length >= 10
+  const allItemsComplete = progress.completed === progress.total
+  // Allow completion even if not all items are done - just need to be online with a summary
+  const canComplete = isOnline && summary.length >= 10
 
   const handleComplete = async () => {
     const data: CompleteInspectionInput = {
@@ -84,25 +85,26 @@ export function CompletionForm({
           <div
             className={cn(
               'p-4 rounded-lg border',
-              isComplete
+              allItemsComplete
                 ? 'bg-green-50 border-green-200'
                 : 'bg-yellow-50 border-yellow-200'
             )}
           >
             <div className="flex items-center gap-3">
-              {isComplete ? (
+              {allItemsComplete ? (
                 <CheckCircle2 className="h-6 w-6 text-green-600" />
               ) : (
                 <AlertTriangle className="h-6 w-6 text-yellow-600" />
               )}
               <div>
                 <p className="font-medium">
-                  {isComplete
+                  {allItemsComplete
                     ? 'All items completed'
-                    : `${progress.total - progress.completed} items remaining`}
+                    : `${progress.total - progress.completed} items not recorded`}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {progress.completed} of {progress.total} checklist items recorded
+                  {!allItemsComplete && ' (you can still complete the inspection)'}
                 </p>
               </div>
             </div>
@@ -220,9 +222,9 @@ export function CompletionForm({
             Complete Inspection
           </Button>
 
-          {!isComplete && (
+          {!allItemsComplete && (
             <p className="text-sm text-center text-muted-foreground">
-              Complete all checklist items before submitting
+              Some checklist items are not recorded - inspection can still be completed
             </p>
           )}
         </div>
