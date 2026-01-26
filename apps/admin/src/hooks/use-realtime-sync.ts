@@ -23,7 +23,16 @@ interface RealtimeConfig {
   onUpdate?: (table: TableName, payload: unknown) => void
 }
 
-// Map table names to query keys (static, no need for useMemo)
+/**
+ * Map table names to React Query keys for cache invalidation.
+ * Cross-portal sync requirements (STAB-29 through STAB-34):
+ * - user_property_assignments: Syncs property access to Client/Tech portals
+ * - work_orders: Syncs across Admin/Tech/Client
+ * - inspections: Syncs across Admin/Tech/Client
+ * - invoices: Syncs across Admin/Client
+ * - service_requests: Syncs across Admin/Client
+ * - programs: Syncs plan changes to Client portal
+ */
 const queryKeyMap: Record<TableName, string[][]> = {
   clients: [['clients'], ['portal', 'dashboard']],
   properties: [['properties'], ['portal', 'properties'], ['portal', 'dashboard']],
