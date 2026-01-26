@@ -14,8 +14,9 @@ const statusConfig: Record<string, { label: string; variant: 'default' | 'second
   new: { label: 'New', variant: 'default' },
   acknowledged: { label: 'Acknowledged', variant: 'secondary' },
   in_progress: { label: 'In Progress', variant: 'warning' },
-  resolved: { label: 'Resolved', variant: 'success' },
-  closed: { label: 'Closed', variant: 'secondary' },
+  scheduled: { label: 'Scheduled', variant: 'secondary' },
+  completed: { label: 'Completed', variant: 'success' },
+  cancelled: { label: 'Cancelled', variant: 'destructive' },
 }
 
 const priorityConfig: Record<string, { label: string; color: string }> = {
@@ -231,8 +232,8 @@ export default function PortalRequestDetailPage() {
                 </p>
               )}
 
-              {/* Add Comment */}
-              {request.status !== 'closed' && (
+              {/* Add Comment - only show for open requests */}
+              {!['completed', 'cancelled'].includes(request.status) && (
                 <>
                   <Separator />
                   <div className="space-y-2">
