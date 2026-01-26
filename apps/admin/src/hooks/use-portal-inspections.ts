@@ -11,6 +11,7 @@ interface UsePortalInspectionsOptions {
 
 /**
  * Hook to fetch inspections for client portal
+ * Only returns inspections for properties assigned to the current user
  */
 export function usePortalInspections(options: UsePortalInspectionsOptions = {}) {
   const { propertyId, limit = 20 } = options
@@ -19,6 +20,32 @@ export function usePortalInspections(options: UsePortalInspectionsOptions = {}) 
   return useQuery({
     queryKey: portalKeys.inspections({ propertyId }),
     queryFn: async (): Promise<PortalInspection[]> => {
+      if (!profile?.id) {
+        throw new Error('User not authenticated')
+      }
+
+      // First, get the property IDs assigned to this user
+      const { data: assignments, error: assignmentError } = await supabase
+        .from('user_property_assignments')
+        .select('property_id')
+        .eq('user_id', profile.id)
+
+      if (assignmentError) {
+        throw assignmentError
+      }
+
+      // If no assignments, return empty array
+      if (!assignments || assignments.length === 0) {
+        return []
+      }
+
+      const assignedPropertyIds = assignments.map((a) => a.property_id)
+
+      // If filtering by a specific property, verify it's assigned to the user
+      if (propertyId && !assignedPropertyIds.includes(propertyId)) {
+        return []
+      }
+
       let query = supabase
         .from('inspections')
         .select(`
@@ -39,20 +66,19 @@ export function usePortalInspections(options: UsePortalInspectionsOptions = {}) 
             name
           )
         `)
+        .in('property_id', propertyId ? [propertyId] : assignedPropertyIds)
         .in('status', ['completed', 'scheduled', 'in_progress'])
         .order('scheduled_date', { ascending: false })
         .limit(limit)
-
-      if (propertyId) {
-        query = query.eq('property_id', propertyId)
-      }
 
       const { data, error } = await query
 
       if (error) throw error
 
       return (data || []).map((i) => {
-        const findings = i.findings as unknown as Array<{ status: string }> | null
+        // findings is a JSONB object keyed by item_id, not an array
+        const findingsObj = i.findings as Record<string, { status: string }> | null
+        const findingsArray = findingsObj ? Object.values(findingsObj) : []
 
         return {
           id: i.id,
@@ -64,10 +90,10 @@ export function usePortalInspections(options: UsePortalInspectionsOptions = {}) 
           report_url: i.report_url,
           inspector: i.inspector as { first_name: string; last_name: string } | null,
           findings_summary: {
-            total: findings?.length || 0,
-            passed: findings?.filter((f) => f.status === 'pass').length || 0,
-            needs_attention: findings?.filter((f) => f.status === 'needs_attention').length || 0,
-            urgent: findings?.filter((f) => f.status === 'urgent').length || 0,
+            total: findingsArray.length,
+            passed: findingsArray.filter((f) => f.status === 'pass').length,
+            needs_attention: findingsArray.filter((f) => f.status === 'needs_attention').length,
+            urgent: findingsArray.filter((f) => f.status === 'urgent').length,
           },
         }
       })
@@ -78,6 +104,7 @@ export function usePortalInspections(options: UsePortalInspectionsOptions = {}) 
 
 /**
  * Hook to fetch single inspection detail for portal
+ * Verifies the inspection belongs to an assigned property
  */
 export function usePortalInspection(inspectionId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
@@ -86,11 +113,25 @@ export function usePortalInspection(inspectionId: string | undefined) {
     queryKey: portalKeys.inspection(inspectionId || ''),
     queryFn: async () => {
       if (!inspectionId) throw new Error('Inspection ID required')
+      if (!profile?.id) throw new Error('User not authenticated')
+
+      // First, get the property IDs assigned to this user
+      const { data: assignments, error: assignmentError } = await supabase
+        .from('user_property_assignments')
+        .select('property_id')
+        .eq('user_id', profile.id)
+
+      if (assignmentError) {
+        throw assignmentError
+      }
+
+      const assignedPropertyIds = assignments?.map((a) => a.property_id) || []
 
       const { data, error } = await supabase
         .from('inspections')
         .select(`
           id,
+          property_id,
           scheduled_date,
           inspection_type,
           status,
@@ -117,6 +158,11 @@ export function usePortalInspection(inspectionId: string | undefined) {
         .single()
 
       if (error) throw error
+
+      // Verify the inspection belongs to an assigned property
+      if (!assignedPropertyIds.includes(data.property_id)) {
+        throw new Error('Inspection not found')
+      }
 
       // Also fetch inspection photos
       const { data: photos } = await supabase
