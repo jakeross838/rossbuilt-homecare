@@ -69,11 +69,18 @@ export default function PortalDashboardPage() {
               </Card>
             ))}
           </div>
-        ) : (
+        ) : properties && properties.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-4">
-            {properties?.slice(0, 4).map((property) => (
+            {properties.slice(0, 4).map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))}
+          </div>
+        ) : (
+          <div className="p-6 bg-gray-50 rounded-lg text-center">
+            <p className="text-gray-500">No properties assigned to your account yet.</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Contact your property manager to get started.
+            </p>
           </div>
         )}
       </section>
