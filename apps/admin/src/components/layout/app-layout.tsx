@@ -14,7 +14,8 @@ export function AppLayout() {
   const { user, isLoading: authLoading } = useAuthStore()
   const { isLoading: permLoading, canAccessRoute, getRedirectPath, isClient } = usePermissions()
 
-  // Enable real-time sync for all data tables
+  // Enable real-time sync for all data tables (STAB-29 through STAB-34)
+  // Changes in Admin portal automatically propagate to Client/Tech portals
   useGlobalRealtimeSync()
 
   const isLoading = authLoading || permLoading

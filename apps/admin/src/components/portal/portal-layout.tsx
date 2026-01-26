@@ -36,7 +36,8 @@ export function PortalLayout() {
   const signOut = useAuthStore((state) => state.signOut)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Enable real-time sync for portal data
+  // Enable real-time sync for portal data (STAB-29 through STAB-34)
+  // Admin changes automatically appear in Client portal without refresh
   usePortalRealtimeSync()
 
   const handleSignOut = async () => {
