@@ -52,7 +52,7 @@ export function useRevenueMetrics(options: UseRevenueMetricsOptions = {}) {
           total,
           paid_at,
           client_id,
-          client:clients(id, first_name, last_name, company_name)
+          client:clients(id, first_name, last_name)
         `)
         .eq('organization_id', orgId)
         .eq('status', 'paid')
@@ -94,14 +94,14 @@ export function useRevenueMetrics(options: UseRevenueMetricsOptions = {}) {
       const clientMap = new Map<string, ClientRevenue>()
       paid.forEach((inv) => {
         if (inv.client) {
-          const client = inv.client as unknown as { id: string; first_name: string; last_name: string; company_name?: string }
+          const client = inv.client as unknown as { id: string; first_name: string; last_name: string }
           const existing = clientMap.get(client.id)
           if (existing) {
             existing.totalRevenue += inv.total || 0
           } else {
             clientMap.set(client.id, {
               clientId: client.id,
-              clientName: client.company_name || `${client.first_name} ${client.last_name}`,
+              clientName: `${client.first_name} ${client.last_name}`,
               totalRevenue: inv.total || 0,
               propertyCount: 0, // Will be populated below
             })

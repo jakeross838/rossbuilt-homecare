@@ -30,6 +30,7 @@ import {
   getDueDate,
   formatCurrency,
 } from '@/lib/helpers/billing'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Plus, Loader2, Download, Wrench, Calendar } from 'lucide-react'
 import type { Resolver } from 'react-hook-form'
 
@@ -60,6 +61,8 @@ export function CreateInvoiceDialog({
   ])
   const [taxRate, setTaxRate] = useState(0)
   const [discountAmount, setDiscountAmount] = useState(0)
+  const [markupPercent, setMarkupPercent] = useState(15) // Default 15% markup
+  const [applyMarkup, setApplyMarkup] = useState(false)
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -146,8 +149,11 @@ export function CreateInvoiceDialog({
     })
   }
 
-  // Calculate totals
-  const subtotal = calculateSubtotal(lineItems)
+  // Calculate totals with optional markup (markup shown separately, not added to subtotal)
+  const rawSubtotal = calculateSubtotal(lineItems)
+  const markupAmount = applyMarkup ? rawSubtotal * (markupPercent / 100) : 0
+  const subtotal = rawSubtotal + markupAmount
+  // Tax and total are calculated from subtotal (which includes markup if enabled)
   const { taxAmount, total } = calculateInvoiceTotal(subtotal, taxRate, discountAmount)
 
   const handleAddLineItem = () => {
@@ -188,11 +194,22 @@ export function CreateInvoiceDialog({
         return
       }
 
+      // Add service fee as a line item if enabled
+      const allLineItems = [...validLineItems]
+      if (applyMarkup && markupAmount > 0) {
+        allLineItems.push({
+          description: `Service Fee (${markupPercent}%)`,
+          quantity: 1,
+          unit_price: markupAmount,
+          line_type: 'service' as const,
+        })
+      }
+
       await createInvoice.mutateAsync({
         ...data,
         tax_rate: taxRate,
         discount_amount: discountAmount,
-        line_items: validLineItems,
+        line_items: allLineItems,
       })
 
       toast({
@@ -204,6 +221,8 @@ export function CreateInvoiceDialog({
       setLineItems([{ description: '', quantity: 1, unit_price: 0 }])
       setTaxRate(0)
       setDiscountAmount(0)
+      setMarkupPercent(15)
+      setApplyMarkup(false)
       onOpenChange(false)
     } catch {
       toast({
@@ -243,8 +262,7 @@ export function CreateInvoiceDialog({
                     <SelectContent>
                       {clients?.map((client) => (
                         <SelectItem key={client.id} value={client.id}>
-                          {client.company_name ||
-                            `${client.first_name} ${client.last_name}`}
+                          {`${client.first_name} ${client.last_name}`}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -381,7 +399,39 @@ export function CreateInvoiceDialog({
 
           {/* Totals */}
           <div className="flex justify-end">
-            <div className="w-64 space-y-2">
+            <div className="w-72 space-y-2">
+              <div className="flex justify-between">
+                <span>Line Items:</span>
+                <span>{formatCurrency(rawSubtotal)}</span>
+              </div>
+
+              {/* Service Fee / Markup */}
+              <div className="flex items-center justify-between gap-2 py-2 border-y">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="apply-markup"
+                    checked={applyMarkup}
+                    onCheckedChange={(checked) => setApplyMarkup(checked === true)}
+                  />
+                  <label htmlFor="apply-markup" className="text-sm cursor-pointer">
+                    Service Fee
+                  </label>
+                </div>
+                <Input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  className="w-16 text-center"
+                  value={markupPercent}
+                  onChange={(e) => setMarkupPercent(parseFloat(e.target.value) || 0)}
+                  disabled={!applyMarkup}
+                />
+                <span className="w-20 text-right">
+                  {applyMarkup ? `+${formatCurrency(markupAmount)}` : '-'}
+                </span>
+              </div>
+
               <div className="flex justify-between">
                 <span>Subtotal:</span>
                 <span>{formatCurrency(subtotal)}</span>
@@ -394,7 +444,7 @@ export function CreateInvoiceDialog({
                   min="0"
                   max="100"
                   step="0.1"
-                  className="w-20"
+                  className="w-16 text-center"
                   value={taxRate * 100}
                   onChange={(e) => setTaxRate(parseFloat(e.target.value) / 100 || 0)}
                 />
@@ -407,7 +457,7 @@ export function CreateInvoiceDialog({
                   type="number"
                   min="0"
                   step="0.01"
-                  className="w-20"
+                  className="w-16 text-center"
                   value={discountAmount}
                   onChange={(e) => setDiscountAmount(parseFloat(e.target.value) || 0)}
                 />

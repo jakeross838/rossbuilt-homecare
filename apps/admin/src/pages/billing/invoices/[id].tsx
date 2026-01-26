@@ -66,9 +66,8 @@ export default function InvoiceDetailPage() {
     first_name: string
     last_name: string
     email: string | null
-    company_name: string | null
   }
-  const clientName = client?.company_name || `${client?.first_name} ${client?.last_name}`
+  const clientName = `${client?.first_name} ${client?.last_name}`
   const daysUntilDue = getDaysUntilDue(invoice.due_date || '')
   const overdue = isInvoiceOverdue(invoice.due_date || '', invoice.status || 'draft')
 

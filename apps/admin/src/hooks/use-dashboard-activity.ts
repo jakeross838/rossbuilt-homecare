@@ -86,15 +86,15 @@ export function useRecentActivity(limit: number = 10) {
           status,
           total,
           updated_at,
-          client:clients(first_name, last_name, company_name)
+          client:clients(first_name, last_name)
         `)
         .eq('organization_id', orgId)
         .order('updated_at', { ascending: false })
         .limit(5)
 
       invoices?.forEach((inv) => {
-        const client = inv.client as unknown as { first_name: string; last_name: string; company_name?: string } | null
-        const clientName = client?.company_name || (client ? `${client.first_name} ${client.last_name}` : 'Unknown')
+        const client = inv.client as unknown as { first_name: string; last_name: string } | null
+        const clientName = client ? `${client.first_name} ${client.last_name}` : 'Unknown'
         activities.push({
           id: `invoice-${inv.id}`,
           type: 'invoice',
@@ -138,7 +138,7 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
           inspection_type,
           property:properties(
             name,
-            client:clients(first_name, last_name, company_name)
+            client:clients(first_name, last_name)
           ),
           inspector:users!inspector_id(first_name, last_name)
         `)
@@ -154,7 +154,7 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
       return (data || []).map((insp) => {
         const property = insp.property as unknown as {
           name: string
-          client: { first_name: string; last_name: string; company_name?: string } | null
+          client: { first_name: string; last_name: string } | null
         } | null
         const inspector = insp.inspector as unknown as { first_name: string; last_name: string } | null
         const client = property?.client
@@ -162,7 +162,7 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
         return {
           id: insp.id,
           propertyName: property?.name || 'Unknown property',
-          clientName: client?.company_name || (client ? `${client.first_name} ${client.last_name}` : 'Unknown'),
+          clientName: client ? `${client.first_name} ${client.last_name}` : 'Unknown',
           scheduledDate: insp.scheduled_date || '',
           tier: insp.inspection_type || 'scheduled',
           inspectorName: inspector ? `${inspector.first_name} ${inspector.last_name}` : undefined,
