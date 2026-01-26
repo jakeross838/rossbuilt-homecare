@@ -1,26 +1,55 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Calendar, Clock, DollarSign, Home, CheckCircle, PauseCircle, AlertCircle } from 'lucide-react'
+import { Calendar, Clock, DollarSign, Home, CheckCircle, PauseCircle, AlertCircle, Edit } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import { usePortalProperties } from '@/hooks/use-portal-dashboard'
+import { usePropertyProgram } from '@/hooks/use-programs'
+import { PlanEditor } from '@/components/portal/plan-editor'
 import { formatCurrency } from '@/lib/helpers/billing'
 import { format } from 'date-fns'
+import type { Tables } from '@/lib/supabase'
 
-const tierLabels: Record<string, string> = {
-  basic: 'Basic',
-  standard: 'Standard',
-  premium: 'Premium',
-  custom: 'Custom',
+type Property = {
+  id: string
+  name: string
+  address_line1: string
+  city: string
+  state: string
+  program?: {
+    id: string
+    tier: string
+    frequency: string
+    status: string
+    monthly_price: number | null
+    next_inspection_date: string | null
+  } | null
+  last_inspection_date?: string | null
+  overall_condition?: string | null
 }
 
+// Tier labels matching database enum: 'visual', 'functional', 'comprehensive', 'preventative'
+const tierLabels: Record<string, string> = {
+  visual: 'Visual',
+  functional: 'Functional',
+  comprehensive: 'Comprehensive',
+  preventative: 'Preventative',
+}
+
+// Frequency labels matching database enum: 'annual', 'semi_annual', 'quarterly', 'monthly', 'bi_weekly'
 const frequencyLabels: Record<string, string> = {
-  weekly: 'Weekly',
-  biweekly: 'Every 2 Weeks',
-  monthly: 'Monthly',
+  annual: 'Annually',
+  semi_annual: 'Semi-Annually',
   quarterly: 'Quarterly',
-  semiannually: 'Semi-Annually',
-  annually: 'Annually',
+  monthly: 'Monthly',
+  bi_weekly: 'Every 2 Weeks',
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
@@ -31,10 +60,14 @@ const statusConfig: Record<string, { label: string; color: string; icon: typeof 
 }
 
 export default function PortalPlansPage() {
-  const { data: properties, isLoading } = usePortalProperties()
+  const { data: properties, isLoading, refetch } = usePortalProperties()
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null)
+
+  // Fetch full program data when editing
+  const { data: fullProgram } = usePropertyProgram(editingProperty?.id || '')
 
   // Filter to only properties with programs
-  const propertiesWithPrograms = properties?.filter(p => p.program) || []
+  const propertiesWithPrograms = (properties?.filter(p => p.program) || []) as Property[]
 
   if (isLoading) {
     return (
@@ -153,6 +186,13 @@ export default function PortalPlansPage() {
 
                   {/* Actions */}
                   <div className="flex gap-2 pt-2">
+                    <Button
+                      size="sm"
+                      onClick={() => setEditingProperty(property)}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Plan
+                    </Button>
                     <Button variant="outline" size="sm" asChild>
                       <Link to={`/portal/properties/${property.id}`}>
                         <Home className="h-4 w-4 mr-2" />
@@ -198,6 +238,25 @@ export default function PortalPlansPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Plan Editor Sheet */}
+      <Sheet open={!!editingProperty} onOpenChange={(open) => !open && setEditingProperty(null)}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Edit Service Plan</SheetTitle>
+          </SheetHeader>
+          {editingProperty && fullProgram && (
+            <div className="mt-6">
+              <PlanEditor
+                program={fullProgram}
+                propertyName={editingProperty.name}
+                onClose={() => setEditingProperty(null)}
+                onSave={() => refetch()}
+              />
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }
