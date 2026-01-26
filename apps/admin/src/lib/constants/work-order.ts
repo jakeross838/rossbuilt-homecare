@@ -95,6 +95,19 @@ export const PRIORITY_LEVELS: Record<
 }
 
 /**
+ * Work order statuses as array for dropdowns
+ */
+export const WORK_ORDER_STATUSES = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'vendor_assigned', label: 'Vendor Assigned' },
+  { value: 'scheduled', label: 'Scheduled' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'on_hold', label: 'On Hold' },
+  { value: 'cancelled', label: 'Cancelled' },
+] as const
+
+/**
  * Work order categories (aligned with equipment categories and vendor trades)
  */
 export const WORK_ORDER_CATEGORIES = [

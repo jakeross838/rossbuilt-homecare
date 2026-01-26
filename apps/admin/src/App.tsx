@@ -18,6 +18,7 @@ const NewClientPage = lazy(() => import('@/pages/clients/new'))
 const ClientDetailPage = lazy(() => import('@/pages/clients/[id]'))
 const EditClientPage = lazy(() => import('@/pages/clients/[id]/edit'))
 const PropertiesPage = lazy(() => import('@/pages/properties'))
+const PropertiesOverviewPage = lazy(() => import('@/pages/properties/overview'))
 const NewPropertyPage = lazy(() => import('@/pages/properties/new'))
 const PropertyDetailPage = lazy(() => import('@/pages/properties/[id]'))
 const EditPropertyPage = lazy(() => import('@/pages/properties/[id]/edit'))
@@ -26,6 +27,11 @@ const OrganizationSettingsPage = lazy(() => import('@/pages/settings/organizatio
 const ProfileSettingsPage = lazy(() => import('@/pages/settings/profile'))
 const PricingSettingsPage = lazy(() => import('@/pages/settings/pricing'))
 const TemplatesPage = lazy(() => import('@/pages/settings/templates'))
+const UsersSettingsPage = lazy(() => import('@/pages/settings/users'))
+const NewUserPage = lazy(() => import('@/pages/settings/users/new'))
+const UserDetailPage = lazy(() => import('@/pages/settings/users/[id]'))
+const EditUserPage = lazy(() => import('@/pages/settings/users/[id]/edit'))
+const PermissionsPage = lazy(() => import('@/pages/settings/permissions'))
 const CalendarPage = lazy(() => import('@/pages/calendar'))
 const InspectionsPage = lazy(() => import('@/pages/inspections'))
 const InspectionReportPage = lazy(() => import('@/pages/inspections/report'))
@@ -134,6 +140,7 @@ function App() {
 
                 {/* Properties */}
                 <Route path="/properties" element={<Suspense fallback={<PageLoader />}><PropertiesPage /></Suspense>} />
+                <Route path="/properties/overview" element={<Suspense fallback={<PageLoader />}><PropertiesOverviewPage /></Suspense>} />
                 <Route path="/properties/new" element={<Suspense fallback={<PageLoader />}><NewPropertyPage /></Suspense>} />
                 <Route path="/properties/:id" element={<Suspense fallback={<PageLoader />}><PropertyDetailPage /></Suspense>} />
                 <Route path="/properties/:id/edit" element={<Suspense fallback={<PageLoader />}><EditPropertyPage /></Suspense>} />
@@ -176,6 +183,11 @@ function App() {
                 <Route path="/settings/pricing" element={<Suspense fallback={<PageLoader />}><PricingSettingsPage /></Suspense>} />
                 <Route path="/settings/templates" element={<Suspense fallback={<PageLoader />}><TemplatesPage /></Suspense>} />
                 <Route path="/settings/notifications" element={<Suspense fallback={<PageLoader />}><NotificationSettingsPage /></Suspense>} />
+                <Route path="/settings/users" element={<Suspense fallback={<PageLoader />}><UsersSettingsPage /></Suspense>} />
+                <Route path="/settings/users/new" element={<Suspense fallback={<PageLoader />}><NewUserPage /></Suspense>} />
+                <Route path="/settings/users/:id" element={<Suspense fallback={<PageLoader />}><UserDetailPage /></Suspense>} />
+                <Route path="/settings/users/:id/edit" element={<Suspense fallback={<PageLoader />}><EditUserPage /></Suspense>} />
+                <Route path="/settings/permissions" element={<Suspense fallback={<PageLoader />}><PermissionsPage /></Suspense>} />
               </Route>
 
               {/* Catch all - redirect to dashboard */}

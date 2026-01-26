@@ -27,7 +27,6 @@ export {
   type PermissionAction,
   type PermissionSubject,
   type AppAbility,
-  AppAbilityClass,
   createAbilityForRole,
   createEmptyAbility,
 } from './ability'

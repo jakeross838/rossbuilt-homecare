@@ -29,6 +29,13 @@ import { formatWorkOrderNumber } from '@/lib/constants/work-order'
 import { useToast } from '@/hooks/use-toast'
 import { format } from 'date-fns'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   ArrowLeft,
   MapPin,
   User,
@@ -41,6 +48,7 @@ import {
   XCircle,
   UserPlus,
 } from 'lucide-react'
+import { WORK_ORDER_STATUSES } from '@/lib/constants/work-order'
 import type {
   AssignVendorFormData,
   CompleteWorkOrderFormData,
@@ -82,7 +90,7 @@ export default function WorkOrderDetailPage() {
     !workOrder.vendor_id &&
     ['pending'].includes(status)
   const canStart =
-    workOrder.vendor_id && ['scheduled'].includes(status)
+    workOrder.vendor_id && ['vendor_assigned', 'scheduled'].includes(status)
   const canComplete = ['in_progress'].includes(status)
   const canCancel = !['completed', 'cancelled'].includes(status)
 
@@ -181,7 +189,41 @@ export default function WorkOrderDetailPage() {
             <span className="text-sm font-mono text-muted-foreground">
               {formatWorkOrderNumber(workOrder.work_order_number)}
             </span>
-            <WorkOrderStatusBadge status={status} />
+            <Select
+              value={status}
+              onValueChange={async (newStatus) => {
+                try {
+                  await updateStatus.mutateAsync({
+                    id: workOrder.id,
+                    status: newStatus as typeof status,
+                  })
+                  toast({
+                    title: 'Status updated',
+                    description: `Work order status changed to ${newStatus.replace('_', ' ')}`,
+                  })
+                } catch {
+                  toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: 'Failed to update status',
+                  })
+                }
+              }}
+              disabled={updateStatus.isPending || ['completed', 'cancelled'].includes(status)}
+            >
+              <SelectTrigger className="w-[160px] h-8">
+                <SelectValue>
+                  <WorkOrderStatusBadge status={status} />
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {WORK_ORDER_STATUSES.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <WorkOrderPriorityBadge priority={workOrder.priority} />
           </div>
           <h1 className="text-2xl font-bold">{workOrder.title}</h1>

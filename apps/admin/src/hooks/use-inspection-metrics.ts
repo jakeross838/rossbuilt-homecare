@@ -92,11 +92,12 @@ export function useInspectionMetrics(options: UseInspectionMetricsOptions = {}) 
         averageDuration = Math.round(totalMinutes / completedWithTimes.length)
       }
 
-      // Aggregate findings from JSONB (findings is an array of finding objects)
+      // Aggregate findings from JSONB (findings is an object with item_id keys)
       const findingsBreakdown = { pass: 0, fail: 0, needsAttention: 0, urgent: 0 }
       data.forEach((i) => {
-        if (i.findings && Array.isArray(i.findings)) {
-          (i.findings as unknown as { status: string }[]).forEach((f) => {
+        if (i.findings && typeof i.findings === 'object' && !Array.isArray(i.findings)) {
+          const findingsObj = i.findings as Record<string, { status: string }>
+          Object.values(findingsObj).forEach((f) => {
             if (f.status === 'pass') findingsBreakdown.pass++
             else if (f.status === 'fail') findingsBreakdown.fail++
             else if (f.status === 'needs_attention') findingsBreakdown.needsAttention++

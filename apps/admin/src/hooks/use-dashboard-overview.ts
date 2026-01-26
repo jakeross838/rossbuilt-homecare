@@ -130,22 +130,22 @@ export function useDashboardOverview(options: UseOverviewOptions = {}) {
           .in('status', ['sent', 'viewed', 'overdue', 'partial']),
       ])
 
-      // Calculate totals
-      const currentClients = currentClientsResult.count || 0
-      const previousClients = previousClientsResult.count || 0
-      const currentProperties = currentPropertiesResult.count || 0
-      const previousProperties = previousPropertiesResult.count || 0
-      const currentInspections = currentInspectionsResult.count || 0
-      const previousInspections = previousInspectionsResult.count || 0
-      const currentWorkOrders = currentWorkOrdersResult.count || 0
-      const previousWorkOrders = previousWorkOrdersResult.count || 0
+      // Calculate totals with error handling
+      const currentClients = currentClientsResult.error ? 0 : (currentClientsResult.count || 0)
+      const previousClients = previousClientsResult.error ? 0 : (previousClientsResult.count || 0)
+      const currentProperties = currentPropertiesResult.error ? 0 : (currentPropertiesResult.count || 0)
+      const previousProperties = previousPropertiesResult.error ? 0 : (previousPropertiesResult.count || 0)
+      const currentInspections = currentInspectionsResult.error ? 0 : (currentInspectionsResult.count || 0)
+      const previousInspections = previousInspectionsResult.error ? 0 : (previousInspectionsResult.count || 0)
+      const currentWorkOrders = currentWorkOrdersResult.error ? 0 : (currentWorkOrdersResult.count || 0)
+      const previousWorkOrders = previousWorkOrdersResult.error ? 0 : (previousWorkOrdersResult.count || 0)
 
-      const currentRevenue = (currentRevenueResult.data || [])
-        .reduce((sum, inv) => sum + (inv.total || 0), 0)
-      const previousRevenue = (previousRevenueResult.data || [])
-        .reduce((sum, inv) => sum + (inv.total || 0), 0)
-      const outstandingBalance = (outstandingResult.data || [])
-        .reduce((sum, inv) => sum + (inv.balance_due || 0), 0)
+      const currentRevenue = currentRevenueResult.error ? 0 :
+        (currentRevenueResult.data || []).reduce((sum, inv) => sum + (inv.total || 0), 0)
+      const previousRevenue = previousRevenueResult.error ? 0 :
+        (previousRevenueResult.data || []).reduce((sum, inv) => sum + (inv.total || 0), 0)
+      const outstandingBalance = outstandingResult.error ? 0 :
+        (outstandingResult.data || []).reduce((sum, inv) => sum + (inv.balance_due || 0), 0)
 
       return {
         activeClients: calculateTrend(currentClients, previousClients),

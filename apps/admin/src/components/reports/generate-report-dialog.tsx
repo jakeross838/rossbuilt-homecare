@@ -14,6 +14,7 @@ import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
 import { useBuildReportData } from '@/hooks/use-reports'
+import { useSendReportReadyEmail } from '@/hooks/use-email'
 import {
   generateAndSaveReport,
   downloadPDF,
@@ -39,6 +40,7 @@ export function GenerateReportDialog({
 }: GenerateReportDialogProps) {
   const { toast } = useToast()
   const { data: reportData, isLoading: isLoadingData } = useBuildReportData(inspectionId)
+  const { send: sendReportEmail } = useSendReportReadyEmail()
 
   const [step, setStep] = useState<GenerationStep>('options')
   const [options, setOptions] = useState<ReportGenerationOptions>(DEFAULT_REPORT_OPTIONS)
@@ -76,10 +78,38 @@ export function GenerateReportDialog({
 
       onSuccess?.(reportUrl)
 
-      toast({
-        title: 'Report Generated',
-        description: 'Your inspection report has been created successfully.',
-      })
+      // Send email if requested
+      if (sendEmail && emailTo) {
+        try {
+          await sendReportEmail({
+            to: emailTo,
+            client_name: reportData.client.name,
+            property_name: reportData.property.name,
+            inspection_date: reportData.inspection_date,
+            overall_condition: reportData.overall_condition || 'Good',
+            findings_summary: `${reportData.findings_summary.passed} items passed, ${reportData.findings_summary.needs_attention} need attention`,
+            recommendations_count: reportData.recommendations.length,
+            report_url: reportUrl,
+            portal_url: window.location.origin,
+          })
+          toast({
+            title: 'Report Generated & Emailed',
+            description: `Report has been sent to ${emailTo}`,
+          })
+        } catch (emailError) {
+          console.error('Failed to send email:', emailError)
+          toast({
+            title: 'Report Generated',
+            description: 'Report created but email failed to send. You can share the link manually.',
+            variant: 'default',
+          })
+        }
+      } else {
+        toast({
+          title: 'Report Generated',
+          description: 'Your inspection report has been created successfully.',
+        })
+      }
     } catch (error) {
       console.error('Report generation failed:', error)
       toast({

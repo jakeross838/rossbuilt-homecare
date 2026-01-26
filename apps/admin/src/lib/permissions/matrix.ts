@@ -25,6 +25,8 @@ export type PageSubject =
   | 'notifications'
   | 'settings'
   | 'reports'
+  | 'users'
+  | 'permissions'
 
 /**
  * Permission matrix configuration
@@ -112,6 +114,16 @@ export const permissionMatrix: Record<PageSubject, Record<PermissionRole, boolea
     Client: false,
     Tech: true,
   },
+  users: {
+    Admin: true,
+    Client: false,
+    Tech: false,
+  },
+  permissions: {
+    Admin: true,
+    Client: false,
+    Tech: false,
+  },
 }
 
 /**
@@ -151,8 +163,17 @@ export function getDefaultPageForRole(role: PermissionRole): string {
  * Maps URL paths to permission subjects
  */
 export function routeToPageSubject(pathname: string): PageSubject | null {
-  // Remove leading slash and get first segment
-  const segment = pathname.replace(/^\//, '').split('/')[0]
+  // Remove leading slash and get segments
+  const segments = pathname.replace(/^\//, '').split('/')
+  const firstSegment = segments[0]
+  const secondSegment = segments[1]
+
+  // Handle special sub-routes that have their own permissions
+  if (firstSegment === 'settings') {
+    if (secondSegment === 'users') return 'users'
+    if (secondSegment === 'permissions') return 'permissions'
+    return 'settings'
+  }
 
   // Map route segments to page subjects
   const routeMap: Record<string, PageSubject> = {
@@ -171,5 +192,5 @@ export function routeToPageSubject(pathname: string): PageSubject | null {
     reports: 'reports',
   }
 
-  return routeMap[segment] ?? null
+  return routeMap[firstSegment] ?? null
 }

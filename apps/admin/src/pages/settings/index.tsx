@@ -7,6 +7,8 @@ import {
   DollarSign,
   FileText,
   Bell,
+  Users,
+  Shield,
 } from 'lucide-react'
 
 interface SettingsLink {
@@ -28,6 +30,18 @@ const settingsLinks: SettingsLink[] = [
     description: 'Your account settings, password, and preferences',
     href: '/settings/profile',
     icon: User,
+  },
+  {
+    title: 'Users',
+    description: 'Manage user accounts, roles, and access',
+    href: '/settings/users',
+    icon: Users,
+  },
+  {
+    title: 'Permissions',
+    description: 'View and manage property assignments',
+    href: '/settings/permissions',
+    icon: Shield,
   },
   {
     title: 'Pricing',

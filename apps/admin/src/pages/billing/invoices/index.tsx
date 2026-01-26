@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { InvoiceStatusBadge } from '@/components/billing/invoice-status-badge'
 import { CreateInvoiceDialog } from '@/components/billing/create-invoice-dialog'
 import { useInvoices, useInvoiceSummary } from '@/hooks/use-invoices'
-import { INVOICE_STATUS_CONFIG } from '@/lib/constants/billing'
+import { INVOICE_STATUS_CONFIG, INVOICE_TYPES } from '@/lib/constants/billing'
 import { formatCurrency, getDaysUntilDue, isInvoiceOverdue } from '@/lib/helpers/billing'
 import type { InvoiceFilters, InvoiceStatus } from '@/lib/types/billing'
 import {
@@ -60,6 +60,14 @@ export default function InvoicesPage() {
       setFilters((prev) => ({ ...prev, status: undefined }))
     } else {
       setFilters((prev) => ({ ...prev, status: [value as InvoiceStatus] }))
+    }
+  }
+
+  const handleTypeFilter = (value: string) => {
+    if (value === 'all') {
+      setFilters((prev) => ({ ...prev, invoice_type: undefined }))
+    } else {
+      setFilters((prev) => ({ ...prev, invoice_type: value }))
     }
   }
 
@@ -130,11 +138,11 @@ export default function InvoicesPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-wrap">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search invoices..."
+            placeholder="Search by invoice #, client, or property..."
             className="pl-9"
             onChange={(e) => handleSearch(e.target.value)}
           />
@@ -153,6 +161,20 @@ export default function InvoicesPage() {
             ))}
           </SelectContent>
         </Select>
+
+        <Select onValueChange={handleTypeFilter} defaultValue="all">
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            {INVOICE_TYPES.map((type) => (
+              <SelectItem key={type.value} value={type.value}>
+                {type.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Invoices Table */}
@@ -162,6 +184,7 @@ export default function InvoicesPage() {
             <TableRow>
               <TableHead>Invoice</TableHead>
               <TableHead>Client</TableHead>
+              <TableHead>Property</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Due</TableHead>
               <TableHead>Status</TableHead>
@@ -172,13 +195,13 @@ export default function InvoicesPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={8} className="text-center py-8">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : invoices?.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={8} className="text-center py-8">
                   No invoices found
                 </TableCell>
               </TableRow>
@@ -186,6 +209,7 @@ export default function InvoicesPage() {
               invoices?.map((invoice) => {
                 const daysUntilDue = getDaysUntilDue(invoice.due_date)
                 const overdue = isInvoiceOverdue(invoice.due_date, invoice.status)
+                const invoiceWithProps = invoice as typeof invoice & { property_names?: string[] }
 
                 return (
                   <TableRow key={invoice.id}>
@@ -201,6 +225,20 @@ export default function InvoicesPage() {
                       </p>
                     </TableCell>
                     <TableCell>{invoice.client_name}</TableCell>
+                    <TableCell>
+                      {invoiceWithProps.property_names?.length ? (
+                        <span className="text-sm">
+                          {invoiceWithProps.property_names.slice(0, 2).join(', ')}
+                          {invoiceWithProps.property_names.length > 2 && (
+                            <span className="text-muted-foreground">
+                              {' '}+{invoiceWithProps.property_names.length - 2} more
+                            </span>
+                          )}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">-</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       {new Date(invoice.invoice_date).toLocaleDateString()}
                     </TableCell>

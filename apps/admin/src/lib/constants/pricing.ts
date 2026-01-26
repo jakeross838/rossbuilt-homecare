@@ -112,30 +112,38 @@ export const INSPECTION_TIERS = [
 ] as const
 
 /**
- * Program add-on services
+ * Program add-on services with pricing
  */
 export const PROGRAM_ADDONS = [
   {
-    value: 'digital_manual',
-    label: 'Digital Home Manual',
-    description:
-      'Comprehensive digital manual for your home with maintenance schedules and equipment details',
+    value: 'hvac_maintenance',
+    label: 'HVAC Maintenance',
+    description: 'Quarterly HVAC filter changes and system check',
+    price: 75,
   },
   {
-    value: 'warranty_tracking',
-    label: 'Warranty Tracking',
-    description: 'Track all equipment warranties with expiration alerts',
+    value: 'pool_spa',
+    label: 'Pool & Spa',
+    description: 'Pool and spa equipment inspection and water quality check',
+    price: 100,
   },
   {
-    value: 'emergency_response',
-    label: 'Emergency Response',
-    description: 'Priority response for emergencies with dedicated contact line',
+    value: 'landscape',
+    label: 'Landscape',
+    description: 'Irrigation system check and landscape health assessment',
+    price: 50,
   },
   {
-    value: 'hurricane_monitoring',
-    label: 'Hurricane Monitoring',
-    description:
-      'Storm tracking with pre and post-storm inspection coordination',
+    value: 'security_system',
+    label: 'Security System',
+    description: 'Security system testing and battery replacement',
+    price: 45,
+  },
+  {
+    value: 'smart_home',
+    label: 'Smart Home',
+    description: 'Smart home device check and connectivity verification',
+    price: 60,
   },
 ] as const
 

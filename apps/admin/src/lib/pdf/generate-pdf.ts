@@ -65,9 +65,9 @@ export async function uploadPDFToStorage({
   const fileName = `${report.inspection_id}-${Date.now()}.pdf`
   const filePath = `reports/${report.property.id}/${fileName}`
 
-  // Upload to Supabase Storage
+  // Upload to Supabase Storage (using 'documents' bucket)
   const { error } = await supabase.storage
-    .from('inspection-reports')
+    .from('documents')
     .upload(filePath, blob, {
       contentType: 'application/pdf',
       cacheControl: '3600',
@@ -77,12 +77,16 @@ export async function uploadPDFToStorage({
     throw new Error(`Failed to upload PDF: ${error.message}`)
   }
 
-  // Get public URL
-  const { data: urlData } = supabase.storage
-    .from('inspection-reports')
-    .getPublicUrl(filePath)
+  // Get public URL (documents bucket is private, use signed URL)
+  const { data: urlData, error: urlError } = await supabase.storage
+    .from('documents')
+    .createSignedUrl(filePath, 60 * 60 * 24 * 365) // 1 year expiry
 
-  return urlData.publicUrl
+  if (urlError || !urlData?.signedUrl) {
+    throw new Error(`Failed to get signed URL: ${urlError?.message || 'Unknown error'}`)
+  }
+
+  return urlData.signedUrl
 }
 
 /**

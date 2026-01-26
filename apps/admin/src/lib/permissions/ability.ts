@@ -5,7 +5,7 @@
  * Integrates with the permission matrix for consistent enforcement.
  */
 
-import { Ability, AbilityBuilder, AbilityClass } from '@casl/ability'
+import { PureAbility, AbilityBuilder } from '@casl/ability'
 import { permissionMatrix, type PageSubject } from './matrix'
 import { type PermissionRole } from './roles'
 
@@ -24,12 +24,7 @@ export type PermissionSubject = PageSubject | 'all'
 /**
  * Application ability type
  */
-export type AppAbility = Ability<[PermissionAction, PermissionSubject]>
-
-/**
- * Ability class for type-safe ability creation
- */
-export const AppAbilityClass = Ability as AbilityClass<AppAbility>
+export type AppAbility = PureAbility<[PermissionAction, PermissionSubject]>
 
 /**
  * Create a CASL ability based on user role
@@ -38,7 +33,7 @@ export const AppAbilityClass = Ability as AbilityClass<AppAbility>
  * @returns CASL Ability instance with appropriate permissions
  */
 export function createAbilityForRole(role: PermissionRole | null): AppAbility {
-  const { can, cannot, build } = new AbilityBuilder<AppAbility>(AppAbilityClass)
+  const { can, cannot, build } = new AbilityBuilder<AppAbility>(PureAbility)
 
   if (!role) {
     // No role = no permissions
@@ -78,5 +73,5 @@ export function createAbilityForRole(role: PermissionRole | null): AppAbility {
  * Used during loading states
  */
 export function createEmptyAbility(): AppAbility {
-  return new AppAbilityClass([])
+  return new PureAbility<[PermissionAction, PermissionSubject]>([])
 }
