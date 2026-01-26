@@ -1,9 +1,11 @@
-import { ExternalLink, CreditCard, Check } from 'lucide-react'
+import { useState } from 'react'
+import { ExternalLink, CreditCard, Check, Download, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/helpers/billing'
 import { INVOICE_STATUS_CONFIG } from '@/lib/constants/billing'
+import { useCreatePaymentLink, openPaymentLink } from '@/hooks/use-stripe'
 import type { PortalInvoice } from '@/lib/types/portal'
 
 interface InvoiceCardProps {
@@ -13,7 +15,35 @@ interface InvoiceCardProps {
 export function InvoiceCard({ invoice }: InvoiceCardProps) {
   const statusConfig = INVOICE_STATUS_CONFIG[invoice.status]
   const isPaid = invoice.status === 'paid'
-  const canPay = ['sent', 'viewed', 'partial', 'overdue'].includes(invoice.status)
+  const canPay = ['sent', 'viewed', 'partial', 'overdue'].includes(invoice.status) && invoice.balance_due > 0
+  const hasPdf = !!invoice.pdf_url
+
+  const createPaymentLink = useCreatePaymentLink()
+  const [isCreatingPaymentLink, setIsCreatingPaymentLink] = useState(false)
+
+  const handlePayNow = async () => {
+    setIsCreatingPaymentLink(true)
+    try {
+      const result = await createPaymentLink.mutateAsync({
+        invoiceId: invoice.id,
+        // Use portal-specific URLs for success/cancel
+        successUrl: `${window.location.origin}/portal/invoices?payment=success&invoice=${invoice.id}`,
+        cancelUrl: `${window.location.origin}/portal/invoices?payment=cancelled&invoice=${invoice.id}`,
+      })
+      // Open Stripe checkout in new tab
+      openPaymentLink(result.url)
+    } catch (error) {
+      console.error('Failed to create payment link:', error)
+    } finally {
+      setIsCreatingPaymentLink(false)
+    }
+  }
+
+  const handleDownloadPdf = () => {
+    if (invoice.pdf_url) {
+      window.open(invoice.pdf_url, '_blank', 'noopener,noreferrer')
+    }
+  }
 
   return (
     <Card>
@@ -71,16 +101,42 @@ export function InvoiceCard({ invoice }: InvoiceCardProps) {
           </div>
         )}
 
-        {/* Pay Button */}
-        {canPay && invoice.stripe_payment_url && (
-          <Button className="w-full mt-4" asChild>
-            <a href={invoice.stripe_payment_url} target="_blank" rel="noopener noreferrer">
-              <CreditCard className="h-4 w-4 mr-2" />
-              Pay Now
-              <ExternalLink className="h-4 w-4 ml-2" />
-            </a>
-          </Button>
-        )}
+        {/* Action Buttons */}
+        <div className="flex gap-2 mt-4">
+          {/* PDF Download Button */}
+          {hasPdf && (
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={handleDownloadPdf}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download PDF
+            </Button>
+          )}
+
+          {/* Pay Button - generates payment link on-demand */}
+          {canPay && (
+            <Button
+              className="flex-1"
+              onClick={handlePayNow}
+              disabled={isCreatingPaymentLink}
+            >
+              {isCreatingPaymentLink ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Pay Now
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </>
+              )}
+            </Button>
+          )}
+        </div>
 
         {isPaid && (
           <div className="flex items-center justify-center gap-2 text-green-600 mt-4 py-2 bg-green-50 rounded-md">
