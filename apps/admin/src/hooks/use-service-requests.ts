@@ -27,6 +27,7 @@ interface UseServiceRequestsOptions {
 
 /**
  * Hook to fetch service requests for client portal
+ * Filters by user's assigned properties
  */
 export function useServiceRequests(options: UseServiceRequestsOptions = {}) {
   const { status, propertyId } = options
@@ -35,6 +36,25 @@ export function useServiceRequests(options: UseServiceRequestsOptions = {}) {
   return useQuery({
     queryKey: serviceRequestKeys.list({ status, propertyId }),
     queryFn: async (): Promise<PortalServiceRequest[]> => {
+      if (!profile?.id) {
+        throw new Error('User not authenticated')
+      }
+
+      // First, get the property IDs assigned to this user
+      const { data: assignments, error: assignmentError } = await supabase
+        .from('user_property_assignments')
+        .select('property_id')
+        .eq('user_id', profile.id)
+
+      if (assignmentError) throw assignmentError
+
+      // If no assignments, return empty array
+      if (!assignments || assignments.length === 0) {
+        return []
+      }
+
+      const assignedPropertyIds = assignments.map((a) => a.property_id)
+
       let query = supabase
         .from('service_requests')
         .select(`
@@ -58,6 +78,7 @@ export function useServiceRequests(options: UseServiceRequestsOptions = {}) {
             address_line1
           )
         `)
+        .in('property_id', assignedPropertyIds)
         .order('created_at', { ascending: false })
 
       if (status) {
@@ -96,6 +117,7 @@ export function useServiceRequests(options: UseServiceRequestsOptions = {}) {
 
 /**
  * Hook to fetch single service request with comments
+ * Verifies request belongs to user's assigned properties
  */
 export function useServiceRequest(requestId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
@@ -104,6 +126,17 @@ export function useServiceRequest(requestId: string | undefined) {
     queryKey: serviceRequestKeys.detail(requestId || ''),
     queryFn: async (): Promise<PortalServiceRequest & { comments: PortalServiceRequestComment[] }> => {
       if (!requestId) throw new Error('Request ID required')
+      if (!profile?.id) throw new Error('User not authenticated')
+
+      // First, get the property IDs assigned to this user
+      const { data: assignments, error: assignmentError } = await supabase
+        .from('user_property_assignments')
+        .select('property_id')
+        .eq('user_id', profile.id)
+
+      if (assignmentError) throw assignmentError
+
+      const assignedPropertyIds = assignments?.map((a) => a.property_id) || []
 
       const { data, error } = await supabase
         .from('service_requests')
@@ -122,6 +155,7 @@ export function useServiceRequest(requestId: string | undefined) {
           work_order_id,
           created_at,
           updated_at,
+          property_id,
           property:properties (
             id,
             name,
@@ -132,6 +166,11 @@ export function useServiceRequest(requestId: string | undefined) {
         .single()
 
       if (error) throw error
+
+      // Verify request belongs to user's assigned properties
+      if (!assignedPropertyIds.includes(data.property_id)) {
+        throw new Error('Request not found')
+      }
 
       // Fetch comments (RLS filters to non-internal for clients)
       const { data: comments } = await supabase
