@@ -6,6 +6,7 @@ import type { PortalInvoice } from '@/lib/types/portal'
 
 /**
  * Hook to fetch invoices for client portal
+ * RLS automatically filters to invoices for client's client_id
  */
 export function usePortalInvoices() {
   const profile = useAuthStore((state) => state.profile)
@@ -19,11 +20,11 @@ export function usePortalInvoices() {
           id,
           invoice_number,
           status,
-          issue_date,
+          invoice_date,
           due_date,
           total,
           balance_due,
-          stripe_payment_url,
+          pdf_url,
           line_items:invoice_line_items (
             description,
             quantity,
@@ -31,7 +32,7 @@ export function usePortalInvoices() {
             amount
           )
         `)
-        .order('issue_date', { ascending: false })
+        .order('invoice_date', { ascending: false })
 
       if (error) throw error
 
@@ -39,10 +40,10 @@ export function usePortalInvoices() {
         id: inv.id,
         invoice_number: inv.invoice_number,
         status: inv.status,
-        issue_date: inv.issue_date,
+        issue_date: inv.invoice_date, // Map invoice_date to issue_date for type compatibility
         due_date: inv.due_date,
-        total: inv.total,
-        balance_due: inv.balance_due,
+        total: Number(inv.total),
+        balance_due: Number(inv.balance_due),
         line_items: (inv.line_items || []).map((li: unknown) => {
           const item = li as {
             description: string
@@ -52,12 +53,14 @@ export function usePortalInvoices() {
           }
           return {
             description: item.description,
-            quantity: item.quantity,
-            unit_price: item.unit_price,
-            amount: item.amount,
+            quantity: Number(item.quantity),
+            unit_price: Number(item.unit_price),
+            amount: Number(item.amount),
           }
         }),
-        stripe_payment_url: inv.stripe_payment_url,
+        // Payment links are generated on-demand via edge function, not stored
+        stripe_payment_url: null,
+        pdf_url: inv.pdf_url,
       }))
     },
     enabled: profile?.role === 'client',
@@ -66,6 +69,7 @@ export function usePortalInvoices() {
 
 /**
  * Hook to fetch single invoice for portal
+ * RLS automatically filters to invoices for client's client_id
  */
 export function usePortalInvoice(invoiceId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
@@ -81,11 +85,11 @@ export function usePortalInvoice(invoiceId: string | undefined) {
           id,
           invoice_number,
           status,
-          issue_date,
+          invoice_date,
           due_date,
           total,
           balance_due,
-          stripe_payment_url,
+          pdf_url,
           notes,
           terms,
           line_items:invoice_line_items (
@@ -104,10 +108,10 @@ export function usePortalInvoice(invoiceId: string | undefined) {
         id: data.id,
         invoice_number: data.invoice_number,
         status: data.status,
-        issue_date: data.issue_date,
+        issue_date: data.invoice_date, // Map invoice_date to issue_date for type compatibility
         due_date: data.due_date,
-        total: data.total,
-        balance_due: data.balance_due,
+        total: Number(data.total),
+        balance_due: Number(data.balance_due),
         line_items: (data.line_items || []).map((li: unknown) => {
           const item = li as {
             description: string
@@ -117,12 +121,14 @@ export function usePortalInvoice(invoiceId: string | undefined) {
           }
           return {
             description: item.description,
-            quantity: item.quantity,
-            unit_price: item.unit_price,
-            amount: item.amount,
+            quantity: Number(item.quantity),
+            unit_price: Number(item.unit_price),
+            amount: Number(item.amount),
           }
         }),
-        stripe_payment_url: data.stripe_payment_url,
+        // Payment links are generated on-demand via edge function, not stored
+        stripe_payment_url: null,
+        pdf_url: data.pdf_url,
       }
     },
     enabled: !!invoiceId && profile?.role === 'client',

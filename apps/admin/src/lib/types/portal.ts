@@ -202,8 +202,11 @@ export interface PortalInvoice {
     amount: number
   }[]
 
-  // Payment link
+  // Payment link (generated on-demand via edge function)
   stripe_payment_url: string | null
+
+  // PDF download URL
+  pdf_url?: string | null
 }
 
 // Dashboard summary for client portal home
