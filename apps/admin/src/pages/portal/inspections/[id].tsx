@@ -1,10 +1,9 @@
 import { useParams, Link } from 'react-router-dom'
 import { format } from 'date-fns'
-import { ArrowLeft, Calendar, Clock, User, MapPin, FileText, Download, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, User, MapPin, FileText, Download, ExternalLink, CheckCircle, AlertTriangle, AlertCircle, MinusCircle, Cloud, Thermometer, Droplets, Wind } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 import { usePortalInspection } from '@/hooks/use-portal-inspections'
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'success' | 'warning' | 'destructive' }> = {
@@ -19,6 +18,31 @@ const conditionColors: Record<string, string> = {
   fair: 'text-yellow-600 bg-yellow-50 border-yellow-200',
   poor: 'text-orange-600 bg-orange-50 border-orange-200',
   critical: 'text-red-600 bg-red-50 border-red-200',
+}
+
+// Finding status configuration
+const findingStatusConfig: Record<string, { label: string; icon: typeof CheckCircle; className: string }> = {
+  pass: { label: 'Passed', icon: CheckCircle, className: 'text-green-600' },
+  needs_attention: { label: 'Needs Attention', icon: AlertTriangle, className: 'text-yellow-600' },
+  urgent: { label: 'Urgent', icon: AlertCircle, className: 'text-red-600' },
+  fail: { label: 'Failed', icon: AlertCircle, className: 'text-red-600' },
+  na: { label: 'N/A', icon: MinusCircle, className: 'text-gray-400' },
+}
+
+// Type for finding entry
+interface Finding {
+  status: string
+  notes?: string
+  response?: string
+  photos?: string[]
+}
+
+// Type for weather conditions
+interface WeatherConditions {
+  temperature?: number
+  humidity?: number
+  conditions?: string
+  wind_speed?: number
 }
 
 export default function PortalInspectionDetailPage() {
@@ -156,18 +180,155 @@ export default function PortalInspectionDetailPage() {
             </Card>
           )}
 
+          {/* Findings */}
+          {inspection.findings && Object.keys(inspection.findings).length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Inspection Findings</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {(() => {
+                  const findingsObj = inspection.findings as Record<string, Finding>
+                  const findingsEntries = Object.entries(findingsObj)
+
+                  // Group by status for summary
+                  const statusCounts = findingsEntries.reduce((acc, [, finding]) => {
+                    const s = finding.status || 'unknown'
+                    acc[s] = (acc[s] || 0) + 1
+                    return acc
+                  }, {} as Record<string, number>)
+
+                  // Show items that need attention first
+                  const sortedFindings = [...findingsEntries].sort((a, b) => {
+                    const priority: Record<string, number> = { urgent: 0, fail: 1, needs_attention: 2, pass: 3, na: 4 }
+                    return (priority[a[1].status] ?? 5) - (priority[b[1].status] ?? 5)
+                  })
+
+                  // Only show non-pass items unless there are few total
+                  const itemsToShow = sortedFindings.length <= 10
+                    ? sortedFindings
+                    : sortedFindings.filter(([, f]) => f.status !== 'pass' && f.status !== 'na')
+
+                  return (
+                    <div className="space-y-4">
+                      {/* Summary counts */}
+                      <div className="flex flex-wrap gap-3 pb-4 border-b">
+                        {statusCounts.pass && (
+                          <span className="text-sm text-green-600 flex items-center gap-1">
+                            <CheckCircle className="h-4 w-4" />
+                            {statusCounts.pass} passed
+                          </span>
+                        )}
+                        {statusCounts.needs_attention && (
+                          <span className="text-sm text-yellow-600 flex items-center gap-1">
+                            <AlertTriangle className="h-4 w-4" />
+                            {statusCounts.needs_attention} needs attention
+                          </span>
+                        )}
+                        {(statusCounts.urgent || statusCounts.fail) && (
+                          <span className="text-sm text-red-600 flex items-center gap-1">
+                            <AlertCircle className="h-4 w-4" />
+                            {(statusCounts.urgent || 0) + (statusCounts.fail || 0)} urgent
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Individual findings (non-pass items) */}
+                      {itemsToShow.length > 0 ? (
+                        <div className="space-y-3">
+                          {itemsToShow.map(([itemId, finding]) => {
+                            const config = findingStatusConfig[finding.status] || findingStatusConfig.na
+                            const Icon = config.icon
+                            return (
+                              <div key={itemId} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
+                                <Icon className={`h-5 w-5 mt-0.5 ${config.className}`} />
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-medium text-sm capitalize">
+                                    {itemId.replace(/_/g, ' ')}
+                                  </p>
+                                  {finding.notes && (
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      {finding.notes}
+                                    </p>
+                                  )}
+                                  {finding.response && (
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      {finding.response}
+                                    </p>
+                                  )}
+                                </div>
+                                <Badge variant={finding.status === 'pass' ? 'secondary' : finding.status === 'urgent' || finding.status === 'fail' ? 'destructive' : 'outline'}>
+                                  {config.label}
+                                </Badge>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">
+                          All items passed inspection
+                        </p>
+                      )}
+                    </div>
+                  )
+                })()}
+              </CardContent>
+            </Card>
+          )}
+
           {/* Weather Conditions */}
-          {inspection.weather_conditions && (
+          {inspection.weather_conditions && Object.keys(inspection.weather_conditions).length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Weather Conditions</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  {typeof inspection.weather_conditions === 'string'
-                    ? inspection.weather_conditions
-                    : JSON.stringify(inspection.weather_conditions)}
-                </p>
+                {(() => {
+                  const weather = inspection.weather_conditions as WeatherConditions
+                  if (typeof inspection.weather_conditions === 'string') {
+                    return <p className="text-muted-foreground">{inspection.weather_conditions}</p>
+                  }
+                  return (
+                    <div className="grid grid-cols-2 gap-4">
+                      {weather.conditions && (
+                        <div className="flex items-center gap-2">
+                          <Cloud className="h-5 w-5 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Conditions</p>
+                            <p className="font-medium">{weather.conditions}</p>
+                          </div>
+                        </div>
+                      )}
+                      {weather.temperature !== undefined && (
+                        <div className="flex items-center gap-2">
+                          <Thermometer className="h-5 w-5 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Temperature</p>
+                            <p className="font-medium">{weather.temperature}F</p>
+                          </div>
+                        </div>
+                      )}
+                      {weather.humidity !== undefined && (
+                        <div className="flex items-center gap-2">
+                          <Droplets className="h-5 w-5 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Humidity</p>
+                            <p className="font-medium">{weather.humidity}%</p>
+                          </div>
+                        </div>
+                      )}
+                      {weather.wind_speed !== undefined && (
+                        <div className="flex items-center gap-2">
+                          <Wind className="h-5 w-5 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">Wind Speed</p>
+                            <p className="font-medium">{weather.wind_speed} mph</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
               </CardContent>
             </Card>
           )}
