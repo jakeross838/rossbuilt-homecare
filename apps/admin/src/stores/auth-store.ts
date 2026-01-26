@@ -97,19 +97,20 @@ export const useAuthStore = create<AuthStore>()(
 
           if (error) {
             set({ isLoading: false })
-            return { error }
+            return { error, profile: null }
           }
 
+          let userProfile = null
           if (data.user) {
             set({ user: data.user, session: data.session })
-            await get().fetchProfile(data.user.id)
+            userProfile = await get().fetchProfile(data.user.id)
           }
 
           set({ isLoading: false })
-          return { error: null }
+          return { error: null, profile: userProfile }
         } catch (error) {
           set({ isLoading: false })
-          return { error: error as Error }
+          return { error: error as Error, profile: null }
         }
       },
 
@@ -143,12 +144,14 @@ export const useAuthStore = create<AuthStore>()(
 
           if (error) {
             console.error('Error fetching profile:', error)
-            return
+            return null
           }
 
           set({ profile: data })
+          return data
         } catch (error) {
           console.error('Error fetching profile:', error)
+          return null
         }
       },
     }),

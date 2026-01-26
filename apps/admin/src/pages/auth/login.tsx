@@ -17,6 +17,13 @@ import {
 } from '@/components/ui/card'
 import { useAuthStore } from '@/stores/auth-store'
 
+// Get redirect path based on user role
+function getRedirectPath(role: string | undefined, fallback: string): string {
+  if (role === 'client') return '/portal'
+  if (role === 'inspector') return '/inspector'
+  return fallback // admin, manager go to dashboard
+}
+
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -27,16 +34,17 @@ type LoginFormData = z.infer<typeof loginSchema>
 export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, signIn } = useAuthStore()
+  const { user, profile, signIn } = useAuthStore()
   const [error, setError] = useState<string | null>(null)
 
-  // Redirect to dashboard if already logged in
+  // Redirect based on role if already logged in
   useEffect(() => {
-    if (user) {
-      const from = (location.state as { from?: Location })?.from?.pathname || '/dashboard'
-      navigate(from, { replace: true })
+    if (user && profile) {
+      const from = (location.state as { from?: Location })?.from?.pathname
+      const defaultPath = getRedirectPath(profile.role, '/dashboard')
+      navigate(from || defaultPath, { replace: true })
     }
-  }, [user, navigate, location.state])
+  }, [user, profile, navigate, location.state])
 
   const {
     register,
@@ -53,16 +61,17 @@ export function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setError(null)
 
-    const { error: signInError } = await signIn(data.email, data.password)
+    const { error: signInError, profile: newProfile } = await signIn(data.email, data.password)
 
     if (signInError) {
       setError(signInError.message || 'Failed to sign in. Please try again.')
       return
     }
 
-    // Redirect to the page they were trying to access, or dashboard
-    const from = (location.state as { from?: Location })?.from?.pathname || '/dashboard'
-    navigate(from, { replace: true })
+    // Redirect based on role (or to the page they were trying to access)
+    const from = (location.state as { from?: Location })?.from?.pathname
+    const defaultPath = getRedirectPath(newProfile?.role, '/dashboard')
+    navigate(from || defaultPath, { replace: true })
   }
 
   return (
