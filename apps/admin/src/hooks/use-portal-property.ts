@@ -12,6 +12,7 @@ import type {
 
 /**
  * Hook to fetch detailed property info for client portal
+ * Only allows access to properties assigned to the current user
  */
 export function usePortalProperty(propertyId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
@@ -20,6 +21,19 @@ export function usePortalProperty(propertyId: string | undefined) {
     queryKey: portalKeys.property(propertyId || ''),
     queryFn: async (): Promise<PortalPropertyDetail> => {
       if (!propertyId) throw new Error('Property ID required')
+      if (!profile?.id) throw new Error('User not authenticated')
+
+      // Verify user has access to this property
+      const { data: assignment } = await supabase
+        .from('user_property_assignments')
+        .select('id')
+        .eq('user_id', profile.id)
+        .eq('property_id', propertyId)
+        .single()
+
+      if (!assignment) {
+        throw new Error('You do not have access to this property')
+      }
 
       // Fetch property with program
       const { data: property, error } = await supabase
@@ -33,18 +47,16 @@ export function usePortalProperty(propertyId: string | undefined) {
           state,
           zip,
           primary_photo_url,
-          property_type,
           square_footage,
           year_built,
           gate_code,
           alarm_code,
           programs (
             id,
-            tier,
-            frequency,
+            inspection_tier,
+            inspection_frequency,
             status,
-            monthly_price,
-            next_inspection_date
+            monthly_total
           )
         `)
         .eq('id', propertyId)
@@ -213,6 +225,17 @@ export function usePortalProperty(propertyId: string | undefined) {
 
       const program = Array.isArray(property.programs) ? property.programs[0] : property.programs
 
+      // Get next scheduled inspection for this property
+      const { data: nextInspection } = await supabase
+        .from('inspections')
+        .select('scheduled_date')
+        .eq('property_id', propertyId)
+        .eq('status', 'scheduled')
+        .gte('scheduled_date', new Date().toISOString())
+        .order('scheduled_date', { ascending: true })
+        .limit(1)
+        .single()
+
       return {
         id: property.id,
         name: property.name,
@@ -222,18 +245,18 @@ export function usePortalProperty(propertyId: string | undefined) {
         state: property.state,
         zip: property.zip,
         primary_photo_url: property.primary_photo_url,
-        property_type: property.property_type,
+        property_type: null, // Not available in schema
         square_footage: property.square_footage,
         year_built: property.year_built,
         gate_code: property.gate_code,
         alarm_code: property.alarm_code,
         program: program ? {
           id: program.id,
-          tier: program.tier,
-          frequency: program.frequency,
+          tier: program.inspection_tier,
+          frequency: program.inspection_frequency,
           status: program.status,
-          monthly_price: program.monthly_price,
-          next_inspection_date: program.next_inspection_date,
+          monthly_price: program.monthly_total,
+          next_inspection_date: nextInspection?.scheduled_date || null,
         } : null,
         equipment_count: equipmentCount || 0,
         open_work_order_count: openWorkOrders || 0,
