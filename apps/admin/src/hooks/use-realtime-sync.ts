@@ -14,6 +14,9 @@ type TableName =
   | 'vendors'
   | 'reminders'
   | 'calendar_events'
+  | 'programs'
+  | 'notifications'
+  | 'user_property_assignments'
 
 interface RealtimeConfig {
   tables: TableName[]
@@ -32,6 +35,9 @@ const queryKeyMap: Record<TableName, string[][]> = {
   vendors: [['vendors']],
   reminders: [['reminders']],
   calendar_events: [['calendar'], ['calendarEvents']],
+  programs: [['programs'], ['portal', 'plan'], ['portal', 'dashboard'], ['admin', 'properties-overview']],
+  notifications: [['notifications'], ['portal', 'notifications'], ['admin', 'notifications']],
+  user_property_assignments: [['property-assignments'], ['portal', 'properties'], ['portal', 'dashboard'], ['users']],
 }
 
 /**
@@ -144,6 +150,9 @@ export function useGlobalRealtimeSync() {
     'vendors',
     'reminders',
     'calendar_events',
+    'programs',
+    'notifications',
+    'user_property_assignments',
   ], [])
 
   return useRealtimeSync({ tables })
@@ -161,6 +170,9 @@ export function usePortalRealtimeSync() {
     'inspections',
     'invoices',
     'service_requests',
+    'programs',
+    'notifications',
+    'user_property_assignments',
   ], [])
 
   return useRealtimeSync({ tables })
