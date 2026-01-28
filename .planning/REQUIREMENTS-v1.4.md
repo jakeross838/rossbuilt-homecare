@@ -32,15 +32,16 @@ When this milestone is complete:
 
 ## Requirements
 
-### SYNC-01: Centralized Query Configuration
+### SYNC-01: Centralized Query Configuration ✅
 **Priority:** HIGH
 **Validation:** All staleTime/cacheTime values come from config file
+**Status:** COMPLETE (2026-01-28)
 
-- [ ] SYNC-01.1: Create `src/lib/queries/config.ts` with all cache strategies
-- [ ] SYNC-01.2: Define constants: `STALE_REALTIME` (0ms), `STALE_FAST` (30s), `STALE_STANDARD` (5min)
-- [ ] SYNC-01.3: Remove all hardcoded `staleTime: 1000 * 60 * 5` from hooks
-- [ ] SYNC-01.4: Apply `staleTime: 0` to all realtime-synced tables
-- [ ] SYNC-01.5: Polling (refetchInterval) only for non-realtime data
+- [x] SYNC-01.1: Create `src/lib/queries/config.ts` with all cache strategies
+- [x] SYNC-01.2: Define constants: `STALE_REALTIME` (0ms), `STALE_FAST` (30s), `STALE_STANDARD` (5min)
+- [x] SYNC-01.3: Remove all hardcoded `staleTime: 1000 * 60 * 5` from hooks
+- [x] SYNC-01.4: Apply `staleTime: 0` to all realtime-synced tables
+- [x] SYNC-01.5: Polling (refetchInterval) only for non-realtime data
 
 ### SYNC-02: Unified Query Key Registry
 **Priority:** HIGH
@@ -112,15 +113,16 @@ When this milestone is complete:
 - [ ] SYNC-08.4: Apply 3-state pattern to all portal pages
 - [ ] SYNC-08.5: Apply 3-state pattern to all admin list pages
 
-### SYNC-09: App Config Centralization
+### SYNC-09: App Config Centralization ✅
 **Priority:** LOW
 **Validation:** Zero hardcoded business values in components
+**Status:** COMPLETE (2026-01-28)
 
-- [ ] SYNC-09.1: Create `src/config/app-config.ts` for business rules
-- [ ] SYNC-09.2: Move pricing markup (20%) to config
-- [ ] SYNC-09.3: Move status labels/colors to config
-- [ ] SYNC-09.4: Move tier definitions to config
-- [ ] SYNC-09.5: Export helper functions (`calculatePrice`, `getStatusInfo`)
+- [x] SYNC-09.1: Create `src/config/app-config.ts` for business rules
+- [x] SYNC-09.2: Move pricing markup (20%) to config
+- [x] SYNC-09.3: Move status labels/colors to config
+- [x] SYNC-09.4: Move tier definitions to config
+- [x] SYNC-09.5: Export helper functions (`calculatePrice`, `getStatusInfo`)
 
 ### SYNC-10: Error Boundary Enhancement
 **Priority:** LOW
@@ -187,7 +189,7 @@ Before marking complete:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SYNC-01 | Phase 1 | Pending |
+| SYNC-01 | Phase 1 | ✅ Complete |
 | SYNC-02 | Phase 2 | Pending |
 | SYNC-03 | Phase 2 | Pending |
 | SYNC-04 | Phase 3 | Pending |
@@ -195,7 +197,7 @@ Before marking complete:
 | SYNC-06 | Phase 4 | Pending |
 | SYNC-07 | Phase 4 | Pending |
 | SYNC-08 | Phase 4 | Pending |
-| SYNC-09 | Phase 1 | Pending |
+| SYNC-09 | Phase 1 | ✅ Complete |
 | SYNC-10 | Phase 5 | Pending |
 
 **Coverage:**

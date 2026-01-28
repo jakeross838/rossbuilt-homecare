@@ -477,7 +477,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 
 ## Milestone v1.4: Sync Infrastructure Overhaul
 
-- [ ] **Phase 1: Query Configuration** - Centralize all cache/stale time settings, app config
+- [x] **Phase 1: Query Configuration** - Centralize all cache/stale time settings, app config ✅
 - [ ] **Phase 2: Query Key Unification** - Single key registry, fix mismatches, align realtime
 - [ ] **Phase 3: Portal Optimization** - Database view, eliminate N+1 queries
 - [ ] **Phase 4: Pattern Templates** - Base hooks, optimistic UI, button/data states
@@ -485,19 +485,19 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 
 ---
 
-### Phase 1: Query Configuration
+### Phase 1: Query Configuration ✅
 **Goal**: All cache timing and business config values centralized in config files
 **Depends on**: v1.3 complete
-**Status**: Not started
+**Status**: COMPLETE (2026-01-28)
 **Milestone**: v1.4 Sync Infrastructure Overhaul
 **Requirements**: SYNC-01, SYNC-09
-**Success Criteria** (what must be TRUE):
-  1. `src/lib/queries/config.ts` exists with STALE_REALTIME, STALE_FAST, STALE_STANDARD
-  2. `src/config/app-config.ts` exists with pricing, statuses, feature flags
-  3. Zero hardcoded `staleTime: 1000 * 60 * 5` in any hook
-  4. All pricing markup values come from config
-**Research**: Unlikely (internal refactoring)
-**Plans**: TBD
+**Plans**: 2 plans executed
+- 01-01: Query Cache and App Configuration (config files created) ✅
+- 01-02: Migrate to Centralized Configuration (hooks/components updated) ✅
+
+**Key Files Created:**
+- apps/admin/src/lib/queries/config.ts - Cache timing constants (STALE_REALTIME, STALE_FAST, STALE_ACTIVITY, STALE_STANDARD)
+- apps/admin/src/config/app-config.ts - Business config (BUILDER_MARKUP, VENDOR_MARKUP, FEATURES, PAGINATION, TIMEOUTS)
 
 ### Phase 2: Query Key Unification
 **Goal**: All query keys in single registry, realtime sync covers every key
@@ -562,7 +562,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Query Configuration | 0/TBD | Not started | - |
+| 1. Query Configuration | 2/2 | ✅ Complete | 2026-01-28 |
 | 2. Query Key Unification | 0/TBD | Not started | - |
 | 3. Portal Optimization | 0/TBD | Not started | - |
 | 4. Pattern Templates | 0/TBD | Not started | - |
