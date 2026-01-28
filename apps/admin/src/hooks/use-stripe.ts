@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import { invoiceKeys } from './use-invoices'
+import { invoiceKeys } from '@/lib/queries'
 
 interface PaymentLinkResponse {
   url: string

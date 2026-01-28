@@ -17,15 +17,7 @@ import {
   sortByValue,
 } from '@/lib/helpers/analytics'
 import { STATUS_CHART_COLORS } from '@/lib/constants/analytics'
-import { STALE_STANDARD } from '@/lib/queries/config'
-
-export const revenueMetricKeys = {
-  all: ['revenue-metrics'] as const,
-  summary: (period: TimePeriod) => [...revenueMetricKeys.all, 'summary', period] as const,
-  timeline: (period: TimePeriod) => [...revenueMetricKeys.all, 'timeline', period] as const,
-  byClient: (period: TimePeriod) => [...revenueMetricKeys.all, 'by-client', period] as const,
-  byStatus: (period: TimePeriod) => [...revenueMetricKeys.all, 'by-status', period] as const,
-}
+import { STALE_STANDARD, revenueMetricKeys } from '@/lib/queries'
 
 interface UseRevenueMetricsOptions {
   period?: TimePeriod

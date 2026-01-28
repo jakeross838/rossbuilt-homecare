@@ -17,16 +17,7 @@ import {
 import {
   STATUS_CHART_COLORS,
 } from '@/lib/constants/analytics'
-import { STALE_STANDARD } from '@/lib/queries/config'
-
-export const workOrderMetricKeys = {
-  all: ['work-order-metrics'] as const,
-  summary: (period: TimePeriod) => [...workOrderMetricKeys.all, 'summary', period] as const,
-  timeline: (period: TimePeriod) => [...workOrderMetricKeys.all, 'timeline', period] as const,
-  byStatus: (period: TimePeriod) => [...workOrderMetricKeys.all, 'by-status', period] as const,
-  byCategory: (period: TimePeriod) => [...workOrderMetricKeys.all, 'by-category', period] as const,
-  vendorPerformance: (period: TimePeriod) => [...workOrderMetricKeys.all, 'vendor-perf', period] as const,
-}
+import { STALE_STANDARD, workOrderMetricKeys } from '@/lib/queries'
 
 interface UseWorkOrderMetricsOptions {
   period?: TimePeriod

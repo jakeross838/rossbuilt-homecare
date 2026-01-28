@@ -6,8 +6,7 @@ import type {
   UpcomingInspection,
   OverdueItem,
 } from '@/lib/types/analytics'
-import { dashboardKeys } from './use-dashboard-overview'
-import { STALE_ACTIVITY, STALE_STANDARD } from '@/lib/queries/config'
+import { STALE_ACTIVITY, STALE_STANDARD, dashboardKeys } from '@/lib/queries'
 
 /**
  * Hook to fetch recent activity for activity feed

@@ -10,15 +10,7 @@ import {
   getPreviousPeriodRange,
   calculateTrend,
 } from '@/lib/helpers/analytics'
-import { STALE_STANDARD } from '@/lib/queries/config'
-
-export const dashboardKeys = {
-  all: ['dashboard'] as const,
-  overview: (period: TimePeriod) => [...dashboardKeys.all, 'overview', period] as const,
-  activity: () => [...dashboardKeys.all, 'activity'] as const,
-  upcoming: () => [...dashboardKeys.all, 'upcoming'] as const,
-  overdue: () => [...dashboardKeys.all, 'overdue'] as const,
-}
+import { STALE_STANDARD, dashboardKeys } from '@/lib/queries'
 
 interface UseOverviewOptions {
   period?: TimePeriod

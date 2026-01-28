@@ -18,15 +18,7 @@ import {
   STATUS_CHART_COLORS,
   TIER_CHART_COLORS,
 } from '@/lib/constants/analytics'
-import { STALE_STANDARD } from '@/lib/queries/config'
-
-export const inspectionMetricKeys = {
-  all: ['inspection-metrics'] as const,
-  summary: (period: TimePeriod) => [...inspectionMetricKeys.all, 'summary', period] as const,
-  timeline: (period: TimePeriod) => [...inspectionMetricKeys.all, 'timeline', period] as const,
-  byStatus: (period: TimePeriod) => [...inspectionMetricKeys.all, 'by-status', period] as const,
-  byTier: (period: TimePeriod) => [...inspectionMetricKeys.all, 'by-tier', period] as const,
-}
+import { STALE_STANDARD, inspectionMetricKeys } from '@/lib/queries'
 
 interface UseInspectionMetricsOptions {
   period?: TimePeriod
