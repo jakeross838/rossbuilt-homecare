@@ -17,6 +17,7 @@ import {
 import {
   STATUS_CHART_COLORS,
 } from '@/lib/constants/analytics'
+import { STALE_STANDARD } from '@/lib/queries/config'
 
 export const workOrderMetricKeys = {
   all: ['work-order-metrics'] as const,
@@ -135,7 +136,7 @@ export function useWorkOrderMetrics(options: UseWorkOrderMetricsOptions = {}) {
       }
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -165,7 +166,7 @@ export function useWorkOrderTimeline(options: UseWorkOrderMetricsOptions = {}) {
       return fillDateGaps(grouped, range.start, range.end)
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -194,7 +195,7 @@ export function useWorkOrdersByStatus(options: UseWorkOrderMetricsOptions = {}) 
       return groupByCategory(data || [], (wo) => wo.status, STATUS_CHART_COLORS)
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -223,6 +224,6 @@ export function useWorkOrdersByCategory(options: UseWorkOrderMetricsOptions = {}
       return groupByCategory(data || [], (wo) => wo.category)
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }

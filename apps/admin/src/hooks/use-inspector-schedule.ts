@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import { getPendingFindings } from '@/lib/offline/db'
 import type { InspectorInspection, InspectorDaySchedule, ChecklistItemFinding } from '@/lib/types/inspector'
+import { STALE_STANDARD } from '@/lib/queries/config'
 
 // Helper to check if user is authenticated with a valid session
 function useIsAuthenticated() {
@@ -141,7 +142,7 @@ export function useInspectorDaySchedule(date: string) {
       return { date, inspections, total_estimated_minutes }
     },
     enabled: !!inspectorId && !!date && isAuthenticated,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: STALE_STANDARD,
   })
 }
 

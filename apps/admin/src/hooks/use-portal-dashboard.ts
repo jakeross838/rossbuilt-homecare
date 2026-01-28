@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { PortalDashboardSummary, PortalProperty } from '@/lib/types/portal'
+import { STALE_STANDARD } from '@/lib/queries/config'
 
 // Query keys for portal
 export const portalKeys = {
@@ -106,7 +107,7 @@ export function usePortalDashboard() {
       }
     },
     enabled: profile?.role === 'client',
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: STALE_STANDARD,
   })
 }
 

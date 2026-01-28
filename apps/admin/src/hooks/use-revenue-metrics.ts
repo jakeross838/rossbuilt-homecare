@@ -17,6 +17,7 @@ import {
   sortByValue,
 } from '@/lib/helpers/analytics'
 import { STATUS_CHART_COLORS } from '@/lib/constants/analytics'
+import { STALE_STANDARD } from '@/lib/queries/config'
 
 export const revenueMetricKeys = {
   all: ['revenue-metrics'] as const,
@@ -152,7 +153,7 @@ export function useRevenueMetrics(options: UseRevenueMetricsOptions = {}) {
       }
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -187,7 +188,7 @@ export function useRevenueTimeline(options: UseRevenueMetricsOptions = {}) {
       return fillDateGaps(grouped, range.start, range.end)
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -230,6 +231,6 @@ export function useInvoicesByStatus(options: UseRevenueMetricsOptions = {}) {
       )
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }

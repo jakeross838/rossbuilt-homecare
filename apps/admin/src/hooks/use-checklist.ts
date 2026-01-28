@@ -3,6 +3,7 @@ import { supabase, type Tables } from '@/lib/supabase'
 import { generateChecklist } from '@/lib/checklist-generator'
 import type { GeneratedChecklist } from '@/lib/types/inspection'
 import type { PropertyFeatures } from '@/lib/validations/property'
+import { STALE_STANDARD } from '@/lib/queries/config'
 
 type Equipment = Tables<'equipment'>
 
@@ -74,7 +75,7 @@ export function useGenerateChecklist(
     },
     enabled: !!propertyId && !!programId,
     // Cache generated checklists since they're expensive to compute
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 30 * 60 * 1000, // 30 minutes (previously cacheTime)
+    staleTime: STALE_STANDARD,
+    gcTime: 30 * 60 * 1000,
   })
 }

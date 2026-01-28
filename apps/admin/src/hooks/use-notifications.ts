@@ -9,6 +9,7 @@ import type {
   NotificationSummary,
 } from '@/lib/types/notification'
 import { sortNotifications, countUnreadByType } from '@/lib/helpers/notifications'
+import { STALE_FAST } from '@/lib/queries/config'
 
 /**
  * Query key factory for notifications
@@ -65,8 +66,8 @@ export function useNotifications(params: {
     queryKey: notificationKeys.list({ unread: params.unread, type: params.type }),
     queryFn: () => fetchNotifications(params),
     enabled: !!profile,
-    staleTime: 30 * 1000, // 30 seconds
-    refetchInterval: 60 * 1000, // Refetch every minute
+    staleTime: STALE_FAST,
+    refetchInterval: 60 * 1000,
   })
 }
 
@@ -88,8 +89,8 @@ export function useUnreadNotificationCount() {
       return count ?? 0
     },
     enabled: !!profile,
-    staleTime: 15 * 1000, // 15 seconds
-    refetchInterval: 30 * 1000, // Refetch every 30 seconds
+    staleTime: STALE_FAST,
+    refetchInterval: 30 * 1000,
   })
 }
 
@@ -121,7 +122,7 @@ export function useNotificationSummary() {
       }
     },
     enabled: !!profile,
-    staleTime: 30 * 1000,
+    staleTime: STALE_FAST,
   })
 }
 

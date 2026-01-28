@@ -6,6 +6,7 @@ import type {
   ActivityAction,
   ActivityEntityType,
 } from '@/lib/types/notification'
+import { STALE_ACTIVITY } from '@/lib/queries/config'
 
 /**
  * Query key factory for activity log
@@ -79,7 +80,7 @@ export function useRecentActivity(limit: number = 20) {
     queryKey: activityKeys.recent(limit),
     queryFn: () => fetchActivityLog({ limit }),
     enabled: !!profile,
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: STALE_ACTIVITY,
   })
 }
 

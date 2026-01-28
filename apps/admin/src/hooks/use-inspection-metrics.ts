@@ -18,6 +18,7 @@ import {
   STATUS_CHART_COLORS,
   TIER_CHART_COLORS,
 } from '@/lib/constants/analytics'
+import { STALE_STANDARD } from '@/lib/queries/config'
 
 export const inspectionMetricKeys = {
   all: ['inspection-metrics'] as const,
@@ -116,7 +117,7 @@ export function useInspectionMetrics(options: UseInspectionMetricsOptions = {}) 
       }
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -147,7 +148,7 @@ export function useInspectionTimeline(options: UseInspectionMetricsOptions = {})
       return fillDateGaps(grouped, range.start, range.end)
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -176,7 +177,7 @@ export function useInspectionsByStatus(options: UseInspectionMetricsOptions = {}
       return groupByCategory(data || [], (i) => i.status, STATUS_CHART_COLORS)
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -209,6 +210,6 @@ export function useInspectionsByTier(options: UseInspectionMetricsOptions = {}) 
       )
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }

@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { NotificationPreferences } from '@/lib/types/notification'
 import { DEFAULT_NOTIFICATION_PREFERENCES } from '@/lib/constants/notifications'
+import { STALE_STANDARD } from '@/lib/queries/config'
 
 /**
  * Query key factory for preferences
@@ -64,7 +65,7 @@ export function useNotificationPreferences() {
       return parsePreferences(data?.settings)
     },
     enabled: !!profile?.id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: STALE_STANDARD,
   })
 }
 

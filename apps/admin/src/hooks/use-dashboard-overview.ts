@@ -10,6 +10,7 @@ import {
   getPreviousPeriodRange,
   calculateTrend,
 } from '@/lib/helpers/analytics'
+import { STALE_STANDARD } from '@/lib/queries/config'
 
 export const dashboardKeys = {
   all: ['dashboard'] as const,
@@ -157,6 +158,6 @@ export function useDashboardOverview(options: UseOverviewOptions = {}) {
       }
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: STALE_STANDARD,
   })
 }

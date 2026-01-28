@@ -7,6 +7,7 @@ import type {
   OverdueItem,
 } from '@/lib/types/analytics'
 import { dashboardKeys } from './use-dashboard-overview'
+import { STALE_ACTIVITY, STALE_STANDARD } from '@/lib/queries/config'
 
 /**
  * Hook to fetch recent activity for activity feed
@@ -112,7 +113,7 @@ export function useRecentActivity(limit: number = 10) {
         .slice(0, limit)
     },
     enabled: !!profile?.organization_id,
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: STALE_ACTIVITY,
   })
 }
 
@@ -170,7 +171,7 @@ export function useUpcomingInspections(days: number = 7, limit: number = 5) {
       })
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -259,6 +260,6 @@ export function useOverdueItems() {
       return items.sort((a, b) => b.daysOverdue - a.daysOverdue)
     },
     enabled: !!profile?.organization_id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_STANDARD,
   })
 }
