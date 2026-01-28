@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 2 of 5 (Query Key Unification) - **v1.4 MILESTONE IN PROGRESS**
-Plan: 1 of TBD complete
+Plan: 2 of TBD complete
 Status: In progress
-Last activity: 2026-01-28 - Completed 02-01-PLAN.md (Query Key Registry)
+Last activity: 2026-01-28 - Completed 02-04-PLAN.md (Final Hook Migration)
 
-Progress: ██▓░░░░░░░ 28% (v1.4 Phase 2 started, Plan 1 complete)
+Progress: ██▓░░░░░░░ 32% (v1.4 Phase 2 in progress, Plans 02-01 and 02-04 complete)
 
 ### Milestone v1.4: Sync Infrastructure Overhaul
 
@@ -40,6 +40,7 @@ Progress: ██▓░░░░░░░ 28% (v1.4 Phase 2 started, Plan 1 compl
 | Plan | Name | Wave | Status |
 |------|------|------|--------|
 | 02-01 | Query Key Registry | 1 | **Complete** |
+| 02-04 | Final Hook Migration | 2 | **Complete** |
 
 ---
 
@@ -560,6 +561,8 @@ Recent decisions affecting current work:
 - **v1.4-02-01**: Kebab-case naming for root keys (e.g., 'service-requests', 'work-orders')
 - **v1.4-02-01**: Individual key factory exports plus combined queryKeys object for flexibility
 - **v1.4-02-01**: QueryKeys type export enables IDE autocomplete
+- **v1.4-02-04**: All portal, inspector, report, dashboard, metrics hooks use centralized keys
+- **v1.4-02-04**: Cross-hook key imports eliminated (portalKeys, dashboardKeys, invoiceKeys)
 
 ### Pending Todos
 
@@ -581,40 +584,41 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 02-01-PLAN.md (Query Key Registry)
+Stopped at: Completed 02-04-PLAN.md (Final Hook Migration)
 Resume file: None
 
 ### Recent Activity (2026-01-28)
 
-**v1.4 Phase 2 Plan 02-01: Query Key Registry Completed:**
-- Created centralized query key registry at `src/lib/queries/keys.ts` (497 lines)
-- Defined 30 individual key factory exports
-- Used kebab-case naming for root keys (e.g., 'service-requests', 'work-orders')
-- Exported combined `queryKeys` object for convenience
-- Exported `QueryKeys` type for autocomplete
-- Created barrel export at `src/lib/queries/index.ts`
+**v1.4 Phase 2 Plan 02-04: Final Hook Migration Completed:**
+- Migrated 15 hooks to use centralized query keys from `@/lib/queries`
+- Portal hooks: 5 files (use-portal-dashboard, use-portal-inspections, use-portal-invoices, use-portal-property, use-recommendation-response)
+- Inspector/report hooks: 4 files (use-inspector-schedule, use-inspection-execution, use-recommendations, use-reports)
+- Dashboard/metrics hooks: 6 files (use-dashboard-overview, use-dashboard-activity, use-inspection-metrics, use-work-order-metrics, use-revenue-metrics, use-stripe)
+- Removed 5 local key factory definitions (~42 lines total)
+- Eliminated 4 cross-hook key imports
 
 **Commits:**
-- 3002b7c: feat(02-01): create centralized query key registry
-- 2604733: feat(02-01): create barrel export for queries module
+- 4e9bd8c: feat(02-04): migrate portal hooks to centralized query keys
+- 2c32b6a: feat(02-04): migrate inspector and report hooks to centralized query keys
+- 911ee1f: feat(02-04): migrate dashboard and metrics hooks to centralized query keys
 
 **Build Status:**
-- ✅ TypeScript: Compiles with no errors
-- ✅ Production Build: Successful (1m 42s)
-- ✅ All verification checks passed
+- TypeScript: Compiles with no errors
+- Production Build: Successful (1m 49s)
+- All verification checks passed
 
 **Previous Session:**
 
-**v1.4 Phase 1 Plan 01-02: Migrate to Centralized Configuration Completed:**
-- Updated App.tsx to use DEFAULT_QUERY_OPTIONS from centralized config
-- Migrated 11 hooks to import cache timing constants
-- Migrated vendor markup to centralized config
+**v1.4 Phase 2 Plan 02-01: Query Key Registry Completed:**
+- Created centralized query key registry at `src/lib/queries/keys.ts` (497 lines)
+- Defined 30 individual key factory exports
+- Exported combined `queryKeys` object for convenience
 
 ## Project Status
 
 **Milestone v1.4: Sync Infrastructure Overhaul - IN PROGRESS**
 
-Phase 2 started. Plan 02-01 complete. Next: Plan 02-02 (Hook Migration)
+Phase 2 in progress. Plans 02-01 and 02-04 complete. Remaining: Plans 02-02, 02-03 (Hook Migration batches)
 
 ## Phase 13 Summary (COMPLETE)
 
