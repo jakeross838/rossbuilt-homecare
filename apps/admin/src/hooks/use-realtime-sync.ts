@@ -2,6 +2,7 @@ import { useEffect, useCallback, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
+import { DEBUG } from '@/config/app-config'
 
 type TableName =
   | 'clients'
@@ -102,7 +103,9 @@ export function useRealtimeSync(config: RealtimeConfig) {
           filter: `organization_id=eq.${orgId}`,
         },
         (payload) => {
-          console.log(`[Realtime] ${table} INSERT:`, payload.new)
+          if (DEBUG.REALTIME_LOGGING) {
+            console.log(`[Realtime] ${table} INSERT:`, payload.new)
+          }
           invalidateTable(table)
           onUpdateCallback?.(table, payload)
         }
@@ -118,7 +121,9 @@ export function useRealtimeSync(config: RealtimeConfig) {
           filter: `organization_id=eq.${orgId}`,
         },
         (payload) => {
-          console.log(`[Realtime] ${table} UPDATE:`, payload.new)
+          if (DEBUG.REALTIME_LOGGING) {
+            console.log(`[Realtime] ${table} UPDATE:`, payload.new)
+          }
           invalidateTable(table)
           onUpdateCallback?.(table, payload)
         }
@@ -134,7 +139,9 @@ export function useRealtimeSync(config: RealtimeConfig) {
           filter: `organization_id=eq.${orgId}`,
         },
         (payload) => {
-          console.log(`[Realtime] ${table} DELETE:`, payload.old)
+          if (DEBUG.REALTIME_LOGGING) {
+            console.log(`[Realtime] ${table} DELETE:`, payload.old)
+          }
           invalidateTable(table)
           onUpdateCallback?.(table, payload)
         }
@@ -143,12 +150,16 @@ export function useRealtimeSync(config: RealtimeConfig) {
 
     // Subscribe to the channel
     channel.subscribe((status) => {
-      console.log(`[Realtime] Subscription status: ${status}`)
+      if (DEBUG.REALTIME_LOGGING) {
+        console.log(`[Realtime] Subscription status: ${status}`)
+      }
     })
 
     // Cleanup on unmount
     return () => {
-      console.log('[Realtime] Unsubscribing from channel')
+      if (DEBUG.REALTIME_LOGGING) {
+        console.log('[Realtime] Unsubscribing from channel')
+      }
       supabase.removeChannel(channel)
     }
   }, [orgId, tablesList, invalidateTable, onUpdateCallback])

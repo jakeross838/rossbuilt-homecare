@@ -79,6 +79,24 @@ export const FEATURES = {
 } as const
 
 // ============================================
+// DEBUG LOGGING FLAGS
+// ============================================
+
+/**
+ * Granular debug logging controls
+ * Each flag controls a specific subsystem's logging
+ * All default to DEV mode only (disabled in production)
+ */
+export const DEBUG = {
+  /** Enable realtime subscription logging */
+  REALTIME_LOGGING: import.meta.env.DEV,
+  /** Enable query/mutation logging */
+  QUERY_LOGGING: false,
+  /** Enable offline sync logging */
+  OFFLINE_LOGGING: import.meta.env.DEV,
+} as const
+
+// ============================================
 // PAGINATION DEFAULTS
 // ============================================
 
