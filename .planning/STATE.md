@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 2 of 5 (Query Key Unification) - **v1.4 MILESTONE IN PROGRESS**
-Plan: 2 of TBD complete
+Plan: 3 of TBD complete
 Status: In progress
-Last activity: 2026-01-28 - Completed 02-04-PLAN.md (Final Hook Migration)
+Last activity: 2026-01-28 - Completed 02-03-PLAN.md (Billing & Operations Hook Migration)
 
-Progress: ██▓░░░░░░░ 32% (v1.4 Phase 2 in progress, Plans 02-01 and 02-04 complete)
+Progress: ██▓░░░░░░░ 35% (v1.4 Phase 2 in progress, Plans 02-01, 02-03, 02-04 complete)
 
 ### Milestone v1.4: Sync Infrastructure Overhaul
 
@@ -40,6 +40,7 @@ Progress: ██▓░░░░░░░ 32% (v1.4 Phase 2 in progress, Plans 02
 | Plan | Name | Wave | Status |
 |------|------|------|--------|
 | 02-01 | Query Key Registry | 1 | **Complete** |
+| 02-03 | Billing & Operations Hook Migration | 2 | **Complete** |
 | 02-04 | Final Hook Migration | 2 | **Complete** |
 
 ---
@@ -561,6 +562,10 @@ Recent decisions affecting current work:
 - **v1.4-02-01**: Kebab-case naming for root keys (e.g., 'service-requests', 'work-orders')
 - **v1.4-02-01**: Individual key factory exports plus combined queryKeys object for flexibility
 - **v1.4-02-01**: QueryKeys type export enables IDE autocomplete
+- **v1.4-02-03**: Billing hooks (use-invoices, use-payments) import from @/lib/queries
+- **v1.4-02-03**: Work order/vendor hooks import workOrderKeys, vendorKeys, recommendationKeys
+- **v1.4-02-03**: Notification hooks import notificationKeys, preferencesKeys, activityKeys
+- **v1.4-02-03**: Service request hooks import serviceRequestKeys, portalKeys
 - **v1.4-02-04**: All portal, inspector, report, dashboard, metrics hooks use centralized keys
 - **v1.4-02-04**: Cross-hook key imports eliminated (portalKeys, dashboardKeys, invoiceKeys)
 
@@ -584,10 +589,31 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 02-04-PLAN.md (Final Hook Migration)
+Stopped at: Completed 02-03-PLAN.md (Billing & Operations Hook Migration)
 Resume file: None
 
 ### Recent Activity (2026-01-28)
+
+**v1.4 Phase 2 Plan 02-03: Billing & Operations Hook Migration Completed:**
+- Migrated 8 hooks to use centralized query keys from `@/lib/queries`
+- Work order/vendor hooks: use-work-orders.ts, use-vendors.ts
+- Billing hooks: use-invoices.ts, use-payments.ts
+- Notification hooks: use-notifications.ts, use-notification-preferences.ts, use-activity-log.ts
+- Service request hooks: use-service-requests.ts
+- Removed 8 local key factory definitions (~101 lines total)
+- Updated inline key usages for recommendations and vendors
+
+**Commits:**
+- 6853d16: feat(02-03): migrate work order and vendor hooks to centralized keys
+- ca43ea4: feat(02-03): migrate billing hooks to centralized keys
+- 4a8d1d1: feat(02-03): migrate notification and service request hooks to centralized keys
+
+**Build Status:**
+- TypeScript: Compiles with no errors
+- Production Build: Successful (2m 1s)
+- All verification checks passed
+
+**Previous Session:**
 
 **v1.4 Phase 2 Plan 02-04: Final Hook Migration Completed:**
 - Migrated 15 hooks to use centralized query keys from `@/lib/queries`
@@ -618,7 +644,7 @@ Resume file: None
 
 **Milestone v1.4: Sync Infrastructure Overhaul - IN PROGRESS**
 
-Phase 2 in progress. Plans 02-01 and 02-04 complete. Remaining: Plans 02-02, 02-03 (Hook Migration batches)
+Phase 2 in progress. Plans 02-01, 02-03, and 02-04 complete. Remaining: Plan 02-02 (Entity Hook Migration)
 
 ## Phase 13 Summary (COMPLETE)
 
