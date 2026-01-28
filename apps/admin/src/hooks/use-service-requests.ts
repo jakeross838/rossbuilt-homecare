@@ -1,24 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import { portalKeys } from './use-portal-dashboard'
+import { serviceRequestKeys, portalKeys } from '@/lib/queries'
 import type {
   PortalServiceRequest,
   PortalServiceRequestComment,
 } from '@/lib/types/portal'
 import type { CreateServiceRequestInput, AddServiceRequestCommentInput } from '@/lib/validations/service-request'
-
-// Service request query keys
-export const serviceRequestKeys = {
-  all: ['service-requests'] as const,
-  lists: () => [...serviceRequestKeys.all, 'list'] as const,
-  list: (filters: { status?: string; propertyId?: string }) =>
-    [...serviceRequestKeys.lists(), filters] as const,
-  details: () => [...serviceRequestKeys.all, 'detail'] as const,
-  detail: (id: string) => [...serviceRequestKeys.details(), id] as const,
-  comments: (requestId: string) =>
-    [...serviceRequestKeys.detail(requestId), 'comments'] as const,
-}
 
 interface UseServiceRequestsOptions {
   status?: string

@@ -9,20 +9,7 @@ import type {
   NotificationSummary,
 } from '@/lib/types/notification'
 import { sortNotifications, countUnreadByType } from '@/lib/helpers/notifications'
-import { STALE_FAST } from '@/lib/queries/config'
-
-/**
- * Query key factory for notifications
- */
-export const notificationKeys = {
-  all: ['notifications'] as const,
-  lists: () => [...notificationKeys.all, 'list'] as const,
-  list: (filters: { unread?: boolean; type?: NotificationType }) =>
-    [...notificationKeys.lists(), filters] as const,
-  detail: (id: string) => [...notificationKeys.all, 'detail', id] as const,
-  unreadCount: () => [...notificationKeys.all, 'unread-count'] as const,
-  summary: () => [...notificationKeys.all, 'summary'] as const,
-}
+import { STALE_FAST, notificationKeys } from '@/lib/queries'
 
 /**
  * Fetch notifications for current user

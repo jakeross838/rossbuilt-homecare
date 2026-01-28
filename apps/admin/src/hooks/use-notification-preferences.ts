@@ -3,15 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { NotificationPreferences } from '@/lib/types/notification'
 import { DEFAULT_NOTIFICATION_PREFERENCES } from '@/lib/constants/notifications'
-import { STALE_STANDARD } from '@/lib/queries/config'
-
-/**
- * Query key factory for preferences
- */
-export const preferencesKeys = {
-  all: ['notification-preferences'] as const,
-  user: (userId: string) => [...preferencesKeys.all, userId] as const,
-}
+import { STALE_STANDARD, preferencesKeys } from '@/lib/queries'
 
 /**
  * Parse user settings JSONB to notification preferences

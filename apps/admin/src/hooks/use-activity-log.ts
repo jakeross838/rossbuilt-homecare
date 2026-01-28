@@ -6,20 +6,7 @@ import type {
   ActivityAction,
   ActivityEntityType,
 } from '@/lib/types/notification'
-import { STALE_ACTIVITY } from '@/lib/queries/config'
-
-/**
- * Query key factory for activity log
- */
-export const activityKeys = {
-  all: ['activity-log'] as const,
-  lists: () => [...activityKeys.all, 'list'] as const,
-  list: (filters: { entity_type?: string; user_id?: string }) =>
-    [...activityKeys.lists(), filters] as const,
-  entity: (entityType: string, entityId: string) =>
-    [...activityKeys.all, 'entity', entityType, entityId] as const,
-  recent: (limit?: number) => [...activityKeys.all, 'recent', limit] as const,
-}
+import { STALE_ACTIVITY, activityKeys } from '@/lib/queries'
 
 /**
  * Fetch activity log entries
