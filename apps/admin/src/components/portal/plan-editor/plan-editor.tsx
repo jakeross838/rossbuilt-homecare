@@ -2,7 +2,7 @@
  * Self-Service Plan Editor
  *
  * Allows clients to modify their property's service plan with live pricing.
- * Includes 20% builder markup on all pricing.
+ * Pricing markup configured in src/config/app-config.ts
  */
 
 import { useState, useMemo } from 'react'
@@ -34,6 +34,7 @@ import { useUpdateProgram } from '@/hooks/use-programs'
 import { useToast } from '@/hooks/use-toast'
 import { formatCurrency } from '@/lib/helpers/billing'
 import { supabase, type Tables } from '@/lib/supabase'
+import { BUILDER_MARKUP } from '@/config/app-config'
 
 type Program = Tables<'programs'>
 
@@ -43,9 +44,6 @@ interface PlanEditorProps {
   onClose: () => void
   onSave?: () => void
 }
-
-// 20% builder markup
-const BUILDER_MARKUP = 0.20
 
 const frequencyOptions = [
   { value: 'annual', label: 'Annual', description: '1 inspection per year' },
