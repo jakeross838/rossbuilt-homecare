@@ -37,13 +37,13 @@ const queryKeyMap: Record<TableName, string[][]> = {
   clients: [['clients'], ['portal', 'dashboard']],
   properties: [['properties'], ['portal', 'properties'], ['portal', 'dashboard']],
   equipment: [['equipment'], ['portal', 'properties']],
-  work_orders: [['workOrders'], ['portal', 'properties'], ['portal', 'dashboard']],
+  work_orders: [['work-orders'], ['portal', 'properties'], ['portal', 'dashboard']], // Fixed: was 'workOrders'
   inspections: [['inspections'], ['portal', 'inspections'], ['portal', 'dashboard']],
   invoices: [['invoices'], ['portal', 'invoices'], ['portal', 'dashboard']],
-  service_requests: [['serviceRequests'], ['portal', 'requests'], ['portal', 'dashboard']],
+  service_requests: [['service-requests'], ['portal', 'requests'], ['portal', 'dashboard']], // Fixed: was 'serviceRequests'
   vendors: [['vendors']],
   reminders: [['reminders']],
-  calendar_events: [['calendar'], ['calendarEvents']],
+  calendar_events: [['calendar'], ['calendar-events']],
   programs: [['programs'], ['portal', 'plan'], ['portal', 'dashboard'], ['admin', 'properties-overview']],
   notifications: [['notifications'], ['portal', 'notifications'], ['admin', 'notifications']],
   user_property_assignments: [['property-assignments'], ['portal', 'properties'], ['portal', 'dashboard'], ['users']],
