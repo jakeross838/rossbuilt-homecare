@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 1 of 5 (Query Configuration) - **v1.4 MILESTONE IN PROGRESS**
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-01-28 - Completed 01-01-PLAN.md (Query Cache and App Configuration)
+Last activity: 2026-01-28 - Completed 01-02-PLAN.md (Migrate to Centralized Configuration)
 
-Progress: █░░░░░░░░░ 10% (v1.4 Phase 1 - Plan 1/3 complete)
+Progress: ██░░░░░░░░ 20% (v1.4 Phase 1 - Plan 2/3 complete)
 
 ### Milestone v1.4: Sync Infrastructure Overhaul
 
@@ -31,7 +31,7 @@ Progress: █░░░░░░░░░ 10% (v1.4 Phase 1 - Plan 1/3 complete)
 | Plan | Name | Wave | Status |
 |------|------|------|--------|
 | 01-01 | Query Cache and App Configuration | 1 | **Complete** |
-| 01-02 | Query Key Unification | 1 | Pending |
+| 01-02 | Migrate to Centralized Configuration | 1 | **Complete** |
 | 01-03 | Hook Standardization | 2 | Pending |
 
 ---
@@ -545,6 +545,10 @@ Recent decisions affecting current work:
 - **v1.4-01-01**: getCacheConfig helper provides consistent cache strategy application across hooks
 - **v1.4-01-01**: app-config.ts re-exports status/tier constants for centralized access pattern
 - **v1.4-01-01**: BUILDER_MARKUP (20%) and VENDOR_MARKUP (15%) centralized as decimal values
+- **v1.4-01-02**: All hooks import cache timing from @/lib/queries/config
+- **v1.4-01-02**: BUILDER_MARKUP imported from app-config (not duplicated in plan-editor)
+- **v1.4-01-02**: VENDOR_MARKUP used via VENDOR_MARKUP * 100 for percent-based defaults
+- **v1.4-01-02**: DEFAULT_MARKUP_PERCENT in work-order.ts derived from VENDOR_MARKUP
 
 ### Pending Todos
 
@@ -566,10 +570,31 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 01-01-PLAN.md (Query Cache and App Configuration)
+Stopped at: Completed 01-02-PLAN.md (Migrate to Centralized Configuration)
 Resume file: None
 
 ### Recent Activity (2026-01-28)
+
+**v1.4 Phase 1 Plan 01-02: Migrate to Centralized Configuration Completed:**
+- Updated App.tsx to use DEFAULT_QUERY_OPTIONS from centralized config
+- Migrated 11 hooks to import cache timing constants (STALE_STANDARD, STALE_FAST, STALE_ACTIVITY)
+- Updated plan-editor.tsx to use BUILDER_MARKUP from app-config.ts
+- Migrated 5 files using vendor markup to use VENDOR_MARKUP from app-config.ts
+- Zero hardcoded staleTime values remain in hooks
+- Zero hardcoded 15% vendor markup values remain in validation/billing files
+
+**Commits:**
+- 9cae71b: feat(01-02): update App.tsx to use centralized query config
+- ce0d511: feat(01-02): migrate hooks to centralized cache config
+- 633678a: feat(01-02): use centralized BUILDER_MARKUP in plan editor
+- c7ccd3d: feat(01-02): migrate vendor markup to centralized config
+
+**Build Status:**
+- ✅ TypeScript: Compiles with no errors
+- ✅ Production Build: Successful (2m 23s)
+- ✅ All verification checks passed
+
+**Previous Session:**
 
 **v1.4 Phase 1 Plan 01-01: Query Cache and App Configuration Completed:**
 - Created query cache configuration with STALE_REALTIME, STALE_FAST, STALE_ACTIVITY, STALE_STANDARD
@@ -579,19 +604,11 @@ Resume file: None
 - Added re-exports for INSPECTION_TIERS, INSPECTION_FREQUENCIES (SYNC-09.4)
 - Added FEATURES, PAGINATION, TIMEOUTS config objects
 
-**Commits:**
-- 0a6ce6e: feat(01-01): create query cache configuration
-- d3a77f8: feat(01-01): create app configuration with business rules
-
-**Build Status:**
-- ✅ Build: Successful (npx tsc --noEmit)
-- ✅ All verification checks passed
-
 ## Project Status
 
 **Milestone v1.4: Sync Infrastructure Overhaul - IN PROGRESS**
 
-Plan 01-01 complete. Next: Plan 01-02 (Query Key Unification)
+Plan 01-02 complete. Next: Plan 01-03 (Hook Standardization)
 
 ## Phase 13 Summary (COMPLETE)
 
