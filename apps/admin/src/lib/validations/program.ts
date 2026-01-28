@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { VENDOR_MARKUP } from '@/config/app-config'
 
 /**
  * Validation schema for program form data
@@ -40,7 +41,7 @@ export const programSchema = z.object({
   billing_day_of_month: z.coerce.number().min(1).max(28).default(1),
 
   // Vendor markup
-  vendor_markup_percent: z.coerce.number().min(0).max(50).default(15),
+  vendor_markup_percent: z.coerce.number().min(0).max(50).default(VENDOR_MARKUP * 100),
 
   // Notes
   notes: z.string().optional(),
@@ -71,7 +72,7 @@ export function programDefaults(
     preferred_time_slot: 'anytime',
     preferred_inspector_id: null,
     billing_day_of_month: 1,
-    vendor_markup_percent: 15,
+    vendor_markup_percent: VENDOR_MARKUP * 100,
     notes: '',
   }
 }

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { WORK_ORDER_CATEGORIES } from '@/lib/constants/work-order'
+import { VENDOR_MARKUP } from '@/config/app-config'
 
 /**
  * Schema for creating a new work order
@@ -82,7 +83,7 @@ export type UpdateWorkOrderFormData = z.infer<typeof updateWorkOrderSchema>
  */
 export const completeWorkOrderSchema = z.object({
   actual_cost: z.coerce.number().min(0, 'Actual cost is required'),
-  markup_percent: z.coerce.number().min(0).max(100).default(15),
+  markup_percent: z.coerce.number().min(0).max(100).default(VENDOR_MARKUP * 100),
   completion_notes: z.string().max(2000).optional(),
 })
 

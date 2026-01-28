@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { VENDOR_MARKUP } from '@/config/app-config'
 
 /**
  * Validation schema for pricing configuration
@@ -71,7 +72,7 @@ export function pricingConfigDefaults(): PricingConfig {
       arrival_prep: 0,
       departure_check: 0,
       home_manual_creation: 0,
-      vendor_markup_percent: 15,
+      vendor_markup_percent: VENDOR_MARKUP * 100,
     },
   }
 }

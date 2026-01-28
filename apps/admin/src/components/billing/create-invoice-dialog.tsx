@@ -33,6 +33,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { Plus, Loader2, Download, Wrench, Calendar } from 'lucide-react'
 import type { Resolver } from 'react-hook-form'
+import { VENDOR_MARKUP } from '@/config/app-config'
 
 interface CreateInvoiceDialogProps {
   open: boolean
@@ -61,7 +62,7 @@ export function CreateInvoiceDialog({
   ])
   const [taxRate, setTaxRate] = useState(0)
   const [discountAmount, setDiscountAmount] = useState(0)
-  const [markupPercent, setMarkupPercent] = useState(15) // Default 15% markup
+  const [markupPercent, setMarkupPercent] = useState(VENDOR_MARKUP * 100)
   const [applyMarkup, setApplyMarkup] = useState(false)
 
   const today = new Date().toISOString().split('T')[0]
@@ -221,7 +222,7 @@ export function CreateInvoiceDialog({
       setLineItems([{ description: '', quantity: 1, unit_price: 0 }])
       setTaxRate(0)
       setDiscountAmount(0)
-      setMarkupPercent(15)
+      setMarkupPercent(VENDOR_MARKUP * 100)
       setApplyMarkup(false)
       onOpenChange(false)
     } catch {
