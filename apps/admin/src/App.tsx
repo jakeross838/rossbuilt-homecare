@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
+import { DEFAULT_QUERY_OPTIONS } from '@/lib/queries/config'
 
 import { AuthProvider } from '@/components/providers/auth-provider'
 import { PermissionProvider } from '@/components/providers/permission-provider'
@@ -77,12 +78,7 @@ const PortalPlansPage = lazy(() => import('@/pages/portal/plans'))
 
 // Create a query client instance
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
-    },
-  },
+  defaultOptions: DEFAULT_QUERY_OPTIONS,
 })
 
 function App() {
