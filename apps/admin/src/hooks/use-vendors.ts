@@ -11,6 +11,7 @@ import {
   formatContactName,
   checkVendorCompliance,
 } from '@/lib/constants/vendor'
+import { vendorKeys } from '@/lib/queries'
 
 type VendorInsert = InsertTables<'vendors'>
 type VendorUpdate = UpdateTables<'vendors'>
@@ -18,18 +19,6 @@ type VendorUpdate = UpdateTables<'vendors'>
 // UUID validation regex
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const isValidUUID = (id: string | undefined): boolean => !!id && UUID_REGEX.test(id)
-
-// Query keys for cache management
-export const vendorKeys = {
-  all: ['vendors'] as const,
-  lists: () => [...vendorKeys.all, 'list'] as const,
-  list: (filters?: VendorFilters) => [...vendorKeys.lists(), filters] as const,
-  details: () => [...vendorKeys.all, 'detail'] as const,
-  detail: (id: string) => [...vendorKeys.details(), id] as const,
-  search: (query: string, category?: string) =>
-    [...vendorKeys.all, 'search', query, category] as const,
-  byTrade: (category: string) => [...vendorKeys.all, 'trade', category] as const,
-}
 
 /**
  * Hook to fetch vendors list with optional filters

@@ -8,6 +8,7 @@ import type {
   WorkOrderStatus,
 } from '@/lib/types/work-order'
 import { calculateClientCost, DEFAULT_MARKUP_PERCENT } from '@/lib/constants/work-order'
+import { workOrderKeys, vendorKeys, recommendationKeys } from '@/lib/queries'
 
 type WorkOrder = Tables<'work_orders'>
 type WorkOrderInsert = InsertTables<'work_orders'>
@@ -16,18 +17,6 @@ type WorkOrderUpdate = UpdateTables<'work_orders'>
 // UUID validation regex
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const isValidUUID = (id: string | undefined): boolean => !!id && UUID_REGEX.test(id)
-
-// Query keys for cache management
-export const workOrderKeys = {
-  all: ['work-orders'] as const,
-  lists: () => [...workOrderKeys.all, 'list'] as const,
-  list: (filters?: WorkOrderFilters) => [...workOrderKeys.lists(), filters] as const,
-  details: () => [...workOrderKeys.all, 'detail'] as const,
-  detail: (id: string) => [...workOrderKeys.details(), id] as const,
-  property: (propertyId: string) => [...workOrderKeys.all, 'property', propertyId] as const,
-  client: (clientId: string) => [...workOrderKeys.all, 'client', clientId] as const,
-  vendor: (vendorId: string) => [...workOrderKeys.all, 'vendor', vendorId] as const,
-}
 
 /**
  * Hook to fetch work orders list with optional filters
@@ -324,7 +313,7 @@ export function useCreateWorkOrder() {
       }
       // Invalidate recommendations if linked
       if (workOrder.recommendation_id) {
-        queryClient.invalidateQueries({ queryKey: ['recommendations'] })
+        queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       }
     },
   })
@@ -417,7 +406,7 @@ export function useUpdateWorkOrderStatus() {
       queryClient.invalidateQueries({ queryKey: workOrderKeys.detail(workOrder.id) })
       queryClient.invalidateQueries({ queryKey: workOrderKeys.lists() })
       if (workOrder.recommendation_id) {
-        queryClient.invalidateQueries({ queryKey: ['recommendations'] })
+        queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       }
     },
   })
@@ -477,7 +466,7 @@ export function useAssignVendor() {
         queryClient.invalidateQueries({
           queryKey: workOrderKeys.vendor(workOrder.vendor_id),
         })
-        queryClient.invalidateQueries({ queryKey: ['vendors'] })
+        queryClient.invalidateQueries({ queryKey: vendorKeys.all })
       }
     },
   })
@@ -551,10 +540,10 @@ export function useCompleteWorkOrder() {
       queryClient.invalidateQueries({ queryKey: workOrderKeys.detail(workOrder.id) })
       queryClient.invalidateQueries({ queryKey: workOrderKeys.lists() })
       if (workOrder.vendor_id) {
-        queryClient.invalidateQueries({ queryKey: ['vendors'] })
+        queryClient.invalidateQueries({ queryKey: vendorKeys.all })
       }
       if (workOrder.recommendation_id) {
-        queryClient.invalidateQueries({ queryKey: ['recommendations'] })
+        queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       }
     },
   })
@@ -607,7 +596,7 @@ export function useCancelWorkOrder() {
       queryClient.invalidateQueries({ queryKey: workOrderKeys.detail(workOrder.id) })
       queryClient.invalidateQueries({ queryKey: workOrderKeys.lists() })
       if (workOrder.recommendation_id) {
-        queryClient.invalidateQueries({ queryKey: ['recommendations'] })
+        queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       }
     },
   })
