@@ -1,19 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase, type Tables, type InsertTables, type UpdateTables } from '@/lib/supabase'
+import { equipmentKeys } from '@/lib/queries'
 
 type Equipment = Tables<'equipment'>
 type EquipmentInsert = InsertTables<'equipment'>
 type EquipmentUpdate = UpdateTables<'equipment'>
-
-// Query keys for cache management
-export const equipmentKeys = {
-  all: ['equipment'] as const,
-  lists: () => [...equipmentKeys.all, 'list'] as const,
-  property: (propertyId: string) =>
-    [...equipmentKeys.all, 'property', propertyId] as const,
-  details: () => [...equipmentKeys.all, 'detail'] as const,
-  detail: (id: string) => [...equipmentKeys.details(), id] as const,
-}
 
 /**
  * Hook to fetch list of equipment for a property

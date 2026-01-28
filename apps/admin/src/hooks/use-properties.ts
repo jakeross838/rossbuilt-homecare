@@ -1,21 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase, type Tables, type InsertTables, type UpdateTables } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import { clientKeys } from './use-clients'
+import { clientKeys, propertyKeys } from '@/lib/queries'
 
 type Property = Tables<'properties'>
 type PropertyInsert = InsertTables<'properties'>
 type PropertyUpdate = UpdateTables<'properties'>
-
-// Query keys for cache management
-export const propertyKeys = {
-  all: ['properties'] as const,
-  lists: () => [...propertyKeys.all, 'list'] as const,
-  list: (filters: { search?: string; clientId?: string; active?: boolean }) =>
-    [...propertyKeys.lists(), filters] as const,
-  details: () => [...propertyKeys.all, 'detail'] as const,
-  detail: (id: string) => [...propertyKeys.details(), id] as const,
-}
 
 interface UsePropertiesOptions {
   search?: string

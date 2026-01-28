@@ -1,20 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase, type Tables, type InsertTables, type UpdateTables } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
+import { clientKeys } from '@/lib/queries'
 
 type Client = Tables<'clients'>
 type ClientInsert = InsertTables<'clients'>
 type ClientUpdate = UpdateTables<'clients'>
-
-// Query keys for cache management
-export const clientKeys = {
-  all: ['clients'] as const,
-  lists: () => [...clientKeys.all, 'list'] as const,
-  list: (filters: { search?: string; active?: boolean }) =>
-    [...clientKeys.lists(), filters] as const,
-  details: () => [...clientKeys.all, 'detail'] as const,
-  detail: (id: string) => [...clientKeys.details(), id] as const,
-}
 
 interface UseClientsOptions {
   search?: string

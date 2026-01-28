@@ -1,19 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase, type Tables, type UpdateTables } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
+import { userKeys, clientKeys } from '@/lib/queries'
 
 type User = Tables<'users'>
 type UserUpdate = UpdateTables<'users'>
-
-// Query keys for cache management
-export const userKeys = {
-  all: ['users'] as const,
-  lists: () => [...userKeys.all, 'list'] as const,
-  list: (filters: { search?: string; role?: string; active?: boolean }) =>
-    [...userKeys.lists(), filters] as const,
-  details: () => [...userKeys.all, 'detail'] as const,
-  detail: (id: string) => [...userKeys.details(), id] as const,
-}
 
 interface UseUsersOptions {
   search?: string
@@ -299,7 +290,7 @@ export function useLinkUserToClient() {
     onSuccess: (_, { userId }) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) })
       queryClient.invalidateQueries({ queryKey: userKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: ['clients'] })
+      queryClient.invalidateQueries({ queryKey: clientKeys.all })
     },
   })
 }
@@ -337,7 +328,7 @@ export function useUnlinkUserFromClient() {
     onSuccess: (_, { userId }) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) })
       queryClient.invalidateQueries({ queryKey: userKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: ['clients'] })
+      queryClient.invalidateQueries({ queryKey: clientKeys.all })
     },
   })
 }
