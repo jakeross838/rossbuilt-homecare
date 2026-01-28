@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { Tables, UpdateTables } from '@/lib/supabase'
+import { organizationKeys } from '@/lib/queries'
 
 type Organization = Tables<'organizations'>
 type OrganizationUpdate = UpdateTables<'organizations'>
@@ -22,11 +23,6 @@ export interface OrganizationSettings {
     email_enabled: boolean
     sms_enabled: boolean
   }
-}
-
-export const organizationKeys = {
-  all: ['organization'] as const,
-  current: () => [...organizationKeys.all, 'current'] as const,
 }
 
 /**

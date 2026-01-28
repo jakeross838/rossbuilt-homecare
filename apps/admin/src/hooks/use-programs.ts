@@ -7,20 +7,11 @@ import {
 } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { ProgramFormData } from '@/lib/validations/program'
+import { programKeys, invoiceKeys, portalKeys, propertyKeys } from '@/lib/queries'
 
 type Program = Tables<'programs'>
 type ProgramInsert = InsertTables<'programs'>
 type ProgramUpdate = UpdateTables<'programs'>
-
-// Query keys for cache management
-export const programKeys = {
-  all: ['programs'] as const,
-  lists: () => [...programKeys.all, 'list'] as const,
-  property: (propertyId: string) =>
-    [...programKeys.all, 'property', propertyId] as const,
-  details: () => [...programKeys.all, 'detail'] as const,
-  detail: (id: string) => [...programKeys.details(), id] as const,
-}
 
 /**
  * Hook to fetch program for a specific property
@@ -105,7 +96,7 @@ export function useCreateProgram() {
       queryClient.invalidateQueries({
         queryKey: programKeys.property(data.property_id),
       })
-      queryClient.invalidateQueries({ queryKey: ['property', data.property_id] })
+      queryClient.invalidateQueries({ queryKey: propertyKeys.detail(data.property_id) })
     },
   })
 }
@@ -214,7 +205,7 @@ export function useUpdateProgram() {
           })
 
           // Invalidate invoice queries
-          queryClient.invalidateQueries({ queryKey: ['invoices'] })
+          queryClient.invalidateQueries({ queryKey: invoiceKeys.all })
         }
       }
 
@@ -226,7 +217,7 @@ export function useUpdateProgram() {
       })
       // Also invalidate portal properties to refresh plans page
       queryClient.invalidateQueries({
-        queryKey: ['portal', 'properties'],
+        queryKey: portalKeys.properties(),
       })
     },
   })

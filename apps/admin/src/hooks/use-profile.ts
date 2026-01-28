@@ -2,13 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { UpdateTables } from '@/lib/supabase'
+import { profileKeys } from '@/lib/queries'
 
 type UserUpdate = UpdateTables<'users'>
-
-export const profileKeys = {
-  all: ['profile'] as const,
-  current: () => [...profileKeys.all, 'current'] as const,
-}
 
 /**
  * Hook to update user profile

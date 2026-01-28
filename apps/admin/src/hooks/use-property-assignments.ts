@@ -1,14 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import { userKeys } from './use-users'
-
-// Query keys for cache management
-export const assignmentKeys = {
-  all: ['property-assignments'] as const,
-  byUser: (userId: string) => [...assignmentKeys.all, 'user', userId] as const,
-  byProperty: (propertyId: string) => [...assignmentKeys.all, 'property', propertyId] as const,
-}
+import { assignmentKeys, userKeys } from '@/lib/queries'
 
 /**
  * Hook to fetch property assignments for a specific user
@@ -17,7 +10,7 @@ export function useUserAssignments(userId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
 
   return useQuery({
-    queryKey: assignmentKeys.byUser(userId || ''),
+    queryKey: assignmentKeys.user(userId || ''),
     queryFn: async () => {
       if (!userId) {
         throw new Error('User ID is required')
@@ -69,7 +62,7 @@ export function usePropertyAssignments(propertyId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
 
   return useQuery({
-    queryKey: assignmentKeys.byProperty(propertyId || ''),
+    queryKey: assignmentKeys.property(propertyId || ''),
     queryFn: async () => {
       if (!propertyId) {
         throw new Error('Property ID is required')
@@ -157,8 +150,8 @@ export function useCreateAssignment() {
       return data
     },
     onSuccess: (_, { userId, propertyId }) => {
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.byUser(userId) })
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.byProperty(propertyId) })
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.user(userId) })
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.property(propertyId) })
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) })
       queryClient.invalidateQueries({ queryKey: userKeys.lists() })
     },
@@ -199,8 +192,8 @@ export function useDeleteAssignment() {
       return { assignmentId, userId, propertyId }
     },
     onSuccess: (_, { userId, propertyId }) => {
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.byUser(userId) })
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.byProperty(propertyId) })
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.user(userId) })
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.property(propertyId) })
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) })
       queryClient.invalidateQueries({ queryKey: userKeys.lists() })
     },
@@ -258,7 +251,7 @@ export function useBulkUpdateUserAssignments() {
       return { userId, propertyIds }
     },
     onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: assignmentKeys.byUser(userId) })
+      queryClient.invalidateQueries({ queryKey: assignmentKeys.user(userId) })
       queryClient.invalidateQueries({ queryKey: assignmentKeys.all })
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) })
       queryClient.invalidateQueries({ queryKey: userKeys.lists() })

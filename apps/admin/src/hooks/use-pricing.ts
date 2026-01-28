@@ -2,14 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase, type InsertTables } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { PricingConfig } from '@/lib/validations/pricing'
+import { pricingKeys } from '@/lib/queries'
 
 type PricingConfigInsert = InsertTables<'pricing_config'>
-
-// Query keys for cache management
-export const pricingKeys = {
-  all: ['pricing'] as const,
-  config: () => [...pricingKeys.all, 'config'] as const,
-}
 
 /**
  * Hook to fetch current pricing configuration
