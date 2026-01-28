@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase'
 import type { InsertTables } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { Payment, RecordPaymentData, InvoiceStatus } from '@/lib/types/billing'
-import { invoiceKeys } from './use-invoices'
+import { paymentKeys, invoiceKeys } from '@/lib/queries'
 
 type PaymentInsert = InsertTables<'payments'>
 
@@ -24,15 +24,6 @@ export interface PaymentFilters {
   payment_method?: string
   date_from?: string
   date_to?: string
-}
-
-// Query keys factory
-export const paymentKeys = {
-  all: ['payments'] as const,
-  lists: () => [...paymentKeys.all, 'list'] as const,
-  list: (filters: PaymentFilters) => [...paymentKeys.lists(), filters] as const,
-  invoice: (invoiceId: string) => [...paymentKeys.all, 'invoice', invoiceId] as const,
-  client: (clientId: string) => [...paymentKeys.all, 'client', clientId] as const,
 }
 
 /**

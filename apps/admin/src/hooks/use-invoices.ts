@@ -18,21 +18,11 @@ import {
   calculateInvoiceTotal,
   isInvoiceOverdue,
 } from '@/lib/helpers/billing'
+import { invoiceKeys } from '@/lib/queries'
 
 type InvoiceInsert = InsertTables<'invoices'>
 type InvoiceUpdate = UpdateTables<'invoices'>
 type LineItemInsert = InsertTables<'invoice_line_items'>
-
-// Query keys factory
-export const invoiceKeys = {
-  all: ['invoices'] as const,
-  lists: () => [...invoiceKeys.all, 'list'] as const,
-  list: (filters: InvoiceFilters) => [...invoiceKeys.lists(), filters] as const,
-  details: () => [...invoiceKeys.all, 'detail'] as const,
-  detail: (id: string) => [...invoiceKeys.details(), id] as const,
-  client: (clientId: string) => [...invoiceKeys.all, 'client', clientId] as const,
-  summary: () => [...invoiceKeys.all, 'summary'] as const,
-}
 
 /**
  * Hook to fetch invoices with optional filters
