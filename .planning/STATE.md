@@ -10,21 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 1 of 5 (Query Configuration) - **v1.4 MILESTONE IN PROGRESS**
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-28 - Roadmap created for v1.4 Sync Infrastructure Overhaul
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-01-28 - Completed 01-01-PLAN.md (Query Cache and App Configuration)
 
-Progress: ░░░░░░░░░░ 0% (v1.4 Phase 1 - Ready to plan)
+Progress: █░░░░░░░░░ 10% (v1.4 Phase 1 - Plan 1/3 complete)
 
 ### Milestone v1.4: Sync Infrastructure Overhaul
 
 | Phase | Status | Description |
 |-------|--------|-------------|
-| 1     | 🔄 Ready to plan | Query Configuration |
+| 1     | 🔄 In progress | Query Configuration |
 | 2     | ⏳ Pending | Query Key Unification |
 | 3     | ⏳ Pending | Portal Optimization |
 | 4     | ⏳ Pending | Pattern Templates |
 | 5     | ⏳ Pending | Error Handling & Testing |
+
+### Phase 1 Plans (Query Configuration)
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 01-01 | Query Cache and App Configuration | 1 | **Complete** |
+| 01-02 | Query Key Unification | 1 | Pending |
+| 01-03 | Hook Standardization | 2 | Pending |
 
 ---
 
@@ -316,8 +324,8 @@ Progress: ██████████ 100% (v1.0/v1.1/v1.2 ALL COMPLETE)
 | 13 | 5/5 | 27 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 13-01 (5 min), 13-03 (6 min), 13-04 (8 min), 13-05 (8 min)
-- Trend: Phase 13 Complete - All notification features ready
+- Last 5 plans: 13-03 (6 min), 13-04 (8 min), 13-05 (8 min), v1.4-01-01 (5 min)
+- Trend: v1.4 Phase 1 started - Query configuration foundation complete
 
 ## Accumulated Context
 
@@ -533,6 +541,10 @@ Recent decisions affecting current work:
 - **13-05**: Notification pages use existing components (NotificationItem, NotificationPreferences, ActivityFeed)
 - **13-05**: Activity nav item added to main sidebar navigation (after Reports)
 - **13-05**: NotificationDropdown placed before user menu in header
+- **v1.4-01-01**: Cache timing constants follow semantic naming (STALE_REALTIME, STALE_FAST, STALE_ACTIVITY, STALE_STANDARD)
+- **v1.4-01-01**: getCacheConfig helper provides consistent cache strategy application across hooks
+- **v1.4-01-01**: app-config.ts re-exports status/tier constants for centralized access pattern
+- **v1.4-01-01**: BUILDER_MARKUP (20%) and VENDOR_MARKUP (15%) centralized as decimal values
 
 ### Pending Todos
 
@@ -553,39 +565,33 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-01-23
-Stopped at: Completed PLAN-01-02.md (Route Protection)
+Last session: 2026-01-28
+Stopped at: Completed 01-01-PLAN.md (Query Cache and App Configuration)
 Resume file: None
 
-### Recent Activity (2026-01-23)
+### Recent Activity (2026-01-28)
 
-**Phase 1 Plan 01-02: Route Protection Completed:**
-- Created PermissionGuard component for route protection
-- Created guards index export
-- Updated AppLayout with permission checking
-- Updated Sidebar with permission-based nav filtering
-- Wrapped App.tsx with PermissionProvider
-- Updated providers index export
-- Fixed formatCurrency import in portal/plans page (blocking issue)
+**v1.4 Phase 1 Plan 01-01: Query Cache and App Configuration Completed:**
+- Created query cache configuration with STALE_REALTIME, STALE_FAST, STALE_ACTIVITY, STALE_STANDARD
+- Created getCacheConfig helper for consistent cache strategy selection
+- Created app configuration with BUILDER_MARKUP (20%), VENDOR_MARKUP (15%)
+- Added re-exports for WORK_ORDER_STATUS, PRIORITY_LEVELS (SYNC-09.3)
+- Added re-exports for INSPECTION_TIERS, INSPECTION_FREQUENCIES (SYNC-09.4)
+- Added FEATURES, PAGINATION, TIMEOUTS config objects
 
 **Commits:**
-- ef431c6: feat(01-02): create permission guard component
-- d98b0fc: feat(01-02): create guards index export
-- e36baf1: feat(01-02): add permission checking to app layout
-- 4516506: feat(01-02): filter sidebar navigation by permissions
-- 56f86a1: feat(01-02): wrap app with permission provider
-- a41fad6: feat(01-02): add permission provider to exports
-- bbdcfa3: fix(01-02): correct formatCurrency import path
+- 0a6ce6e: feat(01-01): create query cache configuration
+- d3a77f8: feat(01-01): create app configuration with business rules
 
 **Build Status:**
-- ✅ Build: Successful
+- ✅ Build: Successful (npx tsc --noEmit)
 - ✅ All verification checks passed
 
 ## Project Status
 
-**Milestone v1.3: Role-Based Permissions - IN PROGRESS**
+**Milestone v1.4: Sync Infrastructure Overhaul - IN PROGRESS**
 
-Plan 01-02 complete. Next: Plan 01-03 (Sidebar Navigation Filtering)
+Plan 01-01 complete. Next: Plan 01-02 (Query Key Unification)
 
 ## Phase 13 Summary (COMPLETE)
 
