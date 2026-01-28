@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 2 of 5 (Query Key Unification) - **v1.4 MILESTONE IN PROGRESS**
-Plan: 0 of TBD complete
-Status: Ready for planning
-Last activity: 2026-01-28 - Completed Phase 1 (Query Configuration) with verification passed
+Plan: 1 of TBD complete
+Status: In progress
+Last activity: 2026-01-28 - Completed 02-01-PLAN.md (Query Key Registry)
 
-Progress: ██░░░░░░░░ 20% (v1.4 Phase 1 complete, Phase 2 ready)
+Progress: ██▓░░░░░░░ 28% (v1.4 Phase 2 started, Plan 1 complete)
 
 ### Milestone v1.4: Sync Infrastructure Overhaul
 
 | Phase | Status | Description |
 |-------|--------|-------------|
 | 1     | ✅ Complete | Query Configuration |
-| 2     | ⏳ Pending | Query Key Unification |
+| 2     | ⏳ In Progress | Query Key Unification |
 | 3     | ⏳ Pending | Portal Optimization |
 | 4     | ⏳ Pending | Pattern Templates |
 | 5     | ⏳ Pending | Error Handling & Testing |
@@ -34,6 +34,12 @@ Progress: ██░░░░░░░░ 20% (v1.4 Phase 1 complete, Phase 2 rea
 | 01-02 | Migrate to Centralized Configuration | 1 | **Complete** |
 
 **Verification:** PASSED - All 4 must-haves verified (see v1.4-01-query-configuration-VERIFICATION.md)
+
+### Phase 2 Plans (Query Key Unification) - In Progress
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 02-01 | Query Key Registry | 1 | **Complete** |
 
 ---
 
@@ -550,6 +556,10 @@ Recent decisions affecting current work:
 - **v1.4-01-02**: BUILDER_MARKUP imported from app-config (not duplicated in plan-editor)
 - **v1.4-01-02**: VENDOR_MARKUP used via VENDOR_MARKUP * 100 for percent-based defaults
 - **v1.4-01-02**: DEFAULT_MARKUP_PERCENT in work-order.ts derived from VENDOR_MARKUP
+- **v1.4-02-01**: Centralized query key registry at src/lib/queries/keys.ts with 30+ factories
+- **v1.4-02-01**: Kebab-case naming for root keys (e.g., 'service-requests', 'work-orders')
+- **v1.4-02-01**: Individual key factory exports plus combined queryKeys object for flexibility
+- **v1.4-02-01**: QueryKeys type export enables IDE autocomplete
 
 ### Pending Todos
 
@@ -571,45 +581,40 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed Phase 1 (Query Configuration) - verification passed
+Stopped at: Completed 02-01-PLAN.md (Query Key Registry)
 Resume file: None
 
 ### Recent Activity (2026-01-28)
 
-**v1.4 Phase 1 Plan 01-02: Migrate to Centralized Configuration Completed:**
-- Updated App.tsx to use DEFAULT_QUERY_OPTIONS from centralized config
-- Migrated 11 hooks to import cache timing constants (STALE_STANDARD, STALE_FAST, STALE_ACTIVITY)
-- Updated plan-editor.tsx to use BUILDER_MARKUP from app-config.ts
-- Migrated 5 files using vendor markup to use VENDOR_MARKUP from app-config.ts
-- Zero hardcoded staleTime values remain in hooks
-- Zero hardcoded 15% vendor markup values remain in validation/billing files
+**v1.4 Phase 2 Plan 02-01: Query Key Registry Completed:**
+- Created centralized query key registry at `src/lib/queries/keys.ts` (497 lines)
+- Defined 30 individual key factory exports
+- Used kebab-case naming for root keys (e.g., 'service-requests', 'work-orders')
+- Exported combined `queryKeys` object for convenience
+- Exported `QueryKeys` type for autocomplete
+- Created barrel export at `src/lib/queries/index.ts`
 
 **Commits:**
-- 9cae71b: feat(01-02): update App.tsx to use centralized query config
-- ce0d511: feat(01-02): migrate hooks to centralized cache config
-- 633678a: feat(01-02): use centralized BUILDER_MARKUP in plan editor
-- c7ccd3d: feat(01-02): migrate vendor markup to centralized config
+- 3002b7c: feat(02-01): create centralized query key registry
+- 2604733: feat(02-01): create barrel export for queries module
 
 **Build Status:**
 - ✅ TypeScript: Compiles with no errors
-- ✅ Production Build: Successful (2m 23s)
+- ✅ Production Build: Successful (1m 42s)
 - ✅ All verification checks passed
 
 **Previous Session:**
 
-**v1.4 Phase 1 Plan 01-01: Query Cache and App Configuration Completed:**
-- Created query cache configuration with STALE_REALTIME, STALE_FAST, STALE_ACTIVITY, STALE_STANDARD
-- Created getCacheConfig helper for consistent cache strategy selection
-- Created app configuration with BUILDER_MARKUP (20%), VENDOR_MARKUP (15%)
-- Added re-exports for WORK_ORDER_STATUS, PRIORITY_LEVELS (SYNC-09.3)
-- Added re-exports for INSPECTION_TIERS, INSPECTION_FREQUENCIES (SYNC-09.4)
-- Added FEATURES, PAGINATION, TIMEOUTS config objects
+**v1.4 Phase 1 Plan 01-02: Migrate to Centralized Configuration Completed:**
+- Updated App.tsx to use DEFAULT_QUERY_OPTIONS from centralized config
+- Migrated 11 hooks to import cache timing constants
+- Migrated vendor markup to centralized config
 
 ## Project Status
 
 **Milestone v1.4: Sync Infrastructure Overhaul - IN PROGRESS**
 
-Phase 1 complete. Next: `/gsd:plan-phase 2` (Query Key Unification)
+Phase 2 started. Plan 02-01 complete. Next: Plan 02-02 (Hook Migration)
 
 ## Phase 13 Summary (COMPLETE)
 
