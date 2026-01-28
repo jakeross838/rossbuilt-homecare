@@ -2,23 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { PortalDashboardSummary, PortalProperty } from '@/lib/types/portal'
-import { STALE_STANDARD } from '@/lib/queries/config'
-
-// Query keys for portal
-export const portalKeys = {
-  all: ['portal'] as const,
-  dashboard: () => [...portalKeys.all, 'dashboard'] as const,
-  properties: () => [...portalKeys.all, 'properties'] as const,
-  property: (id: string) => [...portalKeys.properties(), id] as const,
-  inspections: (filters?: { propertyId?: string }) =>
-    [...portalKeys.all, 'inspections', filters] as const,
-  inspection: (id: string) => [...portalKeys.all, 'inspection', id] as const,
-  requests: (filters?: { status?: string }) =>
-    [...portalKeys.all, 'requests', filters] as const,
-  request: (id: string) => [...portalKeys.all, 'request', id] as const,
-  invoices: () => [...portalKeys.all, 'invoices'] as const,
-  invoice: (id: string) => [...portalKeys.all, 'invoice', id] as const,
-}
+import { STALE_STANDARD, portalKeys } from '@/lib/queries'
 
 /**
  * Hook to fetch client portal dashboard summary

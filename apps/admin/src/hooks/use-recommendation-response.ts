@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import { portalKeys } from './use-portal-dashboard'
+import { portalKeys } from '@/lib/queries'
 import type { RecommendationResponseInput } from '@/lib/validations/service-request'
 
 /**
