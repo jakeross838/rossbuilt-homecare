@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import { getPendingFindings } from '@/lib/offline/db'
 import type { InspectorInspection, InspectorDaySchedule, ChecklistItemFinding } from '@/lib/types/inspector'
-import { STALE_STANDARD } from '@/lib/queries/config'
+import { STALE_STANDARD, inspectorScheduleKeys } from '@/lib/queries'
 
 // Helper to check if user is authenticated with a valid session
 function useIsAuthenticated() {
@@ -18,7 +18,7 @@ export function useInspectorDaySchedule(date: string) {
   const inspectorId = user?.id
 
   return useQuery({
-    queryKey: ['inspector-schedule', inspectorId, date],
+    queryKey: inspectorScheduleKeys.day(inspectorId || '', date),
     queryFn: async (): Promise<InspectorDaySchedule> => {
       if (!inspectorId) {
         return { date, inspections: [], total_estimated_minutes: 0 }
@@ -151,7 +151,7 @@ export function useInspectorInspection(inspectionId: string | undefined) {
   const isAuthenticated = useIsAuthenticated()
 
   return useQuery({
-    queryKey: ['inspector-inspection', inspectionId],
+    queryKey: inspectorScheduleKeys.inspection(inspectionId || ''),
     queryFn: async (): Promise<InspectorInspection | null> => {
       if (!inspectionId) return null
 
@@ -291,7 +291,7 @@ export function useInspectorUpcoming() {
   const inspectorId = user?.id
 
   return useQuery({
-    queryKey: ['inspector-upcoming', inspectorId],
+    queryKey: inspectorScheduleKeys.upcoming(inspectorId || ''),
     queryFn: async () => {
       if (!inspectorId) return []
 

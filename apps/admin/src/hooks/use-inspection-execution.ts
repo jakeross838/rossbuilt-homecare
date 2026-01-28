@@ -6,6 +6,7 @@ import { generateChecklist } from '@/lib/checklist-generator'
 import type { ChecklistItemFinding, InspectorInspection } from '@/lib/types/inspector'
 import type { ChecklistItemFindingInput, CompleteInspectionInput } from '@/lib/validations/inspection-execution'
 import type { PropertyFeatures } from '@/lib/validations/property'
+import { inspectorScheduleKeys, recommendationKeys, inspectionKeys } from '@/lib/queries'
 
 // Start an inspection (set status to in_progress)
 // Also generates checklist if one doesn't exist
@@ -118,9 +119,9 @@ export function useStartInspection() {
       }
     },
     onSuccess: (_, inspectionId) => {
-      queryClient.invalidateQueries({ queryKey: ['inspector-inspection', inspectionId] })
-      queryClient.invalidateQueries({ queryKey: ['inspector-schedule'] })
-      queryClient.invalidateQueries({ queryKey: ['calendar-inspections'] })
+      queryClient.invalidateQueries({ queryKey: inspectorScheduleKeys.inspection(inspectionId) })
+      queryClient.invalidateQueries({ queryKey: inspectorScheduleKeys.all })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.all })
     },
   })
 }
@@ -179,7 +180,7 @@ export function useSaveFinding() {
       return fullFinding
     },
     onSuccess: (_, { inspectionId }) => {
-      queryClient.invalidateQueries({ queryKey: ['inspector-inspection', inspectionId] })
+      queryClient.invalidateQueries({ queryKey: inspectorScheduleKeys.inspection(inspectionId) })
     },
   })
 }
@@ -216,7 +217,7 @@ export function useBatchSaveFindings() {
       return findings.length
     },
     onSuccess: (_, { inspectionId }) => {
-      queryClient.invalidateQueries({ queryKey: ['inspector-inspection', inspectionId] })
+      queryClient.invalidateQueries({ queryKey: inspectorScheduleKeys.inspection(inspectionId) })
     },
   })
 }
@@ -265,9 +266,8 @@ export function useCompleteInspection() {
       }
     },
     onSuccess: (_, { inspectionId }) => {
-      queryClient.invalidateQueries({ queryKey: ['inspector-inspection', inspectionId] })
-      queryClient.invalidateQueries({ queryKey: ['inspector-schedule'] })
-      queryClient.invalidateQueries({ queryKey: ['inspector-upcoming'] })
+      queryClient.invalidateQueries({ queryKey: inspectorScheduleKeys.inspection(inspectionId) })
+      queryClient.invalidateQueries({ queryKey: inspectorScheduleKeys.all })
     },
   })
 }
@@ -333,7 +333,7 @@ export function useAddRecommendation() {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['recommendations'] })
+      queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
     },
   })
 }

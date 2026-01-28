@@ -8,6 +8,7 @@ import type {
 } from '@/lib/types/report'
 import type { ChecklistItemFinding } from '@/lib/types/inspector'
 import type { Tables } from '@/lib/supabase'
+import { reportKeys, inspectionKeys } from '@/lib/queries'
 
 type Inspection = Tables<'inspections'>
 type Recommendation = Tables<'recommendations'>
@@ -15,7 +16,7 @@ type Recommendation = Tables<'recommendations'>
 // Fetch full inspection data for report generation
 export function useInspectionForReport(inspectionId: string | undefined) {
   return useQuery({
-    queryKey: ['inspection-report-data', inspectionId],
+    queryKey: reportKeys.inspectionData(inspectionId || ''),
     queryFn: async () => {
       if (!inspectionId) return null
 
@@ -348,8 +349,8 @@ export function useSaveReportUrl() {
       return data
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['inspection-report-data', data.id] })
-      queryClient.invalidateQueries({ queryKey: ['inspections'] })
+      queryClient.invalidateQueries({ queryKey: reportKeys.inspectionData(data.id) })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.all })
     },
   })
 }
@@ -374,7 +375,7 @@ export function useMarkReportSent() {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['inspections'] })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.all })
     },
   })
 }

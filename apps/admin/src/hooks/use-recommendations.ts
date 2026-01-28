@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { Tables, InsertTables, UpdateTables } from '@/lib/supabase'
+import { recommendationKeys } from '@/lib/queries'
 
 type Recommendation = Tables<'recommendations'>
 type RecommendationInsert = InsertTables<'recommendations'>
@@ -9,7 +10,7 @@ type RecommendationUpdate = UpdateTables<'recommendations'>
 // Fetch recommendations for an inspection
 export function useInspectionRecommendations(inspectionId: string | undefined) {
   return useQuery({
-    queryKey: ['recommendations', 'inspection', inspectionId],
+    queryKey: recommendationKeys.inspection(inspectionId || ''),
     queryFn: async () => {
       if (!inspectionId) return []
 
@@ -30,7 +31,7 @@ export function useInspectionRecommendations(inspectionId: string | undefined) {
 // Fetch recommendations for a property
 export function usePropertyRecommendations(propertyId: string | undefined) {
   return useQuery({
-    queryKey: ['recommendations', 'property', propertyId],
+    queryKey: recommendationKeys.property(propertyId || ''),
     queryFn: async () => {
       if (!propertyId) return []
 
@@ -53,7 +54,7 @@ export function usePropertyRecommendations(propertyId: string | undefined) {
 // Fetch a single recommendation
 export function useRecommendation(id: string | undefined) {
   return useQuery({
-    queryKey: ['recommendation', id],
+    queryKey: recommendationKeys.detail(id || ''),
     queryFn: async () => {
       if (!id) return null
 
@@ -86,15 +87,15 @@ export function useCreateRecommendation() {
       return data as Recommendation
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['recommendations'] })
+      queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       if (data.inspection_id) {
         queryClient.invalidateQueries({
-          queryKey: ['recommendations', 'inspection', data.inspection_id],
+          queryKey: recommendationKeys.inspection(data.inspection_id),
         })
       }
       if (data.property_id) {
         queryClient.invalidateQueries({
-          queryKey: ['recommendations', 'property', data.property_id],
+          queryKey: recommendationKeys.property(data.property_id),
         })
       }
     },
@@ -118,8 +119,8 @@ export function useUpdateRecommendation() {
       return data as Recommendation
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['recommendations'] })
-      queryClient.invalidateQueries({ queryKey: ['recommendation', data.id] })
+      queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
+      queryClient.invalidateQueries({ queryKey: recommendationKeys.detail(data.id) })
     },
   })
 }
@@ -150,8 +151,8 @@ export function useUpdateRecommendationStatus() {
       return data as Recommendation
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['recommendations'] })
-      queryClient.invalidateQueries({ queryKey: ['recommendation', data.id] })
+      queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
+      queryClient.invalidateQueries({ queryKey: recommendationKeys.detail(data.id) })
     },
   })
 }
@@ -171,7 +172,7 @@ export function useDeleteRecommendation() {
       return id
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['recommendations'] })
+      queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
     },
   })
 }
