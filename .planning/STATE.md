@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 2 of 5 (Query Key Unification) - **v1.4 MILESTONE IN PROGRESS**
-Plan: 4 of 4 complete
+Plan: 5 of 5 complete
 Status: Phase complete
-Last activity: 2026-01-28 - Completed 02-02-PLAN.md (Hook Migration)
+Last activity: 2026-01-28 - Completed 02-05-PLAN.md (Realtime Sync Alignment)
 
-Progress: ██████░░░░ 40% (v1.4 Phase 2 complete, all 4 plans done)
+Progress: ██████░░░░ 40% (v1.4 Phase 2 complete, all 5 plans done)
 
 ### Milestone v1.4: Sync Infrastructure Overhaul
 
@@ -43,6 +43,7 @@ Progress: ██████░░░░ 40% (v1.4 Phase 2 complete, all 4 plans
 | 02-02 | Hook Migration | 2 | **Complete** |
 | 02-03 | Billing & Operations Hook Migration | 2 | **Complete** |
 | 02-04 | Final Hook Migration | 2 | **Complete** |
+| 02-05 | Realtime Sync Alignment | 3 | **Complete** |
 
 ---
 
@@ -569,6 +570,11 @@ Recent decisions affecting current work:
 - **v1.4-02-03**: Service request hooks import serviceRequestKeys, portalKeys
 - **v1.4-02-04**: All portal, inspector, report, dashboard, metrics hooks use centralized keys
 - **v1.4-02-04**: Cross-hook key imports eliminated (portalKeys, dashboardKeys, invoiceKeys)
+- **v1.4-02-05**: Realtime queryKeyMap uses kebab-case keys matching hook definitions
+- **v1.4-02-05**: Expanded inspections realtime entry with 7 additional key patterns (calendar, inspector, metrics)
+- **v1.4-02-05**: Added recommendations table to realtime subscriptions
+- **v1.4-02-05**: DEBUG config section with granular REALTIME_LOGGING, QUERY_LOGGING, OFFLINE_LOGGING flags
+- **v1.4-02-05**: All console.log in use-realtime-sync.ts conditional via DEBUG.REALTIME_LOGGING
 
 ### Pending Todos
 
@@ -590,10 +596,29 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 02-03-PLAN.md (Billing & Operations Hook Migration)
+Stopped at: Completed 02-05-PLAN.md (Realtime Sync Alignment)
 Resume file: None
 
 ### Recent Activity (2026-01-28)
+
+**v1.4 Phase 2 Plan 02-05: Realtime Sync Alignment Completed:**
+- Fixed key mismatches: 'workOrders' -> 'work-orders', 'serviceRequests' -> 'service-requests', 'calendarEvents' -> 'calendar-events'
+- Added 7 inspection-related keys to realtime map (calendar-inspections, property-inspections, inspector-workload, etc.)
+- Added recommendations table to realtime subscriptions
+- Added DEBUG config section with REALTIME_LOGGING, QUERY_LOGGING, OFFLINE_LOGGING flags
+- Made all console.log calls conditional via DEBUG.REALTIME_LOGGING
+
+**Commits:**
+- f0d6daf: fix(02-05): fix key mismatches in realtime sync queryKeyMap
+- 66fd38a: feat(02-05): add missing keys to realtime map
+- 7e2fe25: feat(02-05): add configurable debug logging for realtime
+
+**Build Status:**
+- TypeScript: Compiles with no errors
+- Production Build: Successful (3m 47s)
+- All verification checks passed
+
+**Previous Session:**
 
 **v1.4 Phase 2 Plan 02-03: Billing & Operations Hook Migration Completed:**
 - Migrated 8 hooks to use centralized query keys from `@/lib/queries`
@@ -608,11 +633,6 @@ Resume file: None
 - 6853d16: feat(02-03): migrate work order and vendor hooks to centralized keys
 - ca43ea4: feat(02-03): migrate billing hooks to centralized keys
 - 4a8d1d1: feat(02-03): migrate notification and service request hooks to centralized keys
-
-**Build Status:**
-- TypeScript: Compiles with no errors
-- Production Build: Successful (2m 1s)
-- All verification checks passed
 
 **Previous Session:**
 
@@ -645,7 +665,7 @@ Resume file: None
 
 **Milestone v1.4: Sync Infrastructure Overhaul - IN PROGRESS**
 
-Phase 2 in progress. Plans 02-01, 02-03, and 02-04 complete. Remaining: Plan 02-02 (Entity Hook Migration)
+Phase 2 complete. All 5 plans finished (02-01 through 02-05). Ready for Phase 3 (Portal Optimization).
 
 ## Phase 13 Summary (COMPLETE)
 
