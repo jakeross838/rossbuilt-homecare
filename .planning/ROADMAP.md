@@ -478,7 +478,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 ## Milestone v1.4: Sync Infrastructure Overhaul
 
 - [x] **Phase 1: Query Configuration** - Centralize all cache/stale time settings, app config ✅
-- [ ] **Phase 2: Query Key Unification** - Single key registry, fix mismatches, align realtime
+- [x] **Phase 2: Query Key Unification** - Single key registry, fix mismatches, align realtime ✅
 - [ ] **Phase 3: Portal Optimization** - Database view, eliminate N+1 queries
 - [ ] **Phase 4: Pattern Templates** - Base hooks, optimistic UI, button/data states
 - [ ] **Phase 5: Error Handling & Testing** - Error boundaries, fail-loud, verification
@@ -499,20 +499,22 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 - apps/admin/src/lib/queries/config.ts - Cache timing constants (STALE_REALTIME, STALE_FAST, STALE_ACTIVITY, STALE_STANDARD)
 - apps/admin/src/config/app-config.ts - Business config (BUILDER_MARKUP, VENDOR_MARKUP, FEATURES, PAGINATION, TIMEOUTS)
 
-### Phase 2: Query Key Unification
+### Phase 2: Query Key Unification ✅
 **Goal**: All query keys in single registry, realtime sync covers every key
 **Depends on**: Phase 1
-**Status**: Not started
+**Status**: COMPLETE (2026-01-28)
 **Milestone**: v1.4 Sync Infrastructure Overhaul
 **Requirements**: SYNC-02, SYNC-03
-**Success Criteria** (what must be TRUE):
-  1. `src/lib/queries/keys.ts` contains ALL query key factories
-  2. No hook defines its own local query keys
-  3. `service-requests` vs `serviceRequests` mismatch fixed
-  4. `calendar-inspections`, `property-inspections`, `inspector-workload` in realtime map
-  5. Realtime invalidation fires for every table change
-**Research**: Unlikely (internal refactoring)
-**Plans**: TBD
+**Plans**: 5 plans executed in 3 waves
+- 02-01: Query Key Registry (centralized keys.ts with 30+ factories) ✅
+- 02-02: Core Entity Hook Migration (13 hooks) ✅
+- 02-03: Billing/Work Order Hook Migration (8 hooks) ✅
+- 02-04: Portal/Dashboard Hook Migration (15 hooks) ✅
+- 02-05: Realtime Sync Alignment (queryKeyMap + debug logging) ✅
+
+**Key Files Created:**
+- apps/admin/src/lib/queries/keys.ts - Centralized query key registry (30+ factories)
+- apps/admin/src/lib/queries/index.ts - Barrel export for queries module
 
 ### Phase 3: Portal Optimization
 **Goal**: Portal pages make < 5 queries total, no N+1 pattern
@@ -563,7 +565,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Query Configuration | 2/2 | ✅ Complete | 2026-01-28 |
-| 2. Query Key Unification | 0/TBD | Not started | - |
+| 2. Query Key Unification | 5/5 | ✅ Complete | 2026-01-28 |
 | 3. Portal Optimization | 0/TBD | Not started | - |
 | 4. Pattern Templates | 0/TBD | Not started | - |
 | 5. Error Handling & Testing | 0/TBD | Not started | - |

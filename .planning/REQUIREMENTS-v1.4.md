@@ -43,25 +43,27 @@ When this milestone is complete:
 - [x] SYNC-01.4: Apply `staleTime: 0` to all realtime-synced tables
 - [x] SYNC-01.5: Polling (refetchInterval) only for non-realtime data
 
-### SYNC-02: Unified Query Key Registry
+### SYNC-02: Unified Query Key Registry ✅
 **Priority:** HIGH
 **Validation:** All query keys defined in single file
+**Status:** COMPLETE (2026-01-28)
 
-- [ ] SYNC-02.1: Create `src/lib/queries/keys.ts` with all query key factories
-- [ ] SYNC-02.2: Migrate all hook-local keys to central registry
-- [ ] SYNC-02.3: Fix mismatched keys (`service-requests` vs `serviceRequests`)
-- [ ] SYNC-02.4: Add missing keys to realtime map (`calendar-inspections`, `property-inspections`)
-- [ ] SYNC-02.5: Export typed `QueryKeys` object for autocomplete
+- [x] SYNC-02.1: Create `src/lib/queries/keys.ts` with all query key factories
+- [x] SYNC-02.2: Migrate all hook-local keys to central registry
+- [x] SYNC-02.3: Fix mismatched keys (`service-requests` vs `serviceRequests`)
+- [x] SYNC-02.4: Add missing keys to realtime map (`calendar-inspections`, `property-inspections`)
+- [x] SYNC-02.5: Export typed `QueryKeys` object for autocomplete
 
-### SYNC-03: Realtime Subscription Alignment
+### SYNC-03: Realtime Subscription Alignment ✅
 **Priority:** HIGH
 **Validation:** Every query key has matching realtime invalidation
+**Status:** COMPLETE (2026-01-28)
 
-- [ ] SYNC-03.1: Audit all 45 hooks for query keys used
-- [ ] SYNC-03.2: Update `queryKeyMap` in `use-realtime-sync.ts` to include ALL keys
-- [ ] SYNC-03.3: Add `inspector-workload`, `calendar-inspections`, `property-inspections`
-- [ ] SYNC-03.4: Verify realtime invalidation fires for each table change
-- [ ] SYNC-03.5: Add console logging for realtime events (toggleable via config)
+- [x] SYNC-03.1: Audit all 45 hooks for query keys used
+- [x] SYNC-03.2: Update `queryKeyMap` in `use-realtime-sync.ts` to include ALL keys
+- [x] SYNC-03.3: Add `inspector-workload`, `calendar-inspections`, `property-inspections`
+- [x] SYNC-03.4: Verify realtime invalidation fires for each table change
+- [x] SYNC-03.5: Add console logging for realtime events (toggleable via config)
 
 ### SYNC-04: Portal Query Optimization
 **Priority:** HIGH
@@ -190,8 +192,8 @@ Before marking complete:
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | SYNC-01 | Phase 1 | ✅ Complete |
-| SYNC-02 | Phase 2 | Pending |
-| SYNC-03 | Phase 2 | Pending |
+| SYNC-02 | Phase 2 | ✅ Complete |
+| SYNC-03 | Phase 2 | ✅ Complete |
 | SYNC-04 | Phase 3 | Pending |
 | SYNC-05 | Phase 4 | Pending |
 | SYNC-06 | Phase 4 | Pending |
