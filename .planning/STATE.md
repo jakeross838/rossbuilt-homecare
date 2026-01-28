@@ -5,37 +5,86 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 1 — Permission Infrastructure (v1.3)
+**Current focus:** Phase 1 — Query Configuration (v1.4)
 
 ## Current Position
 
-Phase: 1 of 4 (Permission Infrastructure) - **v1.3 MILESTONE IN PROGRESS**
-Plan: 01-02 of 4 (Route Protection)
-Status: In progress
-Last activity: 2026-01-23 - Completed PLAN-01-02.md
+Phase: 1 of 5 (Query Configuration) - **v1.4 MILESTONE IN PROGRESS**
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-28 - Roadmap created for v1.4 Sync Infrastructure Overhaul
 
-Progress: ██░░░░░░░░ 50% (v1.3 Phase 1 - Plan 2 of 4 complete)
+Progress: ░░░░░░░░░░ 0% (v1.4 Phase 1 - Ready to plan)
 
-### Milestone v1.3: Role-Based Permissions
+### Milestone v1.4: Sync Infrastructure Overhaul
 
 | Phase | Status | Description |
 |-------|--------|-------------|
-| 1     | 🔄 In Progress | Permission Infrastructure |
+| 1     | 🔄 Ready to plan | Query Configuration |
+| 2     | ⏳ Pending | Query Key Unification |
+| 3     | ⏳ Pending | Portal Optimization |
+| 4     | ⏳ Pending | Pattern Templates |
+| 5     | ⏳ Pending | Error Handling & Testing |
 
-### Phase 1 Plans (Permission Infrastructure)
+---
+
+### Milestone v1.3: Role-Based Permissions ✅
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| 1     | ✅ | Permission Infrastructure |
+| 2     | ✅ | RLS Audit & Enhancement |
+| 3     | ✅ | Realtime Extensions |
+| 4     | ✅ | Client & Tech Portals (Pre-existing) |
+| 5     | ✅ | Self-Service Plan Editor |
+| 6     | ✅ | Cascading Updates |
+| 7     | ✅ | Admin Dashboard & Notifications |
+
+### Phase 1 Plans (Permission Infrastructure) ✅
 
 | Plan | Name | Wave | Status |
 |------|------|------|--------|
-| 01-01 | Permission System Setup | 1 | **Complete** |
-| 01-02 | Route Protection | 2 | **Complete** |
-| 01-03 | Sidebar Navigation Filtering | 3 | Pending |
-| 01-04 | Permission Integration (Checkpoint) | 4 | Pending |
+| PLAN-01-01 | Permission System Setup | 1 | **Complete** |
+| PLAN-01-02 | Route Protection | 2 | **Complete** |
 
-**Wave Structure:**
-- Wave 1: 01-01 (no dependencies) - Complete
-- Wave 2: 01-02 (depends on 01-01) - Complete
-- Wave 3: 01-03 (depends on 01-02) - Pending
-- Wave 4: 01-04 (checkpoint - depends on 01-03) - Pending
+**Verification:** PASSED - All 5 observable truths verified (see 01-VERIFICATION.md)
+
+### Phase 2 Plans (RLS Audit & Enhancement) ✅
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| PLAN-02-01 | RLS Policy Audit and Client UPDATE Policy | 1 | **Complete** |
+| PLAN-02-02 | Cross-Tenant Security Test Suite | 2 | **Complete** |
+
+### Phase 3 Plans (Realtime Extensions) ✅
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| PLAN-03-01 | Extend Realtime Subscriptions | 1 | **Complete** |
+
+### Phase 4 Plans (Client & Tech Portals) ✅
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| PLAN-04-01 | Portal Assessment | 1 | **Complete** (Pre-existing) |
+
+### Phase 5 Plans (Self-Service Plan Editor) ✅
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| PLAN-05-01 | Self-Service Plan Editor with Live Pricing | 1 | **Complete** |
+
+### Phase 6 Plans (Cascading Updates) ✅
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| PLAN-06-01 | Cascading Program Updates | 1 | **Complete** |
+
+### Phase 7 Plans (Admin Dashboard & Notifications) ✅
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| PLAN-07-01 | Admin Properties Overview & Notifications | 1 | **Complete** |
 
 ---
 

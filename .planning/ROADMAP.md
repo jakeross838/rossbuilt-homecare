@@ -400,3 +400,170 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 - ✅ Global ErrorBoundary already wraps entire app in App.tsx
 
 **Note:** Full unit testing infrastructure deferred - would require significant setup (Vitest, Testing Library). Error boundaries provide immediate production stability.
+
+---
+
+## Milestone v1.3: Role-Based Permissions
+
+- [x] **Phase 1: Permission Infrastructure** - Role types, permission matrix, CASL abilities, route protection ✅
+- [x] **Phase 2: RLS Audit & Enhancement** - RLS policy audit, client UPDATE policy for self-service ✅
+- [x] **Phase 3: Realtime Extensions** - Programs and notifications realtime subscriptions ✅
+- [x] **Phase 4: Client & Tech Portals** - Portal verification (pre-existing) ✅
+- [x] **Phase 5: Self-Service Plan Editor** - Client plan modification with live pricing ✅
+- [x] **Phase 6: Cascading Updates** - RPC functions for atomic cascading changes ✅
+- [x] **Phase 7: Admin Dashboard & Notifications** - Properties overview, admin alerts ✅
+
+---
+
+### Phase 1: Permission Infrastructure ✅
+**Goal**: Users are authenticated with correct role and can only access allowed pages
+**Depends on**: Phase 20 (v1.2)
+**Status**: COMPLETE (2026-01-23)
+**Milestone**: v1.3 Role-Based Permissions
+**Plans**: 2 plans executed
+- PLAN-01-01: Permission System Setup (roles, matrix, CASL, hooks, provider) ✅
+- PLAN-01-02: Route Protection (guards, sidebar filtering, App integration) ✅
+
+### Phase 2: RLS Audit & Enhancement ✅
+**Goal**: Audit RLS policies, add client UPDATE policy for self-service plan management
+**Depends on**: Phase 1
+**Status**: COMPLETE (2026-01-26)
+**Milestone**: v1.3 Role-Based Permissions
+**Plans**: 2 plans executed
+- PLAN-02-01: RLS Policy Audit and Client UPDATE Policy ✅
+- PLAN-02-02: Cross-Tenant Security Test Suite ✅
+
+### Phase 3: Realtime Extensions ✅
+**Goal**: Extend realtime subscriptions to programs and notifications for instant cross-portal sync
+**Depends on**: Phase 2
+**Status**: COMPLETE (2026-01-26)
+**Milestone**: v1.3 Role-Based Permissions
+**Plans**: 1 plan executed
+- PLAN-03-01: Extend Realtime Subscriptions ✅
+
+### Phase 4: Client & Tech Portals ✅
+**Goal**: Verify view-only portal pages for clients and techs are functional
+**Depends on**: Phase 3
+**Status**: COMPLETE (2026-01-26) - Pre-existing
+**Milestone**: v1.3 Role-Based Permissions
+**Plans**: 1 plan executed
+- PLAN-04-01: Portal Assessment (verification only, no implementation needed) ✅
+
+### Phase 5: Self-Service Plan Editor ✅
+**Goal**: Clients can modify their service plans with live pricing updates
+**Depends on**: Phase 4
+**Status**: COMPLETE (2026-01-26)
+**Milestone**: v1.3 Role-Based Permissions
+**Plans**: 1 plan executed
+- PLAN-05-01: Self-Service Plan Editor with Live Pricing ✅
+
+### Phase 6: Cascading Updates ✅
+**Goal**: Plan changes automatically cascade to billing, schedules, and notifications
+**Depends on**: Phase 5
+**Status**: COMPLETE (2026-01-26)
+**Milestone**: v1.3 Role-Based Permissions
+**Plans**: 1 plan executed
+- PLAN-06-01: Cascading Program Updates (RPC function) ✅
+
+### Phase 7: Admin Dashboard & Notifications ✅
+**Goal**: Admin visibility into all properties with alerts when clients modify plans
+**Depends on**: Phase 6
+**Status**: COMPLETE (2026-01-26)
+**Milestone**: v1.3 Role-Based Permissions
+**Plans**: 1 plan executed
+- PLAN-07-01: Admin Properties Overview & Notifications ✅
+
+---
+
+## Milestone v1.4: Sync Infrastructure Overhaul
+
+- [ ] **Phase 1: Query Configuration** - Centralize all cache/stale time settings, app config
+- [ ] **Phase 2: Query Key Unification** - Single key registry, fix mismatches, align realtime
+- [ ] **Phase 3: Portal Optimization** - Database view, eliminate N+1 queries
+- [ ] **Phase 4: Pattern Templates** - Base hooks, optimistic UI, button/data states
+- [ ] **Phase 5: Error Handling & Testing** - Error boundaries, fail-loud, verification
+
+---
+
+### Phase 1: Query Configuration
+**Goal**: All cache timing and business config values centralized in config files
+**Depends on**: v1.3 complete
+**Status**: Not started
+**Milestone**: v1.4 Sync Infrastructure Overhaul
+**Requirements**: SYNC-01, SYNC-09
+**Success Criteria** (what must be TRUE):
+  1. `src/lib/queries/config.ts` exists with STALE_REALTIME, STALE_FAST, STALE_STANDARD
+  2. `src/config/app-config.ts` exists with pricing, statuses, feature flags
+  3. Zero hardcoded `staleTime: 1000 * 60 * 5` in any hook
+  4. All pricing markup values come from config
+**Research**: Unlikely (internal refactoring)
+**Plans**: TBD
+
+### Phase 2: Query Key Unification
+**Goal**: All query keys in single registry, realtime sync covers every key
+**Depends on**: Phase 1
+**Status**: Not started
+**Milestone**: v1.4 Sync Infrastructure Overhaul
+**Requirements**: SYNC-02, SYNC-03
+**Success Criteria** (what must be TRUE):
+  1. `src/lib/queries/keys.ts` contains ALL query key factories
+  2. No hook defines its own local query keys
+  3. `service-requests` vs `serviceRequests` mismatch fixed
+  4. `calendar-inspections`, `property-inspections`, `inspector-workload` in realtime map
+  5. Realtime invalidation fires for every table change
+**Research**: Unlikely (internal refactoring)
+**Plans**: TBD
+
+### Phase 3: Portal Optimization
+**Goal**: Portal pages make < 5 queries total, no N+1 pattern
+**Depends on**: Phase 2
+**Status**: Not started
+**Milestone**: v1.4 Sync Infrastructure Overhaul
+**Requirements**: SYNC-04
+**Success Criteria** (what must be TRUE):
+  1. Database view `portal_property_summaries` exists with pre-aggregated counts
+  2. `usePortalProperties()` uses single view query
+  3. Dashboard fetches in parallel (not waterfall)
+  4. Portal properties page: < 5 queries on load
+**Research**: Unlikely (Supabase views, internal patterns)
+**Plans**: TBD
+
+### Phase 4: Pattern Templates
+**Goal**: Base hook templates with optimistic UI, consistent button/data states
+**Depends on**: Phase 3
+**Status**: Not started
+**Milestone**: v1.4 Sync Infrastructure Overhaul
+**Requirements**: SYNC-05, SYNC-06, SYNC-07, SYNC-08
+**Success Criteria** (what must be TRUE):
+  1. `use-base-query.ts` exists with automatic realtime subscription
+  2. `use-base-mutation.ts` exists with optimistic update + rollback
+  3. `ActionButton` component shows loading state during mutations
+  4. `LoadingState`, `ErrorState`, `EmptyState` components exist
+  5. All portal pages have loading/error/empty states
+**Research**: Unlikely (React Query patterns)
+**Plans**: TBD
+
+### Phase 5: Error Handling & Testing
+**Goal**: Errors caught gracefully, two-tab sync verified working
+**Depends on**: Phase 4
+**Status**: Not started
+**Milestone**: v1.4 Sync Infrastructure Overhaul
+**Requirements**: SYNC-10
+**Success Criteria** (what must be TRUE):
+  1. QueryClientProvider wrapped with error boundary
+  2. Mutation errors logged to console with context
+  3. User-friendly error messages displayed (not raw errors)
+  4. Two-tab sync test passes (change appears < 5 seconds)
+  5. Console shows no red errors during normal operation
+**Research**: Unlikely (error handling patterns)
+**Plans**: TBD
+
+## v1.4 Progress
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Query Configuration | 0/TBD | Not started | - |
+| 2. Query Key Unification | 0/TBD | Not started | - |
+| 3. Portal Optimization | 0/TBD | Not started | - |
+| 4. Pattern Templates | 0/TBD | Not started | - |
+| 5. Error Handling & Testing | 0/TBD | Not started | - |
