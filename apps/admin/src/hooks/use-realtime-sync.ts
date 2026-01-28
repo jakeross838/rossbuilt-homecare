@@ -17,6 +17,7 @@ type TableName =
   | 'programs'
   | 'notifications'
   | 'user_property_assignments'
+  | 'recommendations'
 
 interface RealtimeConfig {
   tables: TableName[]
@@ -38,7 +39,18 @@ const queryKeyMap: Record<TableName, string[][]> = {
   properties: [['properties'], ['portal', 'properties'], ['portal', 'dashboard']],
   equipment: [['equipment'], ['portal', 'properties']],
   work_orders: [['work-orders'], ['portal', 'properties'], ['portal', 'dashboard']], // Fixed: was 'workOrders'
-  inspections: [['inspections'], ['portal', 'inspections'], ['portal', 'dashboard']],
+  inspections: [
+    ['inspections'],
+    ['calendar-inspections'],
+    ['property-inspections'],
+    ['inspector-workload'],
+    ['inspector-schedule'],
+    ['inspector-inspection'],
+    ['inspector-upcoming'],
+    ['inspection-metrics'],
+    ['portal', 'inspections'],
+    ['portal', 'dashboard'],
+  ],
   invoices: [['invoices'], ['portal', 'invoices'], ['portal', 'dashboard']],
   service_requests: [['service-requests'], ['portal', 'requests'], ['portal', 'dashboard']], // Fixed: was 'serviceRequests'
   vendors: [['vendors']],
@@ -47,6 +59,7 @@ const queryKeyMap: Record<TableName, string[][]> = {
   programs: [['programs'], ['portal', 'plan'], ['portal', 'dashboard'], ['admin', 'properties-overview']],
   notifications: [['notifications'], ['portal', 'notifications'], ['admin', 'notifications']],
   user_property_assignments: [['property-assignments'], ['portal', 'properties'], ['portal', 'dashboard'], ['users']],
+  recommendations: [['recommendations']],
 }
 
 /**
@@ -162,6 +175,7 @@ export function useGlobalRealtimeSync() {
     'programs',
     'notifications',
     'user_property_assignments',
+    'recommendations',
   ], [])
 
   return useRealtimeSync({ tables })
@@ -182,6 +196,7 @@ export function usePortalRealtimeSync() {
     'programs',
     'notifications',
     'user_property_assignments',
+    'recommendations',
   ], [])
 
   return useRealtimeSync({ tables })
