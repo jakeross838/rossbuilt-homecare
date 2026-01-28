@@ -1,5 +1,8 @@
 import type { WorkOrderStatus, PriorityLevel } from '@/lib/types/work-order'
-import { VENDOR_MARKUP } from '@/config/app-config'
+
+// Note: VENDOR_MARKUP is 0.15 (15%) defined in app-config.ts
+// We use the literal value here to avoid circular dependency
+// (app-config.ts re-exports WORK_ORDER_STATUS from this file)
 
 /**
  * Work order status configuration
@@ -132,9 +135,10 @@ export type WorkOrderCategory = (typeof WORK_ORDER_CATEGORIES)[number]['value']
 
 /**
  * Default markup percentage for vendor work
- * Derived from centralized VENDOR_MARKUP config (decimal to percent)
+ * This matches VENDOR_MARKUP (0.15) from app-config.ts converted to percent
+ * Note: Using literal to avoid circular dependency with app-config.ts
  */
-export const DEFAULT_MARKUP_PERCENT = VENDOR_MARKUP * 100
+export const DEFAULT_MARKUP_PERCENT = 15
 
 /**
  * Work order number prefix
