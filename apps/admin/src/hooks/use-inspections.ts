@@ -10,18 +10,9 @@ import type {
   ScheduleInspectionInput,
   RescheduleInspectionInput,
 } from '@/lib/validations/inspection'
+import { inspectionKeys } from '@/lib/queries'
 
 type Inspection = Tables<'inspections'>
-
-// Query keys for cache management
-export const inspectionKeys = {
-  all: ['inspections'] as const,
-  calendar: (startDate: string, endDate: string) =>
-    ['calendar-inspections', startDate, endDate] as const,
-  detail: (id: string) => ['inspection', id] as const,
-  property: (propertyId: string) => ['property-inspections', propertyId] as const,
-  inspectorWorkload: () => ['inspector-workload'] as const,
-}
 
 /**
  * Fetch inspections for a date range (calendar view)
@@ -266,7 +257,7 @@ export function useScheduleInspection() {
       // Force immediate refetch to show new inspection on calendar
       queryClient.refetchQueries({ queryKey: ['calendar-inspections'] })
       queryClient.invalidateQueries({ queryKey: ['property-inspections'] })
-      queryClient.invalidateQueries({ queryKey: ['inspector-workload'] })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.inspectorWorkload() })
     },
   })
 }
@@ -305,9 +296,9 @@ export function useRescheduleInspection() {
     onSuccess: (_, variables) => {
       // Force immediate refetch to update calendar
       queryClient.refetchQueries({ queryKey: ['calendar-inspections'] })
-      queryClient.invalidateQueries({ queryKey: ['inspection', variables.id] })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.detail(variables.id) })
       queryClient.invalidateQueries({ queryKey: ['property-inspections'] })
-      queryClient.invalidateQueries({ queryKey: ['inspector-workload'] })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.inspectorWorkload() })
     },
   })
 }
@@ -337,9 +328,9 @@ export function useCancelInspection() {
     onSuccess: (_, id) => {
       // Force immediate refetch to update calendar
       queryClient.refetchQueries({ queryKey: ['calendar-inspections'] })
-      queryClient.invalidateQueries({ queryKey: ['inspection', id] })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.detail(id) })
       queryClient.invalidateQueries({ queryKey: ['property-inspections'] })
-      queryClient.invalidateQueries({ queryKey: ['inspector-workload'] })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.inspectorWorkload() })
     },
   })
 }
@@ -376,9 +367,9 @@ export function useAssignInspector() {
       // Force immediate refetch to update calendar
       queryClient.refetchQueries({ queryKey: ['calendar-inspections'] })
       queryClient.invalidateQueries({
-        queryKey: ['inspection', variables.inspectionId],
+        queryKey: inspectionKeys.detail(variables.inspectionId),
       })
-      queryClient.invalidateQueries({ queryKey: ['inspector-workload'] })
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.inspectorWorkload() })
     },
   })
 }

@@ -1,18 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase, type Tables } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
+import { inspectorKeys } from '@/lib/queries'
 
 type User = Tables<'users'>
-
-// Query keys for cache management
-export const inspectorKeys = {
-  all: ['inspectors'] as const,
-  lists: () => [...inspectorKeys.all, 'list'] as const,
-  workload: (startDate: string, endDate: string) =>
-    [...inspectorKeys.all, 'workload', startDate, endDate] as const,
-  schedule: (inspectorId: string | null, date: string) =>
-    [...inspectorKeys.all, 'schedule', inspectorId, date] as const,
-}
 
 /**
  * Fetch all users with inspector role who are active

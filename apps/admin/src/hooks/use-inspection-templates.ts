@@ -8,24 +8,12 @@ import {
 } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import type { InspectionTemplateFormData } from '@/lib/validations/inspection-template'
+import { templateKeys } from '@/lib/queries'
 
 type InspectionTemplate = Tables<'inspection_templates'>
 type InspectionTemplateInsert = InsertTables<'inspection_templates'>
 type InspectionTemplateUpdate = UpdateTables<'inspection_templates'>
 type InspectionTier = Enums<'inspection_tier'>
-
-// Query keys for cache management
-export const inspectionTemplateKeys = {
-  all: ['inspection_templates'] as const,
-  lists: () => [...inspectionTemplateKeys.all, 'list'] as const,
-  list: (filters: {
-    tier?: InspectionTier
-    category?: string
-    feature_type?: string
-  }) => [...inspectionTemplateKeys.lists(), filters] as const,
-  details: () => [...inspectionTemplateKeys.all, 'detail'] as const,
-  detail: (id: string) => [...inspectionTemplateKeys.details(), id] as const,
-}
 
 /**
  * Options for filtering inspection templates
@@ -41,7 +29,7 @@ export interface InspectionTemplateFilters {
  */
 export function useInspectionTemplates(options?: InspectionTemplateFilters) {
   return useQuery({
-    queryKey: inspectionTemplateKeys.list(options || {}),
+    queryKey: templateKeys.list(options || {}),
     queryFn: async () => {
       let query = supabase
         .from('inspection_templates')
@@ -74,7 +62,7 @@ export function useInspectionTemplates(options?: InspectionTemplateFilters) {
  */
 export function useInspectionTemplate(id: string) {
   return useQuery({
-    queryKey: inspectionTemplateKeys.detail(id),
+    queryKey: templateKeys.detail(id),
     queryFn: async () => {
       const { data, error } = await supabase
         .from('inspection_templates')
@@ -128,7 +116,7 @@ export function useCreateInspectionTemplate() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: inspectionTemplateKeys.lists(),
+        queryKey: templateKeys.lists(),
       })
     },
   })
@@ -191,10 +179,10 @@ export function useUpdateInspectionTemplate() {
     },
     onSuccess: (template) => {
       queryClient.invalidateQueries({
-        queryKey: inspectionTemplateKeys.detail(template.id),
+        queryKey: templateKeys.detail(template.id),
       })
       queryClient.invalidateQueries({
-        queryKey: inspectionTemplateKeys.lists(),
+        queryKey: templateKeys.lists(),
       })
     },
   })
@@ -223,10 +211,10 @@ export function useDeleteInspectionTemplate() {
     },
     onSuccess: (template) => {
       queryClient.invalidateQueries({
-        queryKey: inspectionTemplateKeys.detail(template.id),
+        queryKey: templateKeys.detail(template.id),
       })
       queryClient.invalidateQueries({
-        queryKey: inspectionTemplateKeys.lists(),
+        queryKey: templateKeys.lists(),
       })
     },
   })

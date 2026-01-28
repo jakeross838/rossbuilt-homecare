@@ -3,17 +3,9 @@ import { supabase, type Tables } from '@/lib/supabase'
 import { generateChecklist } from '@/lib/checklist-generator'
 import type { GeneratedChecklist } from '@/lib/types/inspection'
 import type { PropertyFeatures } from '@/lib/validations/property'
-import { STALE_STANDARD } from '@/lib/queries/config'
+import { STALE_STANDARD, checklistKeys } from '@/lib/queries'
 
 type Equipment = Tables<'equipment'>
-
-// Query keys for cache management
-export const checklistKeys = {
-  all: ['checklists'] as const,
-  generated: () => [...checklistKeys.all, 'generated'] as const,
-  forProperty: (propertyId: string, programId: string) =>
-    [...checklistKeys.generated(), 'property', propertyId, 'program', programId] as const,
-}
 
 /**
  * Hook to generate a checklist for a property and program
