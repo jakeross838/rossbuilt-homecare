@@ -358,6 +358,7 @@ export const portalKeys = {
   all: ['portal'] as const,
   dashboard: () => [...portalKeys.all, 'dashboard'] as const,
   properties: () => [...portalKeys.all, 'properties'] as const,
+  propertySummaries: () => [...portalKeys.all, 'property-summaries'] as const,
   property: (id: string) => [...portalKeys.properties(), id] as const,
   inspections: (filters?: { propertyId?: string }) =>
     [...portalKeys.all, 'inspections', filters] as const,
