@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase, type Tables, type InsertTables, type UpdateTables } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import { clientKeys, propertyKeys } from '@/lib/queries'
+import { DEBUG } from '@/config/app-config'
 
 type Property = Tables<'properties'>
 type PropertyInsert = InsertTables<'properties'>
@@ -149,8 +150,18 @@ export function useCreateProperty() {
     mutationFn: async (
       data: Omit<PropertyInsert, 'id' | 'organization_id' | 'created_at' | 'updated_at'>
     ) => {
+      if (DEBUG.QUERY_LOGGING) {
+        console.log('[useCreateProperty] Starting mutation with data:', data)
+        console.log('[useCreateProperty] Profile:', profile)
+      }
+
       if (!profile?.organization_id) {
+        console.error('[useCreateProperty] No organization found!')
         throw new Error('No organization found')
+      }
+
+      if (DEBUG.QUERY_LOGGING) {
+        console.log('[useCreateProperty] Inserting with org_id:', profile.organization_id)
       }
 
       const { data: property, error } = await supabase
@@ -163,18 +174,29 @@ export function useCreateProperty() {
         .single()
 
       if (error) {
+        console.error('[useCreateProperty] Supabase error:', error)
         throw error
+      }
+
+      if (DEBUG.QUERY_LOGGING) {
+        console.log('[useCreateProperty] Success! Created property:', property)
       }
 
       return property as Property
     },
     onSuccess: (property) => {
+      if (DEBUG.QUERY_LOGGING) {
+        console.log('[useCreateProperty] onSuccess - invalidating queries')
+      }
       // Invalidate property list queries to refetch
       queryClient.invalidateQueries({ queryKey: propertyKeys.lists() })
       // Also invalidate the client detail to update property count
       if (property.client_id) {
         queryClient.invalidateQueries({ queryKey: clientKeys.detail(property.client_id) })
       }
+    },
+    onError: (error) => {
+      console.error('[useCreateProperty] Mutation error:', error)
     },
   })
 }
@@ -194,7 +216,13 @@ export function useUpdateProperty() {
       id: string
       data: Omit<PropertyUpdate, 'id' | 'organization_id' | 'created_at' | 'updated_at'>
     }) => {
+      if (DEBUG.QUERY_LOGGING) {
+        console.log('[useUpdateProperty] Starting mutation for id:', id)
+        console.log('[useUpdateProperty] Update data:', data)
+      }
+
       if (!profile?.organization_id) {
+        console.error('[useUpdateProperty] No organization found!')
         throw new Error('No organization found')
       }
 
@@ -210,12 +238,20 @@ export function useUpdateProperty() {
         .single()
 
       if (error) {
+        console.error('[useUpdateProperty] Supabase error:', error)
         throw error
+      }
+
+      if (DEBUG.QUERY_LOGGING) {
+        console.log('[useUpdateProperty] Success! Updated property:', property)
       }
 
       return property as Property
     },
     onSuccess: (property) => {
+      if (DEBUG.QUERY_LOGGING) {
+        console.log('[useUpdateProperty] onSuccess - invalidating queries')
+      }
       // Invalidate specific property and list queries
       queryClient.invalidateQueries({ queryKey: propertyKeys.detail(property.id) })
       queryClient.invalidateQueries({ queryKey: propertyKeys.lists() })
@@ -223,6 +259,9 @@ export function useUpdateProperty() {
       if (property.client_id) {
         queryClient.invalidateQueries({ queryKey: clientKeys.detail(property.client_id) })
       }
+    },
+    onError: (error) => {
+      console.error('[useUpdateProperty] Mutation error:', error)
     },
   })
 }

@@ -128,7 +128,7 @@ export function PropertyForm({
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
-                  disabled={clientsLoading || !!preselectedClientId}
+                  disabled={clientsLoading}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a client" />

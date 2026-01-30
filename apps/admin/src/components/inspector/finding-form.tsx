@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, X, AlertTriangle, AlertCircle, Minus, Camera, Loader2, ChevronRight } from 'lucide-react'
+import { Check, X, AlertTriangle, AlertCircle, Minus, Camera, Loader2, ChevronRight, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { useSaveFinding } from '@/hooks/use-inspection-execution'
 import { usePhotoCapture, CameraInput } from '@/hooks/use-photo-capture'
+import { useToast } from '@/hooks/use-toast'
 import type { ChecklistItem, ChecklistItemFinding } from '@/lib/types/inspector'
 import type { ChecklistItemFindingInput } from '@/lib/validations/inspection-execution'
 import { ITEM_STATUS_OPTIONS } from '@/lib/constants/inspector'
@@ -44,7 +45,9 @@ export function FindingForm({
     existingFinding?.numeric_value
   )
   const [response, setResponse] = useState(existingFinding?.response || '')
+  const [saveError, setSaveError] = useState<string | null>(null)
 
+  const { toast } = useToast()
   const saveFinding = useSaveFinding()
   const {
     photos,
@@ -57,6 +60,8 @@ export function FindingForm({
   } = usePhotoCapture(inspectionId, item.id)
 
   const handleSave = async (goToNext = false) => {
+    setSaveError(null)
+
     const finding: ChecklistItemFindingInput = {
       status,
       notes: notes || undefined,
@@ -64,21 +69,37 @@ export function FindingForm({
       response: response || undefined,
     }
 
-    await saveFinding.mutateAsync({
-      inspectionId,
-      itemId: item.id,
-      finding,
-    })
+    try {
+      await saveFinding.mutateAsync({
+        inspectionId,
+        itemId: item.id,
+        finding,
+      })
 
-    if (goToNext && onSaveAndNext) {
-      onSaveAndNext()
-    } else {
-      onSaved?.()
+      toast({
+        title: 'Finding saved',
+        description: `${item.label} marked as ${status}`,
+      })
+
+      if (goToNext && onSaveAndNext) {
+        onSaveAndNext()
+      } else {
+        onSaved?.()
+      }
+    } catch (err) {
+      console.error('Failed to save finding:', err)
+      const errorMsg = err instanceof Error ? err.message : 'Failed to save finding'
+      setSaveError(errorMsg)
+      toast({
+        title: 'Failed to save',
+        description: errorMsg,
+        variant: 'destructive',
+      })
     }
   }
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4 p-4 overflow-y-auto max-h-[calc(85vh-4rem)]">
       {/* Item info */}
       <div>
         <h3 className="font-medium">{item.label}</h3>
@@ -218,6 +239,14 @@ export function FindingForm({
 
         <CameraInput inputRef={fileInputRef} onChange={handleFileChange} />
       </div>
+
+      {/* Error message */}
+      {saveError && (
+        <div className="p-3 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2">
+          <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+          <p className="text-sm text-red-700">{saveError}</p>
+        </div>
+      )}
 
       {/* Save buttons */}
       <div className="flex gap-2">

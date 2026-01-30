@@ -6,7 +6,7 @@ import { generateChecklist } from '@/lib/checklist-generator'
 import type { ChecklistItemFinding, InspectorInspection } from '@/lib/types/inspector'
 import type { ChecklistItemFindingInput, CompleteInspectionInput } from '@/lib/validations/inspection-execution'
 import type { PropertyFeatures } from '@/lib/validations/property'
-import { inspectorScheduleKeys, recommendationKeys, inspectionKeys } from '@/lib/queries'
+import { inspectorScheduleKeys, recommendationKeys, inspectionKeys, portalKeys } from '@/lib/queries'
 
 // Start an inspection (set status to in_progress)
 // Also generates checklist if one doesn't exist
@@ -266,8 +266,18 @@ export function useCompleteInspection() {
       }
     },
     onSuccess: (_, { inspectionId }) => {
+      // Invalidate inspector schedule
       queryClient.invalidateQueries({ queryKey: inspectorScheduleKeys.inspection(inspectionId) })
       queryClient.invalidateQueries({ queryKey: inspectorScheduleKeys.all })
+      // Invalidate all inspection queries (admin calendar, detail views, property inspections)
+      queryClient.invalidateQueries({ queryKey: inspectionKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['calendar-inspections'] })
+      queryClient.invalidateQueries({ queryKey: ['property-inspections'] })
+      queryClient.invalidateQueries({ queryKey: ['inspection'] })
+      // Invalidate portal queries (client portal)
+      queryClient.invalidateQueries({ queryKey: portalKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['portal', 'inspections'] })
+      queryClient.invalidateQueries({ queryKey: ['portal', 'dashboard'] })
     },
   })
 }

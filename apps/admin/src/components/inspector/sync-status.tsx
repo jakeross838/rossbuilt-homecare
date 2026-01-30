@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Wifi, WifiOff, Cloud, RefreshCw, Check, AlertCircle } from 'lucide-react'
+import { Wifi, WifiOff, Cloud, RefreshCw, Check, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useOffline } from '@/hooks/use-offline'
+import { useToast } from '@/hooks/use-toast'
 import { getPendingPhotoCount } from '@/lib/offline/photos'
 import { cn } from '@/lib/utils'
+import type { SyncResult } from '@/lib/offline/sync'
 
 interface SyncStatusProps {
   compact?: boolean
@@ -12,7 +14,10 @@ interface SyncStatusProps {
 
 export function SyncStatus({ compact = false }: SyncStatusProps) {
   const { isOnline, isSyncing, lastSyncedAt, pendingChanges, syncNow } = useOffline()
+  const { toast } = useToast()
   const [pendingPhotos, setPendingPhotos] = useState(0)
+  const [syncResult, setSyncResult] = useState<SyncResult | null>(null)
+  const [syncError, setSyncError] = useState<string | null>(null)
 
   // Get pending photo count
   useEffect(() => {
@@ -20,6 +25,42 @@ export function SyncStatus({ compact = false }: SyncStatusProps) {
   }, [pendingChanges])
 
   const hasPendingData = pendingChanges > 0 || pendingPhotos > 0
+
+  const handleSync = async () => {
+    console.log('[SyncStatus] Sync button clicked')
+    setSyncResult(null)
+    setSyncError(null)
+    try {
+      console.log('[SyncStatus] Calling syncNow...')
+      const result = await syncNow()
+      console.log('[SyncStatus] Sync result:', result)
+      setSyncResult(result)
+      if (result.errors.length > 0) {
+        setSyncError(result.errors.join(', '))
+        toast({
+          title: 'Sync had errors',
+          description: result.errors.join(', '),
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Sync complete',
+          description: `Synced ${result.findings_synced} findings, ${result.photos_uploaded} photos`,
+        })
+      }
+      // Clear result after 5 seconds
+      setTimeout(() => setSyncResult(null), 5000)
+    } catch (err) {
+      console.error('[SyncStatus] Sync error:', err)
+      const errorMsg = err instanceof Error ? err.message : 'Sync failed'
+      setSyncError(errorMsg)
+      toast({
+        title: 'Sync failed',
+        description: errorMsg,
+        variant: 'destructive',
+      })
+    }
+  }
 
   if (compact) {
     return (
@@ -94,11 +135,11 @@ export function SyncStatus({ compact = false }: SyncStatusProps) {
       </div>
 
       {/* Sync button */}
-      {isOnline && hasPendingData && (
+      {isOnline && (
         <Button
           variant="outline"
           size="sm"
-          onClick={() => syncNow()}
+          onClick={handleSync}
           disabled={isSyncing}
           className="w-full mt-3 gap-2"
         >
@@ -107,12 +148,30 @@ export function SyncStatus({ compact = false }: SyncStatusProps) {
           ) : (
             <Cloud className="h-4 w-4" />
           )}
-          Sync Now
+          {hasPendingData ? 'Sync Now' : 'Force Sync'}
         </Button>
       )}
 
+      {/* Sync result feedback */}
+      {syncResult && syncResult.errors.length === 0 && (
+        <div className="flex items-center gap-2 mt-2 text-green-600 text-sm">
+          <CheckCircle2 className="h-4 w-4" />
+          <span>
+            Synced {syncResult.findings_synced} findings, {syncResult.photos_uploaded} photos
+          </span>
+        </div>
+      )}
+
+      {/* Sync error */}
+      {syncError && (
+        <div className="flex items-center gap-2 mt-2 text-red-600 text-sm">
+          <AlertCircle className="h-4 w-4" />
+          <span>{syncError}</span>
+        </div>
+      )}
+
       {/* All synced indicator */}
-      {!hasPendingData && (
+      {!hasPendingData && !syncResult && (
         <div className="flex items-center gap-2 mt-3 text-green-600">
           <Check className="h-4 w-4" />
           <span className="text-sm">All data synced</span>

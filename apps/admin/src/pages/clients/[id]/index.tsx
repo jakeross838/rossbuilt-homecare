@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -9,6 +10,8 @@ import {
   Building,
   FileText,
   Plus,
+  X,
+  Loader2,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -19,15 +22,39 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PageHeader } from '@/components/layout/page-header'
 import { useClient } from '@/hooks/use-clients'
+import { useUpdateProperty } from '@/hooks/use-properties'
 
 export function ClientDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { data: client, isLoading, error } = useClient(id)
+  const { data: client, isLoading, error, refetch } = useClient(id)
+  const updateProperty = useUpdateProperty()
+  const [propertyToRemove, setPropertyToRemove] = useState<{ id: string; name: string } | null>(null)
+
+  const handleRemoveProperty = async () => {
+    if (!propertyToRemove) return
+
+    await updateProperty.mutateAsync({
+      id: propertyToRemove.id,
+      data: { client_id: null as unknown as string }, // Remove client association
+    })
+    setPropertyToRemove(null)
+    refetch()
+  }
 
   if (isLoading) {
     return (
@@ -286,12 +313,14 @@ export function ClientDetailPage() {
                   state: string | null
                   is_active: boolean | null
                 }) => (
-                  <Link
+                  <div
                     key={property.id}
-                    to={`/properties/${property.id}`}
-                    className="block p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
                   >
-                    <div className="flex items-center justify-between">
+                    <Link
+                      to={`/properties/${property.id}`}
+                      className="flex-1"
+                    >
                       <div>
                         <p className="font-medium">{property.name}</p>
                         {property.address_line1 && (
@@ -302,13 +331,26 @@ export function ClientDetailPage() {
                           </p>
                         )}
                       </div>
+                    </Link>
+                    <div className="flex items-center gap-2">
                       <Badge
                         variant={property.is_active ? 'success' : 'secondary'}
                       >
                         {property.is_active ? 'Active' : 'Inactive'}
                       </Badge>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setPropertyToRemove({ id: property.id, name: property.name })
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -316,6 +358,36 @@ export function ClientDetailPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Remove Property Dialog */}
+        <AlertDialog open={!!propertyToRemove} onOpenChange={(open) => !open && setPropertyToRemove(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remove Property</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to remove "{propertyToRemove?.name}" from this client?
+                The property will remain in the system but will no longer be associated with this client.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleRemoveProperty}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                disabled={updateProperty.isPending}
+              >
+                {updateProperty.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Removing...
+                  </>
+                ) : (
+                  'Remove Property'
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {/* Notes */}
         {client.notes && (
