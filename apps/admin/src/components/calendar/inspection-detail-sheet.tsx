@@ -204,7 +204,7 @@ export function InspectionDetailSheet({
                 size="lg"
                 onClick={() => {
                   onOpenChange(false)
-                  navigate(`/inspector/inspection/${inspection.id}`)
+                  navigate(`/inspections/${inspection.id}/execute`)
                 }}
               >
                 <Play className="h-4 w-4 mr-2" />
@@ -217,7 +217,7 @@ export function InspectionDetailSheet({
                 size="lg"
                 onClick={() => {
                   onOpenChange(false)
-                  navigate(`/inspector/inspection/${inspection.id}`)
+                  navigate(`/inspections/${inspection.id}/execute`)
                 }}
               >
                 <ClipboardList className="h-4 w-4 mr-2" />

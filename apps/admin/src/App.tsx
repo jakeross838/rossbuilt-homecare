@@ -36,8 +36,8 @@ const PermissionsPage = lazy(() => import('@/pages/settings/permissions'))
 const CalendarPage = lazy(() => import('@/pages/calendar'))
 const InspectionsPage = lazy(() => import('@/pages/inspections'))
 const InspectionReportPage = lazy(() => import('@/pages/inspections/report'))
-const InspectorDashboard = lazy(() => import('@/pages/inspector'))
-const InspectionPage = lazy(() => import('@/pages/inspector/inspection'))
+// Inspector pages - now integrated into admin view
+const InspectionExecutionPage = lazy(() => import('@/pages/inspector/inspection'))
 const WorkOrdersPage = lazy(() => import('@/pages/work-orders'))
 const NewWorkOrderPage = lazy(() => import('@/pages/work-orders/new'))
 const WorkOrderDetailPage = lazy(() => import('@/pages/work-orders/[id]'))
@@ -92,10 +92,6 @@ function App() {
               {/* Public routes */}
               <Route path="/login" element={<LoginPage />} />
 
-              {/* Inspector routes (standalone mobile PWA - no AppLayout) */}
-              <Route path="/inspector" element={<PageErrorBoundary><Suspense fallback={<PageLoader />}><InspectorDashboard /></Suspense></PageErrorBoundary>} />
-              <Route path="/inspector/inspection/:id" element={<PageErrorBoundary><Suspense fallback={<PageLoader />}><InspectionPage /></Suspense></PageErrorBoundary>} />
-
               {/* Client Portal Routes */}
               <Route path="/portal/login" element={<Suspense fallback={<PageLoader />}><PortalLoginPage /></Suspense>} />
               <Route
@@ -146,6 +142,7 @@ function App() {
 
                 {/* Inspections */}
                 <Route path="/inspections" element={<Suspense fallback={<PageLoader />}><InspectionsPage /></Suspense>} />
+                <Route path="/inspections/:id/execute" element={<Suspense fallback={<PageLoader />}><InspectionExecutionPage /></Suspense>} />
                 <Route path="/inspections/:id/report" element={<Suspense fallback={<PageLoader />}><InspectionReportPage /></Suspense>} />
 
                 {/* Work Orders */}

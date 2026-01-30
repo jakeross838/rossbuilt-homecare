@@ -20,8 +20,8 @@ import { useAuthStore } from '@/stores/auth-store'
 // Get redirect path based on user role
 function getRedirectPath(role: string | undefined, fallback: string): string {
   if (role === 'client') return '/portal'
-  if (role === 'inspector') return '/inspector'
-  return fallback // admin, manager go to dashboard
+  if (role === 'inspector') return '/inspections' // Inspector now uses admin inspections page
+  return fallback // admin, manager, inspector go to dashboard
 }
 
 const loginSchema = z.object({

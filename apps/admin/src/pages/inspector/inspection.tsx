@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { Play, CheckCircle2, Loader2, AlertCircle } from 'lucide-react'
+import { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Play, CheckCircle2, Loader2, AlertCircle, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { InspectionHeader } from '@/components/inspector/inspection-header'
 import { InspectionChecklist } from '@/components/inspector/inspection-checklist'
@@ -10,55 +10,46 @@ import {
   useStartInspection,
   calculateInspectionProgress,
 } from '@/hooks/use-inspection-execution'
-import { useInspectorRealtimeSync } from '@/hooks/use-realtime-sync'
-import { useAuthStore } from '@/stores/auth-store'
+import { useGlobalRealtimeSync } from '@/hooks/use-realtime-sync'
 import { useToast } from '@/hooks/use-toast'
 
-export default function InspectionPage() {
+/**
+ * Inspection Execution Page
+ * Used by admin/inspectors to conduct inspections
+ * Integrated into the admin layout for unified experience
+ */
+export default function InspectionExecutionPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const location = useLocation()
-  const { user, isLoading: authLoading } = useAuthStore()
   const { data: inspection, isLoading, error } = useInspectorInspection(id)
   const startInspection = useStartInspection()
   const { toast } = useToast()
   const [showCompletion, setShowCompletion] = useState(false)
 
-  // Enable real-time sync for inspector data
-  useInspectorRealtimeSync()
+  // Enable real-time sync (uses global sync since we're in admin layout)
+  useGlobalRealtimeSync()
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/login', { state: { from: location }, replace: true })
-    }
-  }, [user, authLoading, navigate, location])
-
-  if (authLoading || isLoading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-rb-green" />
       </div>
     )
   }
 
-  // Don't render if not authenticated
-  if (!user) {
-    return null
-  }
-
   if (error || !inspection) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center p-8">
         <p className="text-lg font-medium text-destructive">
           Inspection not found
         </p>
         <Button
           variant="outline"
-          onClick={() => navigate('/inspector')}
+          onClick={() => navigate('/inspections')}
           className="mt-4"
         >
-          Back to Schedule
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Inspections
         </Button>
       </div>
     )
@@ -86,16 +77,27 @@ export default function InspectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="container py-6">
+      {/* Back button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate('/inspections')}
+        className="mb-4"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back to Inspections
+      </Button>
+
       {/* Header with property info and progress */}
       <InspectionHeader inspection={inspection} />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="mt-6">
         {isScheduled ? (
           // Start inspection screen
-          <div className="flex-1 flex flex-col items-center justify-center p-8">
-            <div className="text-center max-w-sm">
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="text-center max-w-md">
               <div className="w-16 h-16 rounded-full bg-rb-green/10 flex items-center justify-center mx-auto mb-4">
                 <Play className="h-8 w-8 text-rb-green" />
               </div>
@@ -172,17 +174,15 @@ export default function InspectionPage() {
           </div>
         ) : isInProgress ? (
           // Checklist view
-          <>
-            <div className="flex-1 overflow-hidden">
-              <InspectionChecklist inspection={inspection} />
-            </div>
+          <div className="space-y-6">
+            <InspectionChecklist inspection={inspection} />
 
             {/* Complete button */}
-            <div className="border-t p-4">
+            <div className="flex justify-end">
               <Button
                 onClick={() => setShowCompletion(true)}
                 disabled={progress.completed === 0}
-                className="w-full bg-rb-green hover:bg-rb-green/90"
+                className="bg-rb-green hover:bg-rb-green/90"
                 size="lg"
               >
                 <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -196,21 +196,28 @@ export default function InspectionPage() {
               open={showCompletion}
               onOpenChange={setShowCompletion}
             />
-          </>
+          </div>
         ) : (
           // Completed state
-          <div className="flex-1 flex flex-col items-center justify-center p-8">
+          <div className="flex flex-col items-center justify-center py-12">
             <CheckCircle2 className="h-16 w-16 text-green-600 mb-4" />
             <h2 className="text-xl font-semibold mb-2">Inspection Complete</h2>
             <p className="text-muted-foreground mb-6 text-center">
               This inspection has been completed and submitted.
             </p>
-            <Button
-              variant="outline"
-              onClick={() => navigate('/inspector')}
-            >
-              Back to Schedule
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/inspections')}
+              >
+                Back to Inspections
+              </Button>
+              <Button
+                onClick={() => navigate(`/inspections/${inspection.id}/report`)}
+              >
+                View Report
+              </Button>
+            </div>
           </div>
         )}
       </div>

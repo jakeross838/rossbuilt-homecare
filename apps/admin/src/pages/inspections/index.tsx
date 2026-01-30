@@ -302,7 +302,7 @@ export default function InspectionsPage() {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() => {
                       if (inspection.status === 'scheduled' || inspection.status === 'in_progress') {
-                        navigate(`/inspector/inspection/${inspection.id}`)
+                        navigate(`/inspections/${inspection.id}/execute`)
                       } else {
                         navigate(`/inspections/${inspection.id}/report`)
                       }
@@ -398,7 +398,7 @@ export default function InspectionsPage() {
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation()
-                              navigate(`/inspector/inspection/${inspection.id}`)
+                              navigate(`/inspections/${inspection.id}/execute`)
                             }}
                           >
                             <Play className="h-3 w-3 mr-1" />
@@ -411,7 +411,7 @@ export default function InspectionsPage() {
                             variant="secondary"
                             onClick={(e) => {
                               e.stopPropagation()
-                              navigate(`/inspector/inspection/${inspection.id}`)
+                              navigate(`/inspections/${inspection.id}/execute`)
                             }}
                           >
                             <ClipboardList className="h-3 w-3 mr-1" />

@@ -64,7 +64,7 @@ function InspectionCard({ inspection }: { inspection: InspectorInspection }) {
   const isCompleted = inspection.status === 'completed'
 
   return (
-    <Link to={`/inspector/inspection/${inspection.id}`}>
+    <Link to={`/inspections/${inspection.id}/execute`}>
       <Card
         className={cn(
           'transition-colors hover:bg-muted/50 active:bg-muted',

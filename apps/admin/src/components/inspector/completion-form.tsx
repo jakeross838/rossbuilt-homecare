@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react'
+import { CheckCircle2, AlertTriangle, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -17,6 +17,7 @@ import {
   calculateInspectionProgress,
 } from '@/hooks/use-inspection-execution'
 import { useOffline } from '@/hooks/use-offline'
+import { useToast } from '@/hooks/use-toast'
 import { SyncStatus } from './sync-status'
 import type { InspectorInspection } from '@/lib/types/inspector'
 import type { CompleteInspectionInput } from '@/lib/validations/inspection-execution'
@@ -36,6 +37,7 @@ export function CompletionForm({
 }: CompletionFormProps) {
   const navigate = useNavigate()
   const { isOnline } = useOffline()
+  const { toast } = useToast()
   const completeInspection = useCompleteInspection()
   const progress = calculateInspectionProgress(inspection)
 
@@ -45,12 +47,17 @@ export function CompletionForm({
   const [temperature, setTemperature] = useState<string>('')
   const [humidity, setHumidity] = useState<string>('')
   const [weatherConditions, setWeatherConditions] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
   const allItemsComplete = progress.completed === progress.total
   // Allow completion even if not all items are done - just need to be online with a summary
   const canComplete = isOnline && summary.length >= 10
 
   const handleComplete = async () => {
+    console.log('[CompletionForm] Complete button clicked')
+    console.log('[CompletionForm] isOnline:', isOnline, 'summary.length:', summary.length, 'canComplete:', canComplete)
+    setError(null)
+
     const data: CompleteInspectionInput = {
       overall_condition: overallCondition,
       summary,
@@ -61,13 +68,31 @@ export function CompletionForm({
       },
     }
 
-    await completeInspection.mutateAsync({
-      inspectionId: inspection.id,
-      data,
-    })
+    try {
+      console.log('[CompletionForm] Calling completeInspection.mutateAsync...')
+      await completeInspection.mutateAsync({
+        inspectionId: inspection.id,
+        data,
+      })
+      console.log('[CompletionForm] Inspection completed successfully')
 
-    onOpenChange(false)
-    navigate('/inspector')
+      toast({
+        title: 'Inspection completed',
+        description: 'The inspection has been submitted successfully.',
+      })
+
+      onOpenChange(false)
+      navigate('/inspections')
+    } catch (err) {
+      console.error('[CompletionForm] Failed to complete inspection:', err)
+      const errorMsg = err instanceof Error ? err.message : 'Failed to complete inspection. Please try again.'
+      setError(errorMsg)
+      toast({
+        title: 'Failed to complete inspection',
+        description: errorMsg,
+        variant: 'destructive',
+      })
+    }
   }
 
   return (
@@ -190,6 +215,21 @@ export function CompletionForm({
             </div>
           </div>
 
+          {/* Error message */}
+          {error && (
+            <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-5 w-5 text-red-600" />
+                <div>
+                  <p className="font-medium text-red-800">
+                    Error completing inspection
+                  </p>
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Offline warning */}
           {!isOnline && (
             <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
@@ -222,7 +262,19 @@ export function CompletionForm({
             Complete Inspection
           </Button>
 
-          {!allItemsComplete && (
+          {/* Why button is disabled */}
+          {!canComplete && (
+            <div className="text-sm text-center text-muted-foreground space-y-1">
+              {!isOnline && <p className="text-yellow-600">You must be online to complete</p>}
+              {summary.length < 10 && (
+                <p className="text-yellow-600">
+                  Summary needs at least 10 characters ({summary.length}/10)
+                </p>
+              )}
+            </div>
+          )}
+
+          {!allItemsComplete && canComplete && (
             <p className="text-sm text-center text-muted-foreground">
               Some checklist items are not recorded - inspection can still be completed
             </p>

@@ -24,7 +24,7 @@ export function InspectionHeader({ inspection }: InspectionHeaderProps) {
           variant="ghost"
           size="sm"
           className="gap-1"
-          onClick={() => navigate('/inspector')}
+          onClick={() => navigate('/inspections')}
         >
           <ArrowLeft className="h-4 w-4" />
           Back

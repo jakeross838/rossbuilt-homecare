@@ -264,17 +264,5 @@ export function usePortalRealtimeSync() {
   return useRealtimeSync({ tables })
 }
 
-/**
- * Hook for inspector portal real-time sync
- * Subscribes to inspection-related tables for mobile inspector app
- */
-export function useInspectorRealtimeSync() {
-  const tables = useMemo<TableName[]>(() => [
-    'inspections',
-    'work_orders',
-    'properties',
-    'recommendations',
-  ], [])
-
-  return useRealtimeSync({ tables })
-}
+// Note: useInspectorRealtimeSync was removed - inspector view is now
+// integrated into admin and uses useGlobalRealtimeSync instead
