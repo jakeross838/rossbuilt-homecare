@@ -210,23 +210,25 @@ export function useOverdueItems() {
         })
       })
 
-      // Overdue work orders (past scheduled completion)
+      // Overdue work orders (past scheduled date)
       const { data: workOrders } = await supabase
         .from('work_orders')
-        .select('id, title, scheduled_completion_date, priority')
+        .select('id, title, scheduled_date, priority')
         .eq('organization_id', orgId)
         .not('status', 'in', '("completed","cancelled")')
-        .lt('scheduled_completion_date', today)
+        .not('scheduled_date', 'is', null)
+        .lt('scheduled_date', today)
         .limit(10)
 
       workOrders?.forEach((wo) => {
-        const dueDate = new Date(wo.scheduled_completion_date)
+        if (!wo.scheduled_date) return
+        const dueDate = new Date(wo.scheduled_date)
         const daysOverdue = Math.floor((Date.now() - dueDate.getTime()) / (1000 * 60 * 60 * 24))
         items.push({
           type: 'work_order',
           id: wo.id,
           title: wo.title,
-          dueDate: wo.scheduled_completion_date,
+          dueDate: wo.scheduled_date,
           daysOverdue,
           priority: wo.priority as 'low' | 'medium' | 'high' | 'urgent',
         })

@@ -134,8 +134,20 @@ export function PieChart({
                   layout="horizontal"
                   align="center"
                   verticalAlign="bottom"
-                  formatter={(value) => (
-                    <span className="text-sm text-foreground">{value}</span>
+                  content={({ payload }) => (
+                    <div className="flex flex-wrap justify-center gap-4 pt-2">
+                      {payload?.map((entry, index) => (
+                        <div key={`legend-${index}`} className="flex items-center gap-1.5">
+                          <div
+                            className="h-3 w-3 rounded-full"
+                            style={{ backgroundColor: entry.color }}
+                            role="img"
+                            aria-label={`${entry.value} legend color`}
+                          />
+                          <span className="text-sm text-foreground">{entry.value}</span>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 />
               )}
