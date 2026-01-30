@@ -171,13 +171,14 @@ export function usePortalProperty(propertyId: string | undefined) {
         .limit(5)
 
       const recentInspections: PortalInspection[] = (inspectionsData || []).map((i) => {
-        // Parse findings from JSONB to get summary
-        const findings = i.findings as unknown as Array<{ status: string }> | null
+        // findings is a JSONB object keyed by item_id, not an array
+        const findingsObj = i.findings as Record<string, { status: string }> | null
+        const findingsArray = findingsObj ? Object.values(findingsObj) : []
         const findingsSummary = {
-          total: findings?.length || 0,
-          passed: findings?.filter((f) => f.status === 'pass').length || 0,
-          needs_attention: findings?.filter((f) => f.status === 'needs_attention').length || 0,
-          urgent: findings?.filter((f) => f.status === 'urgent').length || 0,
+          total: findingsArray.length,
+          passed: findingsArray.filter((f) => f.status === 'pass').length,
+          needs_attention: findingsArray.filter((f) => f.status === 'needs_attention').length,
+          urgent: findingsArray.filter((f) => f.status === 'urgent').length,
         }
 
         return {
