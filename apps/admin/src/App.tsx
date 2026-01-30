@@ -64,7 +64,6 @@ function PageLoader() {
 // Client Portal imports (lazy-loaded)
 import { PortalLayout } from '@/components/portal/portal-layout'
 import { PortalAuthGuard } from '@/components/portal/portal-auth-guard'
-const PortalLoginPage = lazy(() => import('@/pages/portal/login'))
 const PortalDashboardPage = lazy(() => import('@/pages/portal'))
 const PortalPropertiesPage = lazy(() => import('@/pages/portal/properties'))
 const PortalPropertyDetailPage = lazy(() => import('@/pages/portal/properties/[id]'))
@@ -92,8 +91,7 @@ function App() {
               {/* Public routes */}
               <Route path="/login" element={<LoginPage />} />
 
-              {/* Client Portal Routes */}
-              <Route path="/portal/login" element={<Suspense fallback={<PageLoader />}><PortalLoginPage /></Suspense>} />
+              {/* Client Portal Routes - uses unified /login page */}
               <Route
                 path="/portal"
                 element={

@@ -19,9 +19,9 @@ export function PortalAuthGuard({ children }: PortalAuthGuardProps) {
     )
   }
 
-  // Redirect to login if not authenticated
+  // Redirect to unified login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/portal/login" state={{ from: location }} replace />
+    return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   // Redirect to admin if not a client

@@ -42,7 +42,7 @@ export function PortalLayout() {
 
   const handleSignOut = async () => {
     await signOut()
-    navigate('/portal/login')
+    navigate('/login')
   }
 
   return (
