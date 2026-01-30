@@ -479,7 +479,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 
 - [x] **Phase 1: Query Configuration** - Centralize all cache/stale time settings, app config ✅
 - [x] **Phase 2: Query Key Unification** - Single key registry, fix mismatches, align realtime ✅
-- [ ] **Phase 3: Portal Optimization** - Database view, eliminate N+1 queries
+- [x] **Phase 3: Portal Optimization** - Database view, eliminate N+1 queries ✅
 - [ ] **Phase 4: Pattern Templates** - Base hooks, optimistic UI, button/data states
 - [ ] **Phase 5: Error Handling & Testing** - Error boundaries, fail-loud, verification
 
@@ -516,19 +516,23 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 - apps/admin/src/lib/queries/keys.ts - Centralized query key registry (30+ factories)
 - apps/admin/src/lib/queries/index.ts - Barrel export for queries module
 
-### Phase 3: Portal Optimization
+### Phase 3: Portal Optimization ✅
 **Goal**: Portal pages make < 5 queries total, no N+1 pattern
 **Depends on**: Phase 2
-**Status**: Not started
+**Status**: COMPLETE (2026-01-30)
 **Milestone**: v1.4 Sync Infrastructure Overhaul
 **Requirements**: SYNC-04
-**Success Criteria** (what must be TRUE):
-  1. Database view `portal_property_summaries` exists with pre-aggregated counts
-  2. `usePortalProperties()` uses single view query
-  3. Dashboard fetches in parallel (not waterfall)
-  4. Portal properties page: < 5 queries on load
-**Research**: Unlikely (Supabase views, internal patterns)
-**Plans**: TBD
+**Plans**: 2 plans executed in 2 waves
+- 03-01: Portal Property Summaries View (database view with pre-aggregated counts) ✅
+- 03-02: Dashboard Query Optimization (hooks migrated to use view) ✅
+
+**Key Files Created:**
+- supabase/migrations/036_portal_property_summaries_view.sql - Database view
+- apps/admin/src/hooks/use-portal-dashboard.ts - Optimized portal hooks
+
+**Performance Impact:**
+- Properties page: 51+ queries → 2 queries
+- Dashboard: 5 sequential → 5 parallel
 
 ### Phase 4: Pattern Templates
 **Goal**: Base hook templates with optimistic UI, consistent button/data states
@@ -566,6 +570,6 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 |-------|----------------|--------|-----------|
 | 1. Query Configuration | 2/2 | ✅ Complete | 2026-01-28 |
 | 2. Query Key Unification | 5/5 | ✅ Complete | 2026-01-28 |
-| 3. Portal Optimization | 0/TBD | Not started | - |
+| 3. Portal Optimization | 2/2 | ✅ Complete | 2026-01-30 |
 | 4. Pattern Templates | 0/TBD | Not started | - |
 | 5. Error Handling & Testing | 0/TBD | Not started | - |
