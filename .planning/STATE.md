@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-14)
 ## Current Position
 
 Phase: 3 of 5 (Portal Optimization) - **v1.4 MILESTONE IN PROGRESS**
-Plan: 0 of TBD complete
-Status: Ready for planning
-Last activity: 2026-01-28 - Completed Phase 2 (Query Key Unification) with verification passed
+Plan: 2 of TBD complete
+Status: In progress
+Last activity: 2026-01-30 - Completed 03-02-PLAN.md (Portal Hooks View Migration)
 
-Progress: ████░░░░░░ 40% (v1.4 Phases 1-2 complete, Phase 3 ready)
+Progress: ████░░░░░░ 45% (v1.4 Phases 1-2 complete, Phase 3 in progress)
 
 ### Milestone v1.4: Sync Infrastructure Overhaul
 
@@ -22,7 +22,7 @@ Progress: ████░░░░░░ 40% (v1.4 Phases 1-2 complete, Phase 3 
 |-------|--------|-------------|
 | 1     | ✅ Complete | Query Configuration |
 | 2     | ✅ Complete | Query Key Unification |
-| 3     | ⏳ Pending | Portal Optimization |
+| 3     | ⏳ In Progress | Portal Optimization |
 | 4     | ⏳ Pending | Pattern Templates |
 | 5     | ⏳ Pending | Error Handling & Testing |
 
@@ -46,6 +46,13 @@ Progress: ████░░░░░░ 40% (v1.4 Phases 1-2 complete, Phase 3 
 | 02-05 | Realtime Sync Alignment | 3 | **Complete** |
 
 **Verification:** PASSED - All 5 success criteria verified (see 02-VERIFICATION.md)
+
+### Phase 3 Plans (Portal Optimization) - In Progress
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 03-01 | Portal Property Summaries View | 1 | **Complete** |
+| 03-02 | Portal Hooks View Migration | 2 | **Complete** |
 
 ---
 
@@ -577,6 +584,9 @@ Recent decisions affecting current work:
 - **v1.4-02-05**: Added recommendations table to realtime subscriptions
 - **v1.4-02-05**: DEBUG config section with granular REALTIME_LOGGING, QUERY_LOGGING, OFFLINE_LOGGING flags
 - **v1.4-02-05**: All console.log in use-realtime-sync.ts conditional via DEBUG.REALTIME_LOGGING
+- **v1.4-03-02**: usePortalProperties queries portal_property_summaries view instead of N+1 pattern
+- **v1.4-03-02**: portalKeys.propertySummaries() factory added for view-based caching
+- **v1.4-03-02**: usePortalDashboard fetches all 5 counts in parallel via Promise.all
 
 ### Pending Todos
 
@@ -597,11 +607,30 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-01-28
-Stopped at: Completed 02-05-PLAN.md (Realtime Sync Alignment)
+Last session: 2026-01-30
+Stopped at: Completed 03-02-PLAN.md (Portal Hooks View Migration)
 Resume file: None
 
-### Recent Activity (2026-01-28)
+### Recent Activity (2026-01-30)
+
+**v1.4 Phase 3 Plan 03-02: Portal Hooks View Migration Completed:**
+- Added portalKeys.propertySummaries() key factory to keys.ts
+- Rewrote usePortalProperties to query portal_property_summaries view (eliminates N+1)
+- Optimized usePortalDashboard with Promise.all for parallel fetching
+- Reduced portal properties queries from 51+ to 2 for 10 properties
+- Reduced dashboard queries from 6 sequential to 2 parallel batches
+
+**Commits:**
+- ea62366: feat(03-02): add propertySummaries key factory to portalKeys
+- 26e9fc8: feat(03-02): rewrite usePortalProperties to use database view
+- 6fa7f8a: feat(03-02): optimize usePortalDashboard for parallel fetching
+
+**Build Status:**
+- TypeScript: Compiles with no errors
+- Production Build: Successful (1m 59s)
+- All verification checks passed
+
+### Previous Activity (2026-01-28)
 
 **v1.4 Phase 2 Plan 02-05: Realtime Sync Alignment Completed:**
 - Fixed key mismatches: 'workOrders' -> 'work-orders', 'serviceRequests' -> 'service-requests', 'calendarEvents' -> 'calendar-events'
