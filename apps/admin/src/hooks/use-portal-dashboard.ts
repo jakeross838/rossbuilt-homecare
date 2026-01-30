@@ -65,6 +65,7 @@ async function getClientPropertyIds(userId: string, userEmail: string | null): P
 /**
  * Hook to fetch client portal dashboard summary
  * Only counts data for properties assigned to the current user
+ * Fetches all counts in parallel for better performance
  */
 export function usePortalDashboard() {
   const profile = useAuthStore((state) => state.profile)
@@ -90,56 +91,65 @@ export function usePortalDashboard() {
         }
       }
 
-      // Get properties count (only assigned)
-      const { count: propertiesCount } = await supabase
-        .from('properties')
-        .select('*', { count: 'exact', head: true })
-        .in('id', assignedPropertyIds)
-        .eq('is_active', true)
-
-      // Get upcoming inspections (next 30 days) for assigned properties
       const thirtyDaysFromNow = new Date()
       thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
 
-      const { count: upcomingInspections } = await supabase
-        .from('inspections')
-        .select('*', { count: 'exact', head: true })
-        .in('property_id', assignedPropertyIds)
-        .eq('status', 'scheduled')
-        .gte('scheduled_date', new Date().toISOString())
-        .lte('scheduled_date', thirtyDaysFromNow.toISOString())
+      // Fetch ALL counts in parallel (not sequential)
+      const [
+        propertiesResult,
+        inspectionsResult,
+        requestsResult,
+        approvalsResult,
+        invoicesResult,
+      ] = await Promise.all([
+        // Properties count
+        supabase
+          .from('properties')
+          .select('*', { count: 'exact', head: true })
+          .in('id', assignedPropertyIds)
+          .eq('is_active', true),
 
-      // Get open service requests for assigned properties
-      const { count: openRequests } = await supabase
-        .from('service_requests')
-        .select('*', { count: 'exact', head: true })
-        .in('property_id', assignedPropertyIds)
-        .in('status', ['new', 'acknowledged', 'in_progress', 'scheduled'])
+        // Upcoming inspections (next 30 days)
+        supabase
+          .from('inspections')
+          .select('*', { count: 'exact', head: true })
+          .in('property_id', assignedPropertyIds)
+          .eq('status', 'scheduled')
+          .gte('scheduled_date', new Date().toISOString())
+          .lte('scheduled_date', thirtyDaysFromNow.toISOString()),
 
-      // Get pending recommendations for assigned properties
-      const { count: pendingApprovals } = await supabase
-        .from('recommendations')
-        .select('*', { count: 'exact', head: true })
-        .in('property_id', assignedPropertyIds)
-        .eq('status', 'pending')
+        // Open service requests
+        supabase
+          .from('service_requests')
+          .select('*', { count: 'exact', head: true })
+          .in('property_id', assignedPropertyIds)
+          .in('status', ['new', 'acknowledged', 'in_progress', 'scheduled']),
 
-      // Get outstanding balance from invoices for assigned properties
-      const { data: invoices } = await supabase
-        .from('invoices')
-        .select('balance_due')
-        .in('property_id', assignedPropertyIds)
-        .in('status', ['sent', 'viewed', 'partial', 'overdue'])
+        // Pending recommendations
+        supabase
+          .from('recommendations')
+          .select('*', { count: 'exact', head: true })
+          .in('property_id', assignedPropertyIds)
+          .eq('status', 'pending'),
 
-      const outstandingBalance = invoices?.reduce(
+        // Outstanding invoices
+        supabase
+          .from('invoices')
+          .select('balance_due')
+          .in('property_id', assignedPropertyIds)
+          .in('status', ['sent', 'viewed', 'partial', 'overdue']),
+      ])
+
+      const outstandingBalance = invoicesResult.data?.reduce(
         (sum, inv) => sum + (inv.balance_due || 0),
         0
       ) || 0
 
       return {
-        properties_count: propertiesCount || 0,
-        upcoming_inspections: upcomingInspections || 0,
-        open_service_requests: openRequests || 0,
-        pending_approvals: pendingApprovals || 0,
+        properties_count: propertiesResult.count || 0,
+        upcoming_inspections: inspectionsResult.count || 0,
+        open_service_requests: requestsResult.count || 0,
+        pending_approvals: approvalsResult.count || 0,
         outstanding_balance: outstandingBalance,
       }
     },
