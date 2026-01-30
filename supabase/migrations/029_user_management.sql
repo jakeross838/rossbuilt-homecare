@@ -7,7 +7,7 @@
 -- Allows assigning techs (inspectors) to specific properties
 -- Techs will only see properties they're assigned to
 
-CREATE TABLE user_property_assignments (
+CREATE TABLE IF NOT EXISTS user_property_assignments (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -33,16 +33,22 @@ COMMENT ON TABLE user_property_assignments IS 'Junction table linking tech users
 -- INDEXES
 -- =============================================================================
 
-CREATE INDEX idx_upa_organization ON user_property_assignments(organization_id);
-CREATE INDEX idx_upa_user ON user_property_assignments(user_id);
-CREATE INDEX idx_upa_property ON user_property_assignments(property_id);
-CREATE INDEX idx_upa_assigned_by ON user_property_assignments(assigned_by);
+CREATE INDEX IF NOT EXISTS idx_upa_organization ON user_property_assignments(organization_id);
+CREATE INDEX IF NOT EXISTS idx_upa_user ON user_property_assignments(user_id);
+CREATE INDEX IF NOT EXISTS idx_upa_property ON user_property_assignments(property_id);
+CREATE INDEX IF NOT EXISTS idx_upa_assigned_by ON user_property_assignments(assigned_by);
 
 -- =============================================================================
 -- RLS POLICIES
 -- =============================================================================
 
 ALTER TABLE user_property_assignments ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Staff can view property assignments" ON user_property_assignments;
+DROP POLICY IF EXISTS "Admin/Manager can insert property assignments" ON user_property_assignments;
+DROP POLICY IF EXISTS "Admin/Manager can update property assignments" ON user_property_assignments;
+DROP POLICY IF EXISTS "Admin/Manager can delete property assignments" ON user_property_assignments;
 
 -- Staff (non-clients) can view all assignments in their org
 CREATE POLICY "Staff can view property assignments"
@@ -111,6 +117,7 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 -- TRIGGER: Update timestamps
 -- =============================================================================
 
+DROP TRIGGER IF EXISTS update_user_property_assignments_updated_at ON user_property_assignments;
 CREATE TRIGGER update_user_property_assignments_updated_at
   BEFORE UPDATE ON user_property_assignments
   FOR EACH ROW

@@ -5,11 +5,13 @@
 DROP POLICY IF EXISTS "Staff can view property assignments" ON user_property_assignments;
 
 -- Create new policy: Users can view their OWN assignments (any role)
+DROP POLICY IF EXISTS "Users can view own assignments" ON user_property_assignments;
 CREATE POLICY "Users can view own assignments"
   ON user_property_assignments FOR SELECT
   USING (user_id = auth.uid());
 
 -- Keep the staff policy for viewing ALL assignments (admin use)
+DROP POLICY IF EXISTS "Staff can view all assignments" ON user_property_assignments;
 CREATE POLICY "Staff can view all assignments"
   ON user_property_assignments FOR SELECT
   USING (

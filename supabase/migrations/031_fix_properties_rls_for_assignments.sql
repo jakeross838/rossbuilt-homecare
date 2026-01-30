@@ -5,6 +5,7 @@
 DROP POLICY IF EXISTS "Clients can view their properties" ON properties;
 
 -- Create new policy: Users can view properties assigned to them
+DROP POLICY IF EXISTS "Users can view assigned properties" ON properties;
 CREATE POLICY "Users can view assigned properties"
   ON properties FOR SELECT
   USING (
@@ -18,6 +19,7 @@ CREATE POLICY "Users can view assigned properties"
 -- Also fix programs table - clients need to see programs for their assigned properties
 DROP POLICY IF EXISTS "Clients can view their programs" ON programs;
 
+DROP POLICY IF EXISTS "Users can view programs for assigned properties" ON programs;
 CREATE POLICY "Users can view programs for assigned properties"
   ON programs FOR SELECT
   USING (
