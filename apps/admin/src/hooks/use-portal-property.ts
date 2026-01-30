@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import { portalKeys } from '@/lib/queries'
+import { portalKeys, STALE_STANDARD } from '@/lib/queries'
 import type {
   PortalPropertyDetail,
   PortalEquipment,
@@ -11,8 +11,66 @@ import type {
 } from '@/lib/types/portal'
 
 /**
+ * Helper to check if user has access to a property
+ * Checks: 1) user_property_assignments, 2) client.user_id match, 3) client.email match
+ */
+async function userHasPropertyAccess(userId: string, userEmail: string | null, propertyId: string): Promise<boolean> {
+  // First, check user_property_assignments
+  const { data: assignment } = await supabase
+    .from('user_property_assignments')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('property_id', propertyId)
+    .single()
+
+  if (assignment) return true
+
+  // Second: Check if property belongs to client linked by user_id
+  const { data: clientByUserId } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  if (clientByUserId) {
+    const { data: property } = await supabase
+      .from('properties')
+      .select('id')
+      .eq('id', propertyId)
+      .eq('client_id', clientByUserId.id)
+      .eq('is_active', true)
+      .single()
+
+    if (property) return true
+  }
+
+  // Third fallback: Check if property belongs to client with matching email
+  if (userEmail) {
+    const { data: clientByEmail } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('email', userEmail)
+      .single()
+
+    if (clientByEmail) {
+      const { data: property } = await supabase
+        .from('properties')
+        .select('id')
+        .eq('id', propertyId)
+        .eq('client_id', clientByEmail.id)
+        .eq('is_active', true)
+        .single()
+
+      if (property) return true
+    }
+  }
+
+  return false
+}
+
+/**
  * Hook to fetch detailed property info for client portal
- * Only allows access to properties assigned to the current user
+ * Only allows access to properties assigned to the current user or owned by their client record
  */
 export function usePortalProperty(propertyId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
@@ -23,15 +81,10 @@ export function usePortalProperty(propertyId: string | undefined) {
       if (!propertyId) throw new Error('Property ID required')
       if (!profile?.id) throw new Error('User not authenticated')
 
-      // Verify user has access to this property
-      const { data: assignment } = await supabase
-        .from('user_property_assignments')
-        .select('id')
-        .eq('user_id', profile.id)
-        .eq('property_id', propertyId)
-        .single()
+      // Verify user has access to this property (via assignment, user_id link, or email match)
+      const hasAccess = await userHasPropertyAccess(profile.id, profile.email, propertyId)
 
-      if (!assignment) {
+      if (!hasAccess) {
         throw new Error('You do not have access to this property')
       }
 
@@ -270,5 +323,6 @@ export function usePortalProperty(propertyId: string | undefined) {
       }
     },
     enabled: !!propertyId && profile?.role === 'client',
+    staleTime: STALE_STANDARD,
   })
 }

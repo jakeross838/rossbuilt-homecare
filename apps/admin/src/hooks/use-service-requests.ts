@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import { serviceRequestKeys, portalKeys } from '@/lib/queries'
+import { serviceRequestKeys, portalKeys, STALE_STANDARD } from '@/lib/queries'
 import type {
   PortalServiceRequest,
   PortalServiceRequestComment,
@@ -14,34 +14,93 @@ interface UseServiceRequestsOptions {
 }
 
 /**
+ * Helper to get property IDs for a client user
+ * Checks: 1) user_property_assignments, 2) client.user_id match, 3) client.email match
+ */
+async function getClientPropertyIds(userId: string, userEmail: string | null): Promise<string[]> {
+  // First, check user_property_assignments
+  const { data: assignments } = await supabase
+    .from('user_property_assignments')
+    .select('property_id')
+    .eq('user_id', userId)
+
+  if (assignments && assignments.length > 0) {
+    return assignments.map((a) => a.property_id)
+  }
+
+  // Second: Find client by user_id and get their properties
+  const { data: clientByUserId } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  if (clientByUserId) {
+    const { data: properties } = await supabase
+      .from('properties')
+      .select('id')
+      .eq('client_id', clientByUserId.id)
+      .eq('is_active', true)
+
+    if (properties && properties.length > 0) {
+      return properties.map((p) => p.id)
+    }
+  }
+
+  // Third fallback: Find client by email and get their properties
+  if (userEmail) {
+    const { data: clientByEmail } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('email', userEmail)
+      .single()
+
+    if (clientByEmail) {
+      const { data: properties } = await supabase
+        .from('properties')
+        .select('id')
+        .eq('client_id', clientByEmail.id)
+        .eq('is_active', true)
+
+      if (properties && properties.length > 0) {
+        return properties.map((p) => p.id)
+      }
+    }
+  }
+
+  return []
+}
+
+/**
  * Hook to fetch service requests for client portal
- * Filters by user's assigned properties
+ * Filters by user's assigned properties OR owned properties
+ * Uses portal-specific query keys for proper real-time sync
  */
 export function useServiceRequests(options: UseServiceRequestsOptions = {}) {
   const { status, propertyId } = options
   const profile = useAuthStore((state) => state.profile)
+  const isClient = profile?.role === 'client'
+
+  // Use portal keys for client users, admin keys for others
+  // This ensures real-time sync invalidation works correctly
+  const queryKey = isClient
+    ? portalKeys.requests({ status })
+    : serviceRequestKeys.list({ status, propertyId })
 
   return useQuery({
-    queryKey: serviceRequestKeys.list({ status, propertyId }),
+    queryKey,
     queryFn: async (): Promise<PortalServiceRequest[]> => {
       if (!profile?.id) {
         throw new Error('User not authenticated')
       }
 
-      // First, get the property IDs assigned to this user
-      const { data: assignments, error: assignmentError } = await supabase
-        .from('user_property_assignments')
-        .select('property_id')
-        .eq('user_id', profile.id)
+      // Get property IDs for this client user
+      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
 
-      if (assignmentError) throw assignmentError
-
-      // If no assignments, return empty array
-      if (!assignments || assignments.length === 0) {
+      // If no properties found, return empty array
+      if (assignedPropertyIds.length === 0) {
         return []
       }
-
-      const assignedPropertyIds = assignments.map((a) => a.property_id)
 
       let query = supabase
         .from('service_requests')
@@ -100,31 +159,32 @@ export function useServiceRequests(options: UseServiceRequestsOptions = {}) {
       }))
     },
     enabled: profile?.role === 'client',
+    staleTime: STALE_STANDARD,
   })
 }
 
 /**
  * Hook to fetch single service request with comments
- * Verifies request belongs to user's assigned properties
+ * Verifies request belongs to user's assigned or owned properties
+ * Uses portal-specific query keys for client users
  */
 export function useServiceRequest(requestId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
+  const isClient = profile?.role === 'client'
+
+  // Use portal keys for client users
+  const queryKey = isClient
+    ? portalKeys.request(requestId || '')
+    : serviceRequestKeys.detail(requestId || '')
 
   return useQuery({
-    queryKey: serviceRequestKeys.detail(requestId || ''),
+    queryKey,
     queryFn: async (): Promise<PortalServiceRequest & { comments: PortalServiceRequestComment[] }> => {
       if (!requestId) throw new Error('Request ID required')
       if (!profile?.id) throw new Error('User not authenticated')
 
-      // First, get the property IDs assigned to this user
-      const { data: assignments, error: assignmentError } = await supabase
-        .from('user_property_assignments')
-        .select('property_id')
-        .eq('user_id', profile.id)
-
-      if (assignmentError) throw assignmentError
-
-      const assignedPropertyIds = assignments?.map((a) => a.property_id) || []
+      // Get property IDs for this client user
+      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
 
       const { data, error } = await supabase
         .from('service_requests')
@@ -201,6 +261,7 @@ export function useServiceRequest(requestId: string | undefined) {
       }
     },
     enabled: !!requestId && profile?.role === 'client',
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -260,7 +321,9 @@ export function useCreateServiceRequest() {
       return data
     },
     onSuccess: () => {
+      // Invalidate both admin and portal query keys
       queryClient.invalidateQueries({ queryKey: serviceRequestKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.requests() })
       queryClient.invalidateQueries({ queryKey: portalKeys.dashboard() })
     },
   })
@@ -291,8 +354,12 @@ export function useAddServiceRequestComment() {
       return data
     },
     onSuccess: (_, variables) => {
+      // Invalidate both admin and portal query keys
       queryClient.invalidateQueries({
         queryKey: serviceRequestKeys.detail(variables.service_request_id),
+      })
+      queryClient.invalidateQueries({
+        queryKey: portalKeys.request(variables.service_request_id),
       })
     },
   })

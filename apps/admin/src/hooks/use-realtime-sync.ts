@@ -35,13 +35,31 @@ interface RealtimeConfig {
  * - service_requests: Syncs across Admin/Client
  * - programs: Syncs plan changes to Client portal
  */
+/**
+ * Map table names to React Query keys for cache invalidation.
+ * Cross-portal sync requirements (STAB-29 through STAB-34):
+ * - user_property_assignments: Syncs property access to Client/Tech portals
+ * - work_orders: Syncs across Admin/Tech/Client
+ * - inspections: Syncs across Admin/Tech/Client
+ * - invoices: Syncs across Admin/Client
+ * - service_requests: Syncs across Admin/Client
+ * - programs: Syncs plan changes to Client portal
+ *
+ * Note: Keys must match what the hooks use. portalKeys.requests() = ['portal', 'requests']
+ */
 const queryKeyMap: Record<TableName, string[][]> = {
   clients: [['clients'], ['portal', 'dashboard']],
-  properties: [['properties'], ['portal', 'properties'], ['portal', 'dashboard']],
-  equipment: [['equipment'], ['portal', 'properties']],
+  properties: [
+    ['properties'],
+    ['portal', 'properties'],
+    ['portal', 'property-summaries'],
+    ['portal', 'dashboard'],
+  ],
+  equipment: [['equipment'], ['portal', 'properties'], ['portal', 'property-summaries']],
   work_orders: [
     ['work-orders'],
     ['portal', 'properties'],
+    ['portal', 'property-summaries'],
     ['portal', 'dashboard'],
     ['dashboard'],
     ['work-order-metrics'],
@@ -59,18 +77,41 @@ const queryKeyMap: Record<TableName, string[][]> = {
     ['inspection-metrics'],
     ['portal', 'inspections'],
     ['portal', 'inspection'],
+    ['portal', 'properties'],
+    ['portal', 'property-summaries'],
     ['portal', 'dashboard'],
     ['dashboard'],
   ],
-  invoices: [['invoices'], ['portal', 'invoices'], ['portal', 'dashboard']],
-  service_requests: [['service-requests'], ['portal', 'requests'], ['portal', 'dashboard']], // Fixed: was 'serviceRequests'
+  invoices: [['invoices'], ['portal', 'invoices'], ['portal', 'invoice'], ['portal', 'dashboard']],
+  service_requests: [
+    ['service-requests'],
+    ['portal', 'requests'],
+    ['portal', 'request'],
+    ['portal', 'dashboard'],
+  ],
   vendors: [['vendors']],
   reminders: [['reminders']],
   calendar_events: [['calendar'], ['calendar-events']],
-  programs: [['programs'], ['portal', 'plan'], ['portal', 'dashboard'], ['admin', 'properties-overview']],
+  programs: [
+    ['programs'],
+    ['portal', 'properties'],
+    ['portal', 'property-summaries'],
+    ['portal', 'dashboard'],
+    ['admin', 'properties-overview'],
+  ],
   notifications: [['notifications'], ['portal', 'notifications'], ['admin', 'notifications']],
-  user_property_assignments: [['property-assignments'], ['portal', 'properties'], ['portal', 'dashboard'], ['users']],
-  recommendations: [['recommendations']],
+  user_property_assignments: [
+    ['property-assignments'],
+    ['portal', 'properties'],
+    ['portal', 'property-summaries'],
+    ['portal', 'dashboard'],
+    ['users'],
+  ],
+  recommendations: [
+    ['recommendations'],
+    ['portal', 'properties'],
+    ['portal', 'property-summaries'],
+  ],
 }
 
 /**

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import { portalKeys } from '@/lib/queries'
+import { portalKeys, STALE_STANDARD } from '@/lib/queries'
 import type { PortalInspection } from '@/lib/types/portal'
 
 interface UsePortalInspectionsOptions {
@@ -10,8 +10,66 @@ interface UsePortalInspectionsOptions {
 }
 
 /**
+ * Helper to get property IDs for a client user
+ * Checks: 1) user_property_assignments, 2) client.user_id match, 3) client.email match
+ */
+async function getClientPropertyIds(userId: string, userEmail: string | null): Promise<string[]> {
+  // First, check user_property_assignments
+  const { data: assignments } = await supabase
+    .from('user_property_assignments')
+    .select('property_id')
+    .eq('user_id', userId)
+
+  if (assignments && assignments.length > 0) {
+    return assignments.map((a) => a.property_id)
+  }
+
+  // Second: Find client by user_id and get their properties
+  const { data: clientByUserId } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  if (clientByUserId) {
+    const { data: properties } = await supabase
+      .from('properties')
+      .select('id')
+      .eq('client_id', clientByUserId.id)
+      .eq('is_active', true)
+
+    if (properties && properties.length > 0) {
+      return properties.map((p) => p.id)
+    }
+  }
+
+  // Third fallback: Find client by email and get their properties
+  if (userEmail) {
+    const { data: clientByEmail } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('email', userEmail)
+      .single()
+
+    if (clientByEmail) {
+      const { data: properties } = await supabase
+        .from('properties')
+        .select('id')
+        .eq('client_id', clientByEmail.id)
+        .eq('is_active', true)
+
+      if (properties && properties.length > 0) {
+        return properties.map((p) => p.id)
+      }
+    }
+  }
+
+  return []
+}
+
+/**
  * Hook to fetch inspections for client portal
- * Only returns inspections for properties assigned to the current user
+ * Returns inspections for properties assigned to user OR owned by client
  */
 export function usePortalInspections(options: UsePortalInspectionsOptions = {}) {
   const { propertyId, limit = 20 } = options
@@ -24,22 +82,13 @@ export function usePortalInspections(options: UsePortalInspectionsOptions = {}) 
         throw new Error('User not authenticated')
       }
 
-      // First, get the property IDs assigned to this user
-      const { data: assignments, error: assignmentError } = await supabase
-        .from('user_property_assignments')
-        .select('property_id')
-        .eq('user_id', profile.id)
+      // Get property IDs for this client user
+      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
 
-      if (assignmentError) {
-        throw assignmentError
-      }
-
-      // If no assignments, return empty array
-      if (!assignments || assignments.length === 0) {
+      // If no properties found, return empty array
+      if (assignedPropertyIds.length === 0) {
         return []
       }
-
-      const assignedPropertyIds = assignments.map((a) => a.property_id)
 
       // If filtering by a specific property, verify it's assigned to the user
       if (propertyId && !assignedPropertyIds.includes(propertyId)) {
@@ -99,6 +148,7 @@ export function usePortalInspections(options: UsePortalInspectionsOptions = {}) 
       })
     },
     enabled: profile?.role === 'client',
+    staleTime: STALE_STANDARD,
   })
 }
 
@@ -115,17 +165,8 @@ export function usePortalInspection(inspectionId: string | undefined) {
       if (!inspectionId) throw new Error('Inspection ID required')
       if (!profile?.id) throw new Error('User not authenticated')
 
-      // First, get the property IDs assigned to this user
-      const { data: assignments, error: assignmentError } = await supabase
-        .from('user_property_assignments')
-        .select('property_id')
-        .eq('user_id', profile.id)
-
-      if (assignmentError) {
-        throw assignmentError
-      }
-
-      const assignedPropertyIds = assignments?.map((a) => a.property_id) || []
+      // Get property IDs for this client user
+      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
 
       const { data, error } = await supabase
         .from('inspections')
@@ -177,5 +218,6 @@ export function usePortalInspection(inspectionId: string | undefined) {
       }
     },
     enabled: !!inspectionId && profile?.role === 'client',
+    staleTime: STALE_STANDARD,
   })
 }

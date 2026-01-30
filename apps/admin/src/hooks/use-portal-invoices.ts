@@ -1,12 +1,70 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import { portalKeys } from '@/lib/queries'
+import { portalKeys, STALE_STANDARD } from '@/lib/queries'
 import type { PortalInvoice } from '@/lib/types/portal'
 
 /**
+ * Helper to get property IDs for a client user
+ * Checks: 1) user_property_assignments, 2) client.user_id match, 3) client.email match
+ */
+async function getClientPropertyIds(userId: string, userEmail: string | null): Promise<string[]> {
+  // First, check user_property_assignments
+  const { data: assignments } = await supabase
+    .from('user_property_assignments')
+    .select('property_id')
+    .eq('user_id', userId)
+
+  if (assignments && assignments.length > 0) {
+    return assignments.map((a) => a.property_id)
+  }
+
+  // Second: Find client by user_id and get their properties
+  const { data: clientByUserId } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  if (clientByUserId) {
+    const { data: properties } = await supabase
+      .from('properties')
+      .select('id')
+      .eq('client_id', clientByUserId.id)
+      .eq('is_active', true)
+
+    if (properties && properties.length > 0) {
+      return properties.map((p) => p.id)
+    }
+  }
+
+  // Third fallback: Find client by email and get their properties
+  if (userEmail) {
+    const { data: clientByEmail } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('email', userEmail)
+      .single()
+
+    if (clientByEmail) {
+      const { data: properties } = await supabase
+        .from('properties')
+        .select('id')
+        .eq('client_id', clientByEmail.id)
+        .eq('is_active', true)
+
+      if (properties && properties.length > 0) {
+        return properties.map((p) => p.id)
+      }
+    }
+  }
+
+  return []
+}
+
+/**
  * Hook to fetch invoices for client portal
- * RLS automatically filters to invoices for client's client_id
+ * Filters by user's assigned properties
  */
 export function usePortalInvoices() {
   const profile = useAuthStore((state) => state.profile)
@@ -14,6 +72,18 @@ export function usePortalInvoices() {
   return useQuery({
     queryKey: portalKeys.invoices(),
     queryFn: async (): Promise<PortalInvoice[]> => {
+      if (!profile?.id) {
+        throw new Error('User not authenticated')
+      }
+
+      // Get property IDs for this client user
+      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
+
+      // If no properties found, return empty array
+      if (assignedPropertyIds.length === 0) {
+        return []
+      }
+
       const { data, error } = await supabase
         .from('invoices')
         .select(`
@@ -32,6 +102,7 @@ export function usePortalInvoices() {
             amount
           )
         `)
+        .in('property_id', assignedPropertyIds)
         .order('invoice_date', { ascending: false })
 
       if (error) throw error
@@ -64,12 +135,13 @@ export function usePortalInvoices() {
       }))
     },
     enabled: profile?.role === 'client',
+    staleTime: STALE_STANDARD,
   })
 }
 
 /**
  * Hook to fetch single invoice for portal
- * RLS automatically filters to invoices for client's client_id
+ * Verifies invoice belongs to user's assigned properties
  */
 export function usePortalInvoice(invoiceId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
@@ -78,6 +150,10 @@ export function usePortalInvoice(invoiceId: string | undefined) {
     queryKey: portalKeys.invoice(invoiceId || ''),
     queryFn: async (): Promise<PortalInvoice> => {
       if (!invoiceId) throw new Error('Invoice ID required')
+      if (!profile?.id) throw new Error('User not authenticated')
+
+      // Get property IDs for this client user
+      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
 
       const { data, error } = await supabase
         .from('invoices')
@@ -90,6 +166,7 @@ export function usePortalInvoice(invoiceId: string | undefined) {
           total,
           balance_due,
           pdf_url,
+          property_id,
           notes,
           terms,
           line_items:invoice_line_items (
@@ -103,6 +180,11 @@ export function usePortalInvoice(invoiceId: string | undefined) {
         .single()
 
       if (error) throw error
+
+      // Verify invoice belongs to user's assigned properties
+      if (!assignedPropertyIds.includes(data.property_id)) {
+        throw new Error('Invoice not found')
+      }
 
       return {
         id: data.id,
@@ -132,5 +214,6 @@ export function usePortalInvoice(invoiceId: string | undefined) {
       }
     },
     enabled: !!invoiceId && profile?.role === 'client',
+    staleTime: STALE_STANDARD,
   })
 }
