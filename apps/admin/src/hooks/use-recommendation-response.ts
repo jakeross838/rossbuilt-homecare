@@ -34,7 +34,7 @@ export function useRespondToRecommendation() {
     onSuccess: () => {
       // Invalidate all portal queries that might show recommendations
       queryClient.invalidateQueries({ queryKey: portalKeys.dashboard() })
-      queryClient.invalidateQueries({ queryKey: portalKeys.properties() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.propertySummaries() })
     },
   })
 }

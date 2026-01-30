@@ -36,10 +36,15 @@ SELECT
 
 FROM properties p
 
--- Active program (one per property via partial unique index)
-LEFT JOIN programs prog
-  ON prog.property_id = p.id
-  AND prog.status = 'active'
+-- Active, pending, or paused program (most recent, not cancelled)
+LEFT JOIN LATERAL (
+  SELECT pr.id, pr.inspection_tier, pr.inspection_frequency, pr.status, pr.monthly_total
+  FROM programs pr
+  WHERE pr.property_id = p.id
+    AND pr.status IN ('active', 'pending', 'paused')
+  ORDER BY pr.created_at DESC
+  LIMIT 1
+) prog ON true
 
 -- Equipment count (active only)
 LEFT JOIN LATERAL (
