@@ -5,6 +5,64 @@ import type { PortalDashboardSummary, PortalProperty } from '@/lib/types/portal'
 import { STALE_STANDARD, portalKeys } from '@/lib/queries'
 
 /**
+ * Helper to get property IDs for a client user
+ * Checks: 1) user_property_assignments, 2) client.user_id match, 3) client.email match
+ */
+async function getClientPropertyIds(userId: string, userEmail: string | null): Promise<string[]> {
+  // First, check user_property_assignments
+  const { data: assignments } = await supabase
+    .from('user_property_assignments')
+    .select('property_id')
+    .eq('user_id', userId)
+
+  if (assignments && assignments.length > 0) {
+    return assignments.map((a) => a.property_id)
+  }
+
+  // Second: Find client by user_id and get their properties
+  const { data: clientByUserId } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  if (clientByUserId) {
+    const { data: properties } = await supabase
+      .from('properties')
+      .select('id')
+      .eq('client_id', clientByUserId.id)
+      .eq('is_active', true)
+
+    if (properties && properties.length > 0) {
+      return properties.map((p) => p.id)
+    }
+  }
+
+  // Third fallback: Find client by email and get their properties
+  if (userEmail) {
+    const { data: clientByEmail } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('email', userEmail)
+      .single()
+
+    if (clientByEmail) {
+      const { data: properties } = await supabase
+        .from('properties')
+        .select('id')
+        .eq('client_id', clientByEmail.id)
+        .eq('is_active', true)
+
+      if (properties && properties.length > 0) {
+        return properties.map((p) => p.id)
+      }
+    }
+  }
+
+  return []
+}
+
+/**
  * Hook to fetch client portal dashboard summary
  * Only counts data for properties assigned to the current user
  */
@@ -18,15 +76,10 @@ export function usePortalDashboard() {
         throw new Error('User not authenticated')
       }
 
-      // First, get the property IDs assigned to this user
-      const { data: assignments } = await supabase
-        .from('user_property_assignments')
-        .select('property_id')
-        .eq('user_id', profile.id)
+      // Get property IDs for this client user
+      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
 
-      const assignedPropertyIds = assignments?.map((a) => a.property_id) || []
-
-      // If no assignments, return zeros
+      // If no properties found, return zeros
       if (assignedPropertyIds.length === 0) {
         return {
           properties_count: 0,
@@ -97,134 +150,61 @@ export function usePortalDashboard() {
 
 /**
  * Hook to fetch client's properties for portal
- * Only returns properties assigned to the current user via user_property_assignments
+ * Uses portal_property_summaries view to avoid N+1 queries
  */
 export function usePortalProperties() {
   const profile = useAuthStore((state) => state.profile)
 
   return useQuery({
-    queryKey: portalKeys.properties(),
+    queryKey: portalKeys.propertySummaries(),
     queryFn: async (): Promise<PortalProperty[]> => {
       if (!profile?.id) {
         throw new Error('User not authenticated')
       }
 
-      // First, get the property IDs assigned to this user
-      const { data: assignments, error: assignmentError } = await supabase
-        .from('user_property_assignments')
-        .select('property_id')
-        .eq('user_id', profile.id)
+      // Get property IDs for this client user
+      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
 
-      if (assignmentError) {
-        throw assignmentError
-      }
-
-      // If no assignments, return empty array
-      if (!assignments || assignments.length === 0) {
+      // If no properties found, return empty array
+      if (assignedPropertyIds.length === 0) {
         return []
       }
 
-      const assignedPropertyIds = assignments.map((a) => a.property_id)
-
-      // Fetch only the assigned properties
-      const { data: properties, error } = await supabase
-        .from('properties')
-        .select(`
-          id,
-          name,
-          address_line1,
-          city,
-          state,
-          zip,
-          primary_photo_url,
-          programs (
-            id,
-            inspection_tier,
-            inspection_frequency,
-            status,
-            monthly_total
-          )
-        `)
+      // Single query to view with all pre-aggregated data
+      const { data: summaries, error } = await supabase
+        .from('portal_property_summaries')
+        .select('*')
         .in('id', assignedPropertyIds)
         .eq('is_active', true)
         .order('name')
 
       if (error) throw error
 
-      // For each property, get counts
-      const propertiesWithCounts = await Promise.all(
-        (properties || []).map(async (prop) => {
-          // Equipment count
-          const { count: equipmentCount } = await supabase
-            .from('equipment')
-            .select('*', { count: 'exact', head: true })
-            .eq('property_id', prop.id)
-            .eq('is_active', true)
-
-          // Open work orders
-          const { count: openWorkOrders } = await supabase
-            .from('work_orders')
-            .select('*', { count: 'exact', head: true })
-            .eq('property_id', prop.id)
-            .in('status', ['pending', 'vendor_assigned', 'scheduled', 'in_progress'])
-
-          // Pending recommendations
-          const { count: pendingRecs } = await supabase
-            .from('recommendations')
-            .select('*', { count: 'exact', head: true })
-            .eq('property_id', prop.id)
-            .eq('status', 'pending')
-
-          // Last inspection
-          const { data: lastInspection } = await supabase
-            .from('inspections')
-            .select('scheduled_date, overall_condition')
-            .eq('property_id', prop.id)
-            .eq('status', 'completed')
-            .order('scheduled_date', { ascending: false })
-            .limit(1)
-            .single()
-
-          const program = Array.isArray(prop.programs) ? prop.programs[0] : prop.programs
-
-          // Get next scheduled inspection for this property
-          const { data: nextInspection } = await supabase
-            .from('inspections')
-            .select('scheduled_date')
-            .eq('property_id', prop.id)
-            .eq('status', 'scheduled')
-            .gte('scheduled_date', new Date().toISOString())
-            .order('scheduled_date', { ascending: true })
-            .limit(1)
-            .single()
-
-          return {
-            id: prop.id,
-            name: prop.name,
-            address_line1: prop.address_line1,
-            city: prop.city,
-            state: prop.state,
-            zip: prop.zip,
-            primary_photo_url: prop.primary_photo_url,
-            program: program ? {
-              id: program.id,
-              tier: program.inspection_tier,
-              frequency: program.inspection_frequency,
-              status: program.status,
-              monthly_price: program.monthly_total,
-              next_inspection_date: nextInspection?.scheduled_date || null,
-            } : null,
-            equipment_count: equipmentCount || 0,
-            open_work_order_count: openWorkOrders || 0,
-            pending_recommendation_count: pendingRecs || 0,
-            last_inspection_date: lastInspection?.scheduled_date || null,
-            overall_condition: lastInspection?.overall_condition || null,
-          } satisfies PortalProperty
-        })
-      )
-
-      return propertiesWithCounts
+      // Map view data to PortalProperty shape
+      return (summaries || []).map((s) => ({
+        id: s.id,
+        name: s.name,
+        address_line1: s.address_line1,
+        city: s.city,
+        state: s.state,
+        zip: s.zip,
+        primary_photo_url: s.primary_photo_url,
+        program: s.program_id ? {
+          id: s.program_id,
+          tier: s.inspection_tier,
+          frequency: s.inspection_frequency,
+          status: s.program_status,
+          monthly_price: s.monthly_total,
+          next_inspection_date: s.next_inspection_date,
+        } : null,
+        equipment_count: s.equipment_count ?? 0,
+        open_work_order_count: s.open_work_order_count ?? 0,
+        pending_recommendation_count: s.pending_recommendation_count ?? 0,
+        last_inspection_date: s.last_inspection_date,
+        overall_condition: s.last_inspection_condition,
+      } satisfies PortalProperty))
     },
     enabled: profile?.role === 'client',
+    staleTime: STALE_STANDARD,
   })
 }
