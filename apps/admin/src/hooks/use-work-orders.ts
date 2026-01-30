@@ -8,14 +8,14 @@ import type {
   WorkOrderStatus,
 } from '@/lib/types/work-order'
 import { calculateClientCost, DEFAULT_MARKUP_PERCENT } from '@/lib/constants/work-order'
-import { workOrderKeys, vendorKeys, recommendationKeys } from '@/lib/queries'
+import { workOrderKeys, vendorKeys, recommendationKeys, portalKeys } from '@/lib/queries'
 
 type WorkOrder = Tables<'work_orders'>
 type WorkOrderInsert = InsertTables<'work_orders'>
 type WorkOrderUpdate = UpdateTables<'work_orders'>
 
-// UUID validation regex
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+// UUID validation regex - permissive to accept any 8-4-4-4-12 hex format (demo data may not follow RFC 4122)
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const isValidUUID = (id: string | undefined): boolean => !!id && UUID_REGEX.test(id)
 
 /**
@@ -249,17 +249,32 @@ export function useCreateWorkOrder() {
     mutationFn: async (
       data: Omit<WorkOrderInsert, 'id' | 'work_order_number' | 'created_at' | 'updated_at'>
     ) => {
+      console.log('[useCreateWorkOrder] Starting mutation with data:', data)
+
       // Get organization_id from current user context
-      const { data: userData } = await supabase.auth.getUser()
+      const { data: userData, error: authError } = await supabase.auth.getUser()
+      if (authError) {
+        console.error('[useCreateWorkOrder] Auth error:', authError)
+        throw new Error('Authentication error: ' + authError.message)
+      }
       if (!userData.user) throw new Error('Not authenticated')
 
-      const { data: profile } = await supabase
+      console.log('[useCreateWorkOrder] Fetching profile for user:', userData.user.id)
+
+      const { data: profile, error: profileError } = await supabase
         .from('users')
         .select('organization_id')
         .eq('id', userData.user.id)
         .single()
 
+      if (profileError) {
+        console.error('[useCreateWorkOrder] Profile fetch error:', profileError)
+        throw new Error('Failed to fetch user profile: ' + profileError.message)
+      }
+
       if (!profile) throw new Error('User profile not found')
+
+      console.log('[useCreateWorkOrder] Profile loaded, org_id:', profile.organization_id)
 
       // Generate work order number using sequence
       const { data: seqData, error: seqError } = await supabase
@@ -274,6 +289,8 @@ export function useCreateWorkOrder() {
         workOrderNumber = `WO-${seqData}`
       }
 
+      console.log('[useCreateWorkOrder] Inserting work order with org_id:', profile.organization_id)
+
       const { data: workOrder, error } = await supabase
         .from('work_orders')
         .insert({
@@ -285,7 +302,12 @@ export function useCreateWorkOrder() {
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('[useCreateWorkOrder] Supabase error:', error)
+        throw new Error(error.message || 'Failed to create work order')
+      }
+
+      console.log('[useCreateWorkOrder] Success! Created:', workOrder)
 
       // If created from recommendation, update recommendation status
       if (data.recommendation_id) {
@@ -315,6 +337,10 @@ export function useCreateWorkOrder() {
       if (workOrder.recommendation_id) {
         queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       }
+      // Invalidate portal queries for cross-portal sync
+      queryClient.invalidateQueries({ queryKey: portalKeys.properties() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.propertySummaries() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.dashboard() })
     },
   })
 }
@@ -349,6 +375,9 @@ export function useUpdateWorkOrder() {
     onSuccess: (workOrder) => {
       queryClient.invalidateQueries({ queryKey: workOrderKeys.detail(workOrder.id) })
       queryClient.invalidateQueries({ queryKey: workOrderKeys.lists() })
+      // Invalidate portal queries for cross-portal sync
+      queryClient.invalidateQueries({ queryKey: portalKeys.properties() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.propertySummaries() })
     },
   })
 }
@@ -408,6 +437,10 @@ export function useUpdateWorkOrderStatus() {
       if (workOrder.recommendation_id) {
         queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       }
+      // Invalidate portal queries for cross-portal sync
+      queryClient.invalidateQueries({ queryKey: portalKeys.properties() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.propertySummaries() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.dashboard() })
     },
   })
 }
@@ -468,6 +501,10 @@ export function useAssignVendor() {
         })
         queryClient.invalidateQueries({ queryKey: vendorKeys.all })
       }
+      // Invalidate portal queries for cross-portal sync
+      queryClient.invalidateQueries({ queryKey: portalKeys.properties() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.propertySummaries() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.dashboard() })
     },
   })
 }
@@ -545,6 +582,10 @@ export function useCompleteWorkOrder() {
       if (workOrder.recommendation_id) {
         queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       }
+      // Invalidate portal queries for cross-portal sync
+      queryClient.invalidateQueries({ queryKey: portalKeys.properties() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.propertySummaries() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.dashboard() })
     },
   })
 }
@@ -598,6 +639,10 @@ export function useCancelWorkOrder() {
       if (workOrder.recommendation_id) {
         queryClient.invalidateQueries({ queryKey: recommendationKeys.all })
       }
+      // Invalidate portal queries for cross-portal sync
+      queryClient.invalidateQueries({ queryKey: portalKeys.properties() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.propertySummaries() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.dashboard() })
     },
   })
 }

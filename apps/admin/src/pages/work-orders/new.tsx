@@ -58,6 +58,7 @@ export function NewWorkOrderPage() {
   }
 
   const handleSubmit = async (data: CreateWorkOrderFormData) => {
+    console.log('[NewWorkOrderPage] handleSubmit called with data:', data)
     try {
       const workOrder = await createWorkOrder.mutateAsync(data)
 
@@ -67,10 +68,11 @@ export function NewWorkOrderPage() {
       })
 
       navigate(`/work-orders/${workOrder.id}`)
-    } catch {
+    } catch (error) {
+      console.error('[NewWorkOrderPage] Error creating work order:', error)
       toast({
         title: 'Error',
-        description: 'Failed to create work order. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to create work order. Please try again.',
         variant: 'destructive',
       })
     }

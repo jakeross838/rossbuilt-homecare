@@ -106,6 +106,40 @@ export function useRecentActivity(limit: number = 10) {
         })
       })
 
+      // Fetch recent service requests (client-submitted)
+      const { data: serviceRequests } = await supabase
+        .from('service_requests')
+        .select(`
+          id,
+          request_number,
+          title,
+          status,
+          created_at,
+          updated_at,
+          property:properties(name),
+          client:clients(first_name, last_name)
+        `)
+        .eq('organization_id', orgId)
+        .order('updated_at', { ascending: false })
+        .limit(5)
+
+      serviceRequests?.forEach((sr) => {
+        const property = sr.property as unknown as { name: string } | null
+        const client = sr.client as unknown as { first_name: string; last_name: string } | null
+        const clientName = client ? `${client.first_name} ${client.last_name}` : 'Unknown'
+
+        activities.push({
+          id: `service-request-${sr.id}`,
+          type: 'service_request' as ActivityLogEntry['type'],
+          action: sr.status === 'new' ? 'created' : 'updated',
+          title: sr.status === 'new' ? 'New service request' : `Service request ${(sr.status || '').replace('_', ' ')}`,
+          description: `${sr.title || sr.request_number} - ${property?.name || ''} (${clientName})`,
+          entityId: sr.id,
+          userName: clientName,
+          timestamp: sr.updated_at || sr.created_at || new Date().toISOString(),
+        })
+      })
+
       // Sort by timestamp and take limit
       return activities
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())

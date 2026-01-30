@@ -89,11 +89,11 @@ export const FEATURES = {
  */
 export const DEBUG = {
   /** Enable realtime subscription logging */
-  REALTIME_LOGGING: import.meta.env.DEV,
+  REALTIME_LOGGING: true,  // Force enabled for debugging
   /** Enable query/mutation logging */
-  QUERY_LOGGING: false,
+  QUERY_LOGGING: true,     // Force enabled for debugging
   /** Enable offline sync logging */
-  OFFLINE_LOGGING: import.meta.env.DEV,
+  OFFLINE_LOGGING: true,   // Force enabled for debugging
 } as const
 
 // ============================================

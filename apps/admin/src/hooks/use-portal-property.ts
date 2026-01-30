@@ -75,14 +75,18 @@ async function userHasPropertyAccess(userId: string, userEmail: string | null, p
 export function usePortalProperty(propertyId: string | undefined) {
   const profile = useAuthStore((state) => state.profile)
 
+  console.log('[usePortalProperty] propertyId:', propertyId, 'profile:', profile?.id, 'role:', profile?.role)
+
   return useQuery({
     queryKey: portalKeys.property(propertyId || ''),
     queryFn: async (): Promise<PortalPropertyDetail> => {
+      console.log('[usePortalProperty] queryFn started')
       if (!propertyId) throw new Error('Property ID required')
       if (!profile?.id) throw new Error('User not authenticated')
 
       // Verify user has access to this property (via assignment, user_id link, or email match)
       const hasAccess = await userHasPropertyAccess(profile.id, profile.email, propertyId)
+      console.log('[usePortalProperty] hasAccess:', hasAccess)
 
       if (!hasAccess) {
         throw new Error('You do not have access to this property')
@@ -115,6 +119,7 @@ export function usePortalProperty(propertyId: string | undefined) {
         .eq('id', propertyId)
         .single()
 
+      console.log('[usePortalProperty] property query:', { property, error })
       if (error) throw error
 
       // Fetch equipment
@@ -122,12 +127,12 @@ export function usePortalProperty(propertyId: string | undefined) {
         .from('equipment')
         .select(`
           id,
-          name,
+          custom_name,
+          equipment_type,
           category,
           location,
           condition,
-          last_serviced_at,
-          next_service_date
+          last_service_date
         `)
         .eq('property_id', propertyId)
         .eq('is_active', true)
@@ -135,12 +140,12 @@ export function usePortalProperty(propertyId: string | undefined) {
 
       const equipment: PortalEquipment[] = (equipmentData || []).map((e) => ({
         id: e.id,
-        name: e.name,
+        name: e.custom_name || e.equipment_type || 'Unknown Equipment',
         category: e.category,
         location: e.location,
         condition: e.condition,
-        last_serviced_at: e.last_serviced_at,
-        next_service_date: e.next_service_date,
+        last_serviced_at: e.last_service_date,
+        next_service_date: null, // Column doesn't exist in DB
       }))
 
       // Fetch recent inspections (last 5)
@@ -289,6 +294,7 @@ export function usePortalProperty(propertyId: string | undefined) {
         .limit(1)
         .single()
 
+      console.log('[usePortalProperty] Building result object')
       return {
         id: property.id,
         name: property.name,

@@ -5,6 +5,38 @@ import type { PortalDashboardSummary, PortalProperty } from '@/lib/types/portal'
 import { STALE_STANDARD, portalKeys } from '@/lib/queries'
 
 /**
+ * Helper to get client ID for a user
+ * Checks: 1) client.user_id match, 2) client.email match
+ */
+async function getClientId(userId: string, userEmail: string | null): Promise<string | null> {
+  // First: Find client by user_id
+  const { data: clientByUserId } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  if (clientByUserId) {
+    return clientByUserId.id
+  }
+
+  // Second fallback: Find client by email
+  if (userEmail) {
+    const { data: clientByEmail } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('email', userEmail)
+      .single()
+
+    if (clientByEmail) {
+      return clientByEmail.id
+    }
+  }
+
+  return null
+}
+
+/**
  * Helper to get property IDs for a client user
  * Checks: 1) user_property_assignments, 2) client.user_id match, 3) client.email match
  */
@@ -77,8 +109,11 @@ export function usePortalDashboard() {
         throw new Error('User not authenticated')
       }
 
-      // Get property IDs for this client user
-      const assignedPropertyIds = await getClientPropertyIds(profile.id, profile.email)
+      // Get property IDs and client ID for this user
+      const [assignedPropertyIds, clientId] = await Promise.all([
+        getClientPropertyIds(profile.id, profile.email),
+        getClientId(profile.id, profile.email),
+      ])
 
       // If no properties found, return zeros
       if (assignedPropertyIds.length === 0) {
@@ -93,6 +128,15 @@ export function usePortalDashboard() {
 
       const thirtyDaysFromNow = new Date()
       thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+
+      // Build invoices query - only if we have a client_id
+      const invoicesQuery = clientId
+        ? supabase
+            .from('invoices')
+            .select('balance_due')
+            .eq('client_id', clientId)
+            .in('status', ['sent', 'viewed', 'partial', 'overdue'])
+        : Promise.resolve({ data: [], error: null })
 
       // Fetch ALL counts in parallel (not sequential)
       const [
@@ -132,12 +176,8 @@ export function usePortalDashboard() {
           .in('property_id', assignedPropertyIds)
           .eq('status', 'pending'),
 
-        // Outstanding invoices
-        supabase
-          .from('invoices')
-          .select('balance_due')
-          .in('property_id', assignedPropertyIds)
-          .in('status', ['sent', 'viewed', 'partial', 'overdue']),
+        // Outstanding invoices (by client_id, not property_id)
+        invoicesQuery,
       ])
 
       const outstandingBalance = invoicesResult.data?.reduce(

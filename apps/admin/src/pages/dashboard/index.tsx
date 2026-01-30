@@ -8,6 +8,7 @@ import {
   AlertCircle,
   Calendar,
   TrendingUp,
+  MessageSquare,
 } from 'lucide-react'
 
 import { PageHeader } from '@/components/layout/page-header'
@@ -46,6 +47,8 @@ function getActivityIcon(type: ActivityLogEntry['type']) {
       return Users
     case 'property':
       return Building2
+    case 'service_request':
+      return MessageSquare
     default:
       return AlertCircle
   }
@@ -63,6 +66,8 @@ function getActivityLink(activity: ActivityLogEntry): string {
       return `/clients/${activity.entityId}`
     case 'property':
       return `/properties/${activity.entityId}`
+    case 'service_request':
+      return `/service-requests/${activity.entityId}`
     default:
       return '#'
   }

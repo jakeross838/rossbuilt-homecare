@@ -58,9 +58,36 @@ export function WorkOrderForm({
     },
   })
 
+  // Debug: log form errors when they change
+  const formErrors = form.formState.errors
+  if (Object.keys(formErrors).length > 0) {
+    console.log('[WorkOrderForm] Validation errors:', formErrors)
+  }
+
+  const handleFormSubmit = form.handleSubmit(
+    (data) => {
+      console.log('[WorkOrderForm] Form valid, submitting:', data)
+      onSubmit(data)
+    },
+    (errors) => {
+      console.error('[WorkOrderForm] Form validation failed:', errors)
+    }
+  )
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleFormSubmit} className="space-y-4">
+        {/* Show validation errors summary */}
+        {Object.keys(form.formState.errors).length > 0 && (
+          <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
+            Please fix the following errors:
+            <ul className="list-disc list-inside mt-1">
+              {Object.entries(form.formState.errors).map(([field, error]) => (
+                <li key={field}>{field}: {error?.message as string}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <FormField
           control={form.control}
           name="title"

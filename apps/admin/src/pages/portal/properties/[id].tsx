@@ -23,13 +23,27 @@ import { cn } from '@/lib/utils'
 
 export default function PortalPropertyDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { data: property, isLoading } = usePortalProperty(id)
+  const { data: property, isLoading, error, isFetching, status, fetchStatus } = usePortalProperty(id)
+
+  // Debug logging for troubleshooting
+  console.log('[PortalPropertyDetail] id:', id, 'isLoading:', isLoading, 'isFetching:', isFetching, 'status:', status, 'fetchStatus:', fetchStatus, 'hasData:', !!property, 'error:', error?.message)
 
   if (isLoading) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">Error loading property: {error.message}</p>
+        <Link to="/portal/properties" className="text-blue-600 mt-4 inline-block">
+          Back to properties
+        </Link>
       </div>
     )
   }

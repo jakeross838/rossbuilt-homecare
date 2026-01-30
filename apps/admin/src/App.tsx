@@ -41,6 +41,8 @@ const InspectionExecutionPage = lazy(() => import('@/pages/inspector/inspection'
 const WorkOrdersPage = lazy(() => import('@/pages/work-orders'))
 const NewWorkOrderPage = lazy(() => import('@/pages/work-orders/new'))
 const WorkOrderDetailPage = lazy(() => import('@/pages/work-orders/[id]'))
+const ServiceRequestsPage = lazy(() => import('@/pages/service-requests'))
+const ServiceRequestDetailPage = lazy(() => import('@/pages/service-requests/[id]'))
 const VendorsPage = lazy(() => import('@/pages/vendors'))
 const NewVendorPage = lazy(() => import('@/pages/vendors/new'))
 const VendorDetailPage = lazy(() => import('@/pages/vendors/[id]'))
@@ -147,6 +149,10 @@ function App() {
                 <Route path="/work-orders" element={<Suspense fallback={<PageLoader />}><WorkOrdersPage /></Suspense>} />
                 <Route path="/work-orders/new" element={<Suspense fallback={<PageLoader />}><NewWorkOrderPage /></Suspense>} />
                 <Route path="/work-orders/:id" element={<Suspense fallback={<PageLoader />}><WorkOrderDetailPage /></Suspense>} />
+
+                {/* Service Requests (client-submitted) */}
+                <Route path="/service-requests" element={<Suspense fallback={<PageLoader />}><ServiceRequestsPage /></Suspense>} />
+                <Route path="/service-requests/:id" element={<Suspense fallback={<PageLoader />}><ServiceRequestDetailPage /></Suspense>} />
 
                 {/* Billing */}
                 <Route path="/billing" element={<Suspense fallback={<PageLoader />}><BillingDashboard /></Suspense>} />

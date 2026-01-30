@@ -395,3 +395,325 @@ export function useUploadServiceRequestPhoto() {
     },
   })
 }
+
+// ============================================================================
+// ADMIN HOOKS - For admin view of all service requests
+// ============================================================================
+
+export interface AdminServiceRequest {
+  id: string
+  request_number: string
+  request_type: string
+  title: string
+  description: string | null
+  priority: string
+  status: string
+  photos: string[]
+  resolution: string | null
+  resolved_at: string | null
+  acknowledged_at: string | null
+  work_order_id: string | null
+  created_at: string
+  updated_at: string
+  property: {
+    id: string
+    name: string
+    address_line1: string | null
+  }
+  client: {
+    id: string
+    first_name: string | null
+    last_name: string | null
+    email: string | null
+  }
+}
+
+interface AdminServiceRequestFilters {
+  status?: string[]
+  priority?: string[]
+  propertyId?: string
+  clientId?: string
+  search?: string
+}
+
+/**
+ * Hook to fetch ALL service requests for admin view
+ * Shows requests from all clients across the organization
+ */
+export function useAdminServiceRequests(filters?: AdminServiceRequestFilters) {
+  const profile = useAuthStore((state) => state.profile)
+
+  return useQuery({
+    queryKey: serviceRequestKeys.list({
+      status: filters?.status?.join(','),
+      propertyId: filters?.propertyId
+    }),
+    queryFn: async (): Promise<AdminServiceRequest[]> => {
+      if (!profile?.organization_id) {
+        throw new Error('User not authenticated')
+      }
+
+      let query = supabase
+        .from('service_requests')
+        .select(`
+          id,
+          request_number,
+          request_type,
+          title,
+          description,
+          priority,
+          status,
+          photos,
+          resolution,
+          resolved_at,
+          acknowledged_at,
+          work_order_id,
+          created_at,
+          updated_at,
+          property:properties (
+            id,
+            name,
+            address_line1
+          ),
+          client:clients (
+            id,
+            first_name,
+            last_name,
+            email
+          )
+        `)
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false })
+
+      // Apply filters
+      if (filters?.status?.length) {
+        query = query.in('status', filters.status)
+      }
+      if (filters?.priority?.length) {
+        query = query.in('priority', filters.priority)
+      }
+      if (filters?.propertyId) {
+        query = query.eq('property_id', filters.propertyId)
+      }
+      if (filters?.clientId) {
+        query = query.eq('client_id', filters.clientId)
+      }
+      if (filters?.search) {
+        query = query.or(
+          `title.ilike.%${filters.search}%,request_number.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
+        )
+      }
+
+      const { data, error } = await query
+
+      if (error) throw error
+
+      return (data || []).map((sr) => ({
+        id: sr.id,
+        request_number: sr.request_number,
+        request_type: sr.request_type,
+        title: sr.title,
+        description: sr.description,
+        priority: sr.priority,
+        status: sr.status,
+        photos: sr.photos || [],
+        resolution: sr.resolution,
+        resolved_at: sr.resolved_at,
+        acknowledged_at: sr.acknowledged_at,
+        work_order_id: sr.work_order_id,
+        created_at: sr.created_at,
+        updated_at: sr.updated_at,
+        property: sr.property as AdminServiceRequest['property'],
+        client: sr.client as AdminServiceRequest['client'],
+      }))
+    },
+    enabled: !!profile?.organization_id && profile?.role !== 'client',
+    staleTime: STALE_STANDARD,
+  })
+}
+
+/**
+ * Hook to fetch single service request for admin view
+ */
+export function useAdminServiceRequest(requestId: string | undefined) {
+  const profile = useAuthStore((state) => state.profile)
+
+  return useQuery({
+    queryKey: serviceRequestKeys.detail(requestId || ''),
+    queryFn: async (): Promise<AdminServiceRequest & { comments: PortalServiceRequestComment[] }> => {
+      if (!requestId) throw new Error('Request ID required')
+      if (!profile?.organization_id) throw new Error('User not authenticated')
+
+      const { data, error } = await supabase
+        .from('service_requests')
+        .select(`
+          id,
+          request_number,
+          request_type,
+          title,
+          description,
+          priority,
+          status,
+          photos,
+          resolution,
+          resolved_at,
+          acknowledged_at,
+          work_order_id,
+          created_at,
+          updated_at,
+          property:properties (
+            id,
+            name,
+            address_line1
+          ),
+          client:clients (
+            id,
+            first_name,
+            last_name,
+            email
+          )
+        `)
+        .eq('id', requestId)
+        .eq('organization_id', profile.organization_id)
+        .single()
+
+      if (error) throw error
+
+      // Fetch comments
+      const { data: comments } = await supabase
+        .from('service_request_comments')
+        .select(`
+          id,
+          comment,
+          is_internal,
+          created_at,
+          user:users (
+            first_name,
+            last_name,
+            role
+          )
+        `)
+        .eq('service_request_id', requestId)
+        .order('created_at', { ascending: true })
+
+      return {
+        id: data.id,
+        request_number: data.request_number,
+        request_type: data.request_type,
+        title: data.title,
+        description: data.description,
+        priority: data.priority,
+        status: data.status,
+        photos: data.photos || [],
+        resolution: data.resolution,
+        resolved_at: data.resolved_at,
+        acknowledged_at: data.acknowledged_at,
+        work_order_id: data.work_order_id,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+        property: data.property as AdminServiceRequest['property'],
+        client: data.client as AdminServiceRequest['client'],
+        comments: (comments || []).map((c) => ({
+          id: c.id,
+          comment: c.comment,
+          created_at: c.created_at,
+          user: c.user as { first_name: string; last_name: string; role: string } | null,
+        })),
+      }
+    },
+    enabled: !!requestId && !!profile?.organization_id && profile?.role !== 'client',
+    staleTime: STALE_STANDARD,
+  })
+}
+
+/**
+ * Hook to update service request status (admin only)
+ */
+export function useUpdateServiceRequestStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      status,
+      resolution,
+    }: {
+      id: string
+      status: string
+      resolution?: string
+    }) => {
+      const updates: Record<string, unknown> = {
+        status,
+        updated_at: new Date().toISOString(),
+      }
+
+      if (status === 'acknowledged' && !updates.acknowledged_at) {
+        updates.acknowledged_at = new Date().toISOString()
+      }
+      if (status === 'completed' && resolution) {
+        updates.resolution = resolution
+        updates.resolved_at = new Date().toISOString()
+      }
+
+      const { data, error } = await supabase
+        .from('service_requests')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: (_, variables) => {
+      // Invalidate both admin and portal queries
+      queryClient.invalidateQueries({ queryKey: serviceRequestKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: serviceRequestKeys.detail(variables.id) })
+      queryClient.invalidateQueries({ queryKey: portalKeys.requests() })
+      queryClient.invalidateQueries({ queryKey: portalKeys.request(variables.id) })
+      queryClient.invalidateQueries({ queryKey: portalKeys.dashboard() })
+    },
+  })
+}
+
+/**
+ * Hook to add internal comment to service request (admin only)
+ */
+export function useAddAdminComment() {
+  const queryClient = useQueryClient()
+  const user = useAuthStore((state) => state.user)
+
+  return useMutation({
+    mutationFn: async ({
+      service_request_id,
+      comment,
+      is_internal = false,
+    }: {
+      service_request_id: string
+      comment: string
+      is_internal?: boolean
+    }) => {
+      const { data, error } = await supabase
+        .from('service_request_comments')
+        .insert({
+          service_request_id,
+          user_id: user?.id,
+          comment,
+          is_internal,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: serviceRequestKeys.detail(variables.service_request_id),
+      })
+      queryClient.invalidateQueries({
+        queryKey: portalKeys.request(variables.service_request_id),
+      })
+    },
+  })
+}
