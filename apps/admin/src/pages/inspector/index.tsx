@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { format, addDays, subDays } from 'date-fns'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, Calendar, RefreshCw, Loader2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScheduleList } from '@/components/inspector/schedule-list'
 import { SyncStatus } from '@/components/inspector/sync-status'
 import { useOffline } from '@/hooks/use-offline'
 import { useInspectorUpcoming } from '@/hooks/use-inspector-schedule'
+import { useInspectorRealtimeSync } from '@/hooks/use-realtime-sync'
 import { registerPWA, updateServiceWorker } from '@/lib/pwa'
 import { useAuthStore } from '@/stores/auth-store'
 
@@ -17,8 +18,11 @@ export default function InspectorDashboard() {
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), 'yyyy-MM-dd')
   )
-  const { isOnline, isSyncing, syncNow } = useOffline()
+  useOffline() // Initialize offline detection
   const { data: upcoming } = useInspectorUpcoming()
+
+  // Enable real-time sync for inspector data
+  useInspectorRealtimeSync()
 
   // PWA update state
   const [needsUpdate, setNeedsUpdate] = useState(false)
@@ -88,21 +92,7 @@ export default function InspectorDashboard() {
             <h1 className="text-xl font-semibold">Inspector</h1>
             <p className="text-sm text-white/80">Ross Built Home Care</p>
           </div>
-          <div className="flex items-center gap-2">
-            {isOnline && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/20"
-                onClick={() => syncNow()}
-                disabled={isSyncing}
-              >
-                <RefreshCw
-                  className={`h-5 w-5 ${isSyncing ? 'animate-spin' : ''}`}
-                />
-              </Button>
-            )}
-          </div>
+          <SyncStatus compact />
         </div>
       </header>
 
@@ -138,7 +128,7 @@ export default function InspectorDashboard() {
 
       {/* Bottom Sync Status */}
       <div className="border-t p-4">
-        <SyncStatus compact />
+        <SyncStatus />
 
         {/* Upcoming count */}
         {upcoming && upcoming.length > 0 && (

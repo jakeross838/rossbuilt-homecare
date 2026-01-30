@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { Play, CheckCircle2, Loader2 } from 'lucide-react'
+import { Play, CheckCircle2, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { InspectionHeader } from '@/components/inspector/inspection-header'
 import { InspectionChecklist } from '@/components/inspector/inspection-checklist'
@@ -10,7 +10,9 @@ import {
   useStartInspection,
   calculateInspectionProgress,
 } from '@/hooks/use-inspection-execution'
+import { useInspectorRealtimeSync } from '@/hooks/use-realtime-sync'
 import { useAuthStore } from '@/stores/auth-store'
+import { useToast } from '@/hooks/use-toast'
 
 export default function InspectionPage() {
   const { id } = useParams<{ id: string }>()
@@ -19,7 +21,11 @@ export default function InspectionPage() {
   const { user, isLoading: authLoading } = useAuthStore()
   const { data: inspection, isLoading, error } = useInspectorInspection(id)
   const startInspection = useStartInspection()
+  const { toast } = useToast()
   const [showCompletion, setShowCompletion] = useState(false)
+
+  // Enable real-time sync for inspector data
+  useInspectorRealtimeSync()
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -63,7 +69,20 @@ export default function InspectionPage() {
   const progress = calculateInspectionProgress(inspection)
 
   const handleStart = async () => {
-    await startInspection.mutateAsync(inspection.id)
+    try {
+      await startInspection.mutateAsync(inspection.id)
+      toast({
+        title: 'Inspection started',
+        description: 'You can now record findings.',
+      })
+    } catch (err) {
+      console.error('[InspectionPage] Failed to start inspection:', err)
+      toast({
+        title: 'Failed to start inspection',
+        description: err instanceof Error ? err.message : 'An error occurred',
+        variant: 'destructive',
+      })
+    }
   }
 
   return (
@@ -114,6 +133,25 @@ export default function InspectionPage() {
                   <p className="text-sm text-yellow-700">
                     {inspection.property.special_instructions}
                   </p>
+                </div>
+              )}
+
+              {/* Error message */}
+              {startInspection.error && (
+                <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200">
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-red-800">
+                        Failed to start inspection
+                      </p>
+                      <p className="text-sm text-red-700">
+                        {startInspection.error instanceof Error
+                          ? startInspection.error.message
+                          : 'An error occurred. Please try again.'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
 

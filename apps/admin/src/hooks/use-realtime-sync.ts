@@ -39,18 +39,28 @@ const queryKeyMap: Record<TableName, string[][]> = {
   clients: [['clients'], ['portal', 'dashboard']],
   properties: [['properties'], ['portal', 'properties'], ['portal', 'dashboard']],
   equipment: [['equipment'], ['portal', 'properties']],
-  work_orders: [['work-orders'], ['portal', 'properties'], ['portal', 'dashboard']], // Fixed: was 'workOrders'
+  work_orders: [
+    ['work-orders'],
+    ['portal', 'properties'],
+    ['portal', 'dashboard'],
+    ['dashboard'],
+    ['work-order-metrics'],
+  ],
   inspections: [
     ['inspections'],
+    ['inspection'],
     ['calendar-inspections'],
     ['property-inspections'],
     ['inspector-workload'],
     ['inspector-schedule'],
     ['inspector-inspection'],
     ['inspector-upcoming'],
+    ['inspectors'],
     ['inspection-metrics'],
     ['portal', 'inspections'],
+    ['portal', 'inspection'],
     ['portal', 'dashboard'],
+    ['dashboard'],
   ],
   invoices: [['invoices'], ['portal', 'invoices'], ['portal', 'dashboard']],
   service_requests: [['service-requests'], ['portal', 'requests'], ['portal', 'dashboard']], // Fixed: was 'serviceRequests'
@@ -207,6 +217,21 @@ export function usePortalRealtimeSync() {
     'programs',
     'notifications',
     'user_property_assignments',
+    'recommendations',
+  ], [])
+
+  return useRealtimeSync({ tables })
+}
+
+/**
+ * Hook for inspector portal real-time sync
+ * Subscribes to inspection-related tables for mobile inspector app
+ */
+export function useInspectorRealtimeSync() {
+  const tables = useMemo<TableName[]>(() => [
+    'inspections',
+    'work_orders',
+    'properties',
     'recommendations',
   ], [])
 
