@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { DashboardSummary } from '@/components/portal/dashboard-summary'
 import { PropertyCard } from '@/components/portal/property-card'
 import { ServiceRequestForm } from '@/components/portal/service-request-form'
+import { ErrorState } from '@/components/shared'
 import { usePortalDashboard, usePortalProperties } from '@/hooks/use-portal-dashboard'
 import { usePortalInspections } from '@/hooks/use-portal-inspections'
 import { useServiceRequests } from '@/hooks/use-service-requests'
@@ -14,11 +15,33 @@ import { usePortalAuth } from '@/hooks/use-portal-auth'
 
 export default function PortalDashboardPage() {
   const { profile } = usePortalAuth()
-  const { data: summary, isLoading: summaryLoading } = usePortalDashboard()
-  const { data: properties, isLoading: propertiesLoading } = usePortalProperties()
+  const { data: summary, isLoading: summaryLoading, error: summaryError, refetch: refetchSummary } = usePortalDashboard()
+  const { data: properties, isLoading: propertiesLoading, error: propertiesError, refetch: refetchProperties } = usePortalProperties()
   const { data: inspections } = usePortalInspections({ limit: 3 })
   const { data: requests } = useServiceRequests()
   const [showRequestForm, setShowRequestForm] = useState(false)
+
+  // Error state - show if main dashboard data fails to load
+  if (summaryError) {
+    return (
+      <ErrorState
+        title="Failed to load dashboard"
+        error={summaryError}
+        onRetry={() => refetchSummary()}
+      />
+    )
+  }
+
+  // Error state for properties
+  if (propertiesError) {
+    return (
+      <ErrorState
+        title="Failed to load properties"
+        error={propertiesError}
+        onRetry={() => refetchProperties()}
+      />
+    )
+  }
 
   // Get upcoming inspections
   const upcomingInspections = inspections?.filter(
