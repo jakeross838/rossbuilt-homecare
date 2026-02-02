@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { InvoiceLineItemRow } from './invoice-line-item-row'
 import { useClients } from '@/hooks/use-clients'
-import { useCreateInvoice, useClientBillableItems } from '@/hooks/use-invoices'
+import { useCreateInvoice, useClientBillableItems, useMarkInvoiceSent } from '@/hooks/use-invoices'
 import { useToast } from '@/hooks/use-toast'
 import { createInvoiceSchema, type CreateInvoiceFormData } from '@/lib/validations/billing'
 import {
@@ -56,6 +56,7 @@ export function CreateInvoiceDialog({
   const { toast } = useToast()
   const { data: clients } = useClients()
   const createInvoice = useCreateInvoice()
+  const markSent = useMarkInvoiceSent()
 
   const [lineItems, setLineItems] = useState<LineItemData[]>([
     { description: '', quantity: 1, unit_price: 0 },
@@ -64,6 +65,7 @@ export function CreateInvoiceDialog({
   const [discountAmount, setDiscountAmount] = useState(0)
   const [markupPercent, setMarkupPercent] = useState(VENDOR_MARKUP * 100)
   const [applyMarkup, setApplyMarkup] = useState(false)
+  const [publishToPortal, setPublishToPortal] = useState(true) // Default to publish
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -206,16 +208,23 @@ export function CreateInvoiceDialog({
         })
       }
 
-      await createInvoice.mutateAsync({
+      const invoice = await createInvoice.mutateAsync({
         ...data,
         tax_rate: taxRate,
         discount_amount: discountAmount,
         line_items: allLineItems,
       })
 
+      // If publish to portal is checked, mark as sent immediately
+      if (publishToPortal && invoice?.id) {
+        await markSent.mutateAsync(invoice.id)
+      }
+
       toast({
         title: 'Invoice Created',
-        description: 'Invoice has been created as a draft',
+        description: publishToPortal
+          ? 'Invoice created and published to client portal'
+          : 'Invoice has been created as a draft',
       })
 
       reset()
@@ -224,6 +233,7 @@ export function CreateInvoiceDialog({
       setDiscountAmount(0)
       setMarkupPercent(VENDOR_MARKUP * 100)
       setApplyMarkup(false)
+      setPublishToPortal(true)
       onOpenChange(false)
     } catch {
       toast({
@@ -489,6 +499,18 @@ export function CreateInvoiceDialog({
             </div>
           </div>
 
+          {/* Publish Option */}
+          <div className="flex items-center gap-2 py-2 border-t">
+            <Checkbox
+              id="publish-to-portal"
+              checked={publishToPortal}
+              onCheckedChange={(checked) => setPublishToPortal(checked === true)}
+            />
+            <label htmlFor="publish-to-portal" className="text-sm cursor-pointer">
+              Publish to client portal immediately
+            </label>
+          </div>
+
           <DialogFooter>
             <Button
               type="button"
@@ -497,11 +519,11 @@ export function CreateInvoiceDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={createInvoice.isPending}>
-              {createInvoice.isPending && (
+            <Button type="submit" disabled={createInvoice.isPending || markSent.isPending}>
+              {(createInvoice.isPending || markSent.isPending) && (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               )}
-              Create Draft
+              {publishToPortal ? 'Create & Publish' : 'Create Draft'}
             </Button>
           </DialogFooter>
         </form>

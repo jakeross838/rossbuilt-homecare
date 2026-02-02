@@ -592,6 +592,37 @@ export function useClientBillableItems(clientId: string | undefined) {
 }
 
 /**
+ * Hook to mark invoice as sent (publish to portal without sending email)
+ */
+export function useMarkInvoiceSent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('invoices')
+        .update({
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .eq('status', 'draft') // Only update from draft status
+        .select()
+        .single()
+
+      if (error) throw error
+      return data as Invoice
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.detail(data.id) })
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.summary() })
+    },
+  })
+}
+
+/**
  * Hook to mark invoice as viewed
  */
 export function useMarkInvoiceViewed() {

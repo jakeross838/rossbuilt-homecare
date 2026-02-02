@@ -17,7 +17,7 @@ import { InvoiceStatusBadge } from '@/components/billing/invoice-status-badge'
 import { RecordPaymentDialog } from '@/components/billing/record-payment-dialog'
 import { SendInvoiceDialog } from '@/components/billing/send-invoice-dialog'
 import { PaymentLinkButton } from '@/components/billing/payment-link-button'
-import { useInvoice, useVoidInvoice, useDeleteInvoice } from '@/hooks/use-invoices'
+import { useInvoice, useVoidInvoice, useDeleteInvoice, useMarkInvoiceSent } from '@/hooks/use-invoices'
 import { useInvoicePayments } from '@/hooks/use-payments'
 import { useToast } from '@/hooks/use-toast'
 import { PAYMENT_METHODS } from '@/lib/constants/billing'
@@ -37,6 +37,8 @@ import {
   User,
   Calendar,
   Clock,
+  Globe,
+  Loader2,
 } from 'lucide-react'
 
 export default function InvoiceDetailPage() {
@@ -48,6 +50,7 @@ export default function InvoiceDetailPage() {
   const { data: payments } = useInvoicePayments(id!)
   const voidInvoice = useVoidInvoice()
   const deleteInvoice = useDeleteInvoice()
+  const markSent = useMarkInvoiceSent()
 
   const [showPayment, setShowPayment] = useState(false)
   const [showSend, setShowSend] = useState(false)
@@ -105,6 +108,22 @@ export default function InvoiceDetailPage() {
     }
   }
 
+  const handlePublishToPortal = async () => {
+    try {
+      await markSent.mutateAsync(invoice.id)
+      toast({
+        title: 'Invoice Published',
+        description: 'Invoice is now visible in the client portal',
+      })
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to publish invoice',
+        variant: 'destructive',
+      })
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -125,9 +144,21 @@ export default function InvoiceDetailPage() {
         <div className="flex items-center gap-2">
           {invoice.status === 'draft' && (
             <>
+              <Button
+                variant="outline"
+                onClick={handlePublishToPortal}
+                disabled={markSent.isPending}
+              >
+                {markSent.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Globe className="h-4 w-4 mr-2" />
+                )}
+                Publish to Portal
+              </Button>
               <Button variant="outline" onClick={() => setShowSend(true)}>
                 <Send className="h-4 w-4 mr-2" />
-                Send
+                Send Email
               </Button>
               <Button
                 variant="outline"
