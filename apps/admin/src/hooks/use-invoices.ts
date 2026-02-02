@@ -314,9 +314,13 @@ export function useCreateInvoice() {
 
       return invoice as Invoice
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: invoiceKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: invoiceKeys.summary() })
+    onSuccess: (invoice) => {
+      // Invalidate all invoice-related queries to ensure UI updates everywhere
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.all })
+      // Also invalidate client-billable-items so work orders don't show as unbilled
+      if (invoice.client_id) {
+        queryClient.invalidateQueries({ queryKey: ['client-billable-items', invoice.client_id] })
+      }
     },
   })
 }
