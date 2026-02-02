@@ -606,6 +606,10 @@ Recent decisions affecting current work:
 - **v1.4-03-02**: usePortalProperties queries portal_property_summaries view instead of N+1 pattern
 - **v1.4-03-02**: portalKeys.propertySummaries() factory added for view-based caching
 - **v1.4-03-02**: usePortalDashboard fetches all 5 counts in parallel via Promise.all
+- **v1.4-04-01**: TableName type duplicated in use-base-query.ts for type-safety (avoids circular dependency)
+- **v1.4-04-01**: useBaseList and useBaseDetail default to 'realtime' cache strategy
+- **v1.4-04-01**: useOptimisticMutation always refetches on settled for server state consistency
+- **v1.4-04-01**: Only useUpdateClient migrated as proof-of-concept (full migration in v1.5)
 - **v1.4-04-02**: LoadingState uses existing LoadingSpinner component for consistency
 - **v1.4-04-02**: ErrorState accepts Error object or string for flexibility
 - **v1.4-04-02**: ActionButton uses forwardRef for form integration
