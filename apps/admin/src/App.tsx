@@ -84,11 +84,11 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <PermissionProvider>
-          <ErrorBoundary>
-          <BrowserRouter>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <PermissionProvider>
+            <BrowserRouter>
             <Routes>
               {/* Public routes */}
               <Route path="/login" element={<LoginPage />} />
@@ -191,10 +191,10 @@ function App() {
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </BrowserRouter>
-          </ErrorBoundary>
         </PermissionProvider>
       </AuthProvider>
     </QueryClientProvider>
+  </ErrorBoundary>
   )
 }
 
