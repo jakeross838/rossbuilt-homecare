@@ -480,7 +480,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 - [x] **Phase 1: Query Configuration** - Centralize all cache/stale time settings, app config ✅
 - [x] **Phase 2: Query Key Unification** - Single key registry, fix mismatches, align realtime ✅
 - [x] **Phase 3: Portal Optimization** - Database view, eliminate N+1 queries ✅
-- [ ] **Phase 4: Pattern Templates** - Base hooks, optimistic UI, button/data states
+- [x] **Phase 4: Pattern Templates** - Base hooks, optimistic UI, button/data states ✅
 - [ ] **Phase 5: Error Handling & Testing** - Error boundaries, fail-loud, verification
 
 ---
@@ -534,20 +534,23 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 - Properties page: 51+ queries → 2 queries
 - Dashboard: 5 sequential → 5 parallel
 
-### Phase 4: Pattern Templates
+### Phase 4: Pattern Templates ✅
 **Goal**: Base hook templates with optimistic UI, consistent button/data states
 **Depends on**: Phase 3
-**Status**: Not started
+**Status**: COMPLETE (2026-02-02)
 **Milestone**: v1.4 Sync Infrastructure Overhaul
 **Requirements**: SYNC-05, SYNC-06, SYNC-07, SYNC-08
-**Success Criteria** (what must be TRUE):
-  1. `use-base-query.ts` exists with automatic realtime subscription
-  2. `use-base-mutation.ts` exists with optimistic update + rollback
-  3. `ActionButton` component shows loading state during mutations
-  4. `LoadingState`, `ErrorState`, `EmptyState` components exist
-  5. All portal pages have loading/error/empty states
-**Research**: Unlikely (React Query patterns)
-**Plans**: TBD
+**Plans**: 3 plans executed in 2 waves
+- 04-01: Base Hook Templates (use-base-query.ts, use-base-mutation.ts) ✅
+- 04-02: UI State Components (LoadingState, ErrorState, ActionButton) ✅
+- 04-03: Portal Page Integration (5 pages updated with 3-state pattern) ✅
+
+**Key Files Created:**
+- apps/admin/src/hooks/use-base-query.ts - Base query with realtime subscription
+- apps/admin/src/hooks/use-base-mutation.ts - Optimistic mutation with rollback
+- apps/admin/src/components/shared/loading-state.tsx - Loading spinner component
+- apps/admin/src/components/shared/error-state.tsx - Error display with retry
+- apps/admin/src/components/shared/action-button.tsx - Button with pending state
 
 ### Phase 5: Error Handling & Testing
 **Goal**: Errors caught gracefully, two-tab sync verified working
@@ -571,5 +574,5 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 14
 | 1. Query Configuration | 2/2 | ✅ Complete | 2026-01-28 |
 | 2. Query Key Unification | 5/5 | ✅ Complete | 2026-01-28 |
 | 3. Portal Optimization | 2/2 | ✅ Complete | 2026-01-30 |
-| 4. Pattern Templates | 0/TBD | Not started | - |
+| 4. Pattern Templates | 3/3 | ✅ Complete | 2026-02-02 |
 | 5. Error Handling & Testing | 0/TBD | Not started | - |
