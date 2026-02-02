@@ -13,7 +13,7 @@ export const lineItemSchema = z.object({
 
 // Create invoice form schema (line_items validated separately in component)
 export const createInvoiceSchema = z.object({
-  client_id: z.string().uuid('Invalid client'),
+  client_id: z.string().min(1, 'Client is required'),
   invoice_type: z.enum(['subscription', 'service', 'mixed']),
   invoice_date: z.string().min(1, 'Invoice date is required'),
   due_date: z.string().min(1, 'Due date is required'),

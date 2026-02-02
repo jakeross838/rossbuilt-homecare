@@ -196,6 +196,7 @@ export const revenueMetricKeys = {
   summary: (period: string) => [...revenueMetricKeys.all, 'summary', period] as const,
   timeline: (period: string) => [...revenueMetricKeys.all, 'timeline', period] as const,
   bySource: (period: string) => [...revenueMetricKeys.all, 'by-source', period] as const,
+  byStatus: (period: string) => [...revenueMetricKeys.all, 'by-status', period] as const,
 }
 
 /**

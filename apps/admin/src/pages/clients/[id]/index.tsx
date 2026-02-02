@@ -37,6 +37,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { PageHeader } from '@/components/layout/page-header'
 import { useClient } from '@/hooks/use-clients'
 import { useUpdateProperty } from '@/hooks/use-properties'
+import { ClientBillingSection } from '../components/client-billing-section'
 
 export function ClientDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -358,6 +359,9 @@ export function ClientDetailPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Billing / Invoices */}
+        <ClientBillingSection clientId={id!} />
 
         {/* Remove Property Dialog */}
         <AlertDialog open={!!propertyToRemove} onOpenChange={(open) => !open && setPropertyToRemove(null)}>
