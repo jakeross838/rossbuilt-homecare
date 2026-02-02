@@ -5,15 +5,31 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Skeleton } from '@/components/ui/skeleton'
+import { LoadingState, ErrorState, EmptyState } from '@/components/shared'
 import { ServiceRequestForm } from '@/components/portal/service-request-form'
 import { useServiceRequests } from '@/hooks/use-service-requests'
 import { getServiceRequestStatus, formatRelativeDate } from '@/lib/helpers/portal'
 
 export default function PortalRequestsPage() {
-  const { data: requests, isLoading } = useServiceRequests()
+  const { data: requests, isLoading, error, refetch } = useServiceRequests()
   const [showForm, setShowForm] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>('open')
+
+  // Loading state
+  if (isLoading) {
+    return <LoadingState message="Loading service requests..." />
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <ErrorState
+        title="Failed to load service requests"
+        error={error}
+        onRetry={() => refetch()}
+      />
+    )
+  }
 
   const openRequests = requests?.filter((r) =>
     ['new', 'acknowledged', 'in_progress', 'scheduled'].includes(r.status)
@@ -51,13 +67,7 @@ export default function PortalRequestsPage() {
         </TabsList>
 
         <TabsContent value={statusFilter} className="space-y-4 mt-4">
-          {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-24" />
-              ))}
-            </div>
-          ) : filteredRequests.length > 0 ? (
+          {filteredRequests.length > 0 ? (
             filteredRequests.map((request) => {
               const status = getServiceRequestStatus(request.status)
               return (
@@ -88,14 +98,20 @@ export default function PortalRequestsPage() {
               )
             })
           ) : (
-            <div className="text-center py-12">
-              <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">
-                {statusFilter === 'open'
-                  ? 'No open requests'
-                  : 'No closed requests'}
-              </p>
-            </div>
+            <EmptyState
+              icon={MessageSquare}
+              title={statusFilter === 'open' ? 'No open requests' : 'No closed requests'}
+              description={
+                statusFilter === 'open'
+                  ? 'Submit a new service request to get started.'
+                  : 'Completed requests will appear here.'
+              }
+              action={
+                statusFilter === 'open'
+                  ? { label: 'New Request', onClick: () => setShowForm(true) }
+                  : undefined
+              }
+            />
           )}
         </TabsContent>
       </Tabs>
