@@ -46,7 +46,14 @@ export const DEFAULT_QUERY_OPTIONS = {
   queries: {
     staleTime: STALE_STANDARD,
     gcTime: CACHE_STANDARD,
-    retry: 1,
+    retry: 1,  // SYNC-10.4: Retry mechanism - one automatic retry on failure
     refetchOnWindowFocus: false,
   },
+  mutations: {
+    onError: (error: Error) => {
+      if (import.meta.env.DEV) {
+        console.error('[Query Error]', new Date().toISOString(), error.message)
+      }
+    }
+  }
 }
