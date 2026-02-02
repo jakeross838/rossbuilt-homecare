@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase, type Tables, type InsertTables, type UpdateTables } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
 import { clientKeys } from '@/lib/queries'
+import { useOptimisticMutation } from './use-base-mutation'
 
 type Client = Tables<'clients'>
 type ClientInsert = InsertTables<'clients'>
@@ -148,19 +149,22 @@ export function useCreateClient() {
 
 /**
  * Hook to update an existing client
+ *
+ * Uses useOptimisticMutation for optimistic UI updates (SYNC-06.4 proof-of-concept)
+ * - Immediately updates UI before server response
+ * - Rolls back on error
+ * - Always refetches to ensure consistency
  */
 export function useUpdateClient() {
-  const queryClient = useQueryClient()
   const profile = useAuthStore((state) => state.profile)
 
-  return useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: string
-      data: Omit<ClientUpdate, 'id' | 'organization_id' | 'created_at' | 'updated_at'>
-    }) => {
+  return useOptimisticMutation<
+    Client,
+    Error,
+    { id: string; data: Partial<Client> },
+    Client[]
+  >({
+    mutationFn: async ({ id, data }) => {
       if (!profile?.organization_id) {
         throw new Error('No organization found')
       }
@@ -182,11 +186,16 @@ export function useUpdateClient() {
 
       return client as Client
     },
-    onSuccess: (client) => {
-      // Invalidate specific client and list queries
-      queryClient.invalidateQueries({ queryKey: clientKeys.detail(client.id) })
-      queryClient.invalidateQueries({ queryKey: clientKeys.lists() })
+    queryKey: clientKeys.list({}),
+    updateCache: (oldData, { id, data }) => {
+      if (!oldData) return []
+      return oldData.map((client) =>
+        client.id === id ? { ...client, ...data } : client
+      )
     },
+    successMessage: 'Client updated successfully',
+    errorMessage: 'Failed to update client',
+    invalidateKeys: [clientKeys.lists()],
   })
 }
 
