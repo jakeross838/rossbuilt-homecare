@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Receipt, CheckCircle, XCircle } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { LoadingState, ErrorState, EmptyState } from '@/components/shared'
 import { InvoiceCard } from '@/components/portal/invoice-card'
 import { usePortalInvoices } from '@/hooks/use-portal-invoices'
 
 export default function PortalInvoicesPage() {
-  const { data: invoices, isLoading, refetch } = usePortalInvoices()
+  const { data: invoices, isLoading, error, refetch } = usePortalInvoices()
   const [searchParams, setSearchParams] = useSearchParams()
   const [paymentStatus, setPaymentStatus] = useState<'success' | 'cancelled' | null>(null)
 
@@ -35,6 +35,22 @@ export default function PortalInvoicesPage() {
       return () => clearTimeout(timeout)
     }
   }, [searchParams, refetch, setSearchParams])
+
+  // Loading state
+  if (isLoading) {
+    return <LoadingState message="Loading invoices..." />
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <ErrorState
+        title="Failed to load invoices"
+        error={error}
+        onRetry={() => refetch()}
+      />
+    )
+  }
 
   const unpaidInvoices = invoices?.filter((i) =>
     ['sent', 'viewed', 'partial', 'overdue'].includes(i.status)
@@ -83,43 +99,34 @@ export default function PortalInvoicesPage() {
         </TabsList>
 
         <TabsContent value="unpaid" className="mt-4">
-          {isLoading ? (
-            <div className="grid md:grid-cols-2 gap-4">
-              {[1, 2].map((i) => (
-                <Skeleton key={i} className="h-48" />
-              ))}
-            </div>
-          ) : unpaidInvoices.length > 0 ? (
+          {unpaidInvoices.length > 0 ? (
             <div className="grid md:grid-cols-2 gap-4">
               {unpaidInvoices.map((invoice) => (
                 <InvoiceCard key={invoice.id} invoice={invoice} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <Receipt className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No outstanding invoices</p>
-            </div>
+            <EmptyState
+              icon={Receipt}
+              title="No outstanding invoices"
+              description="All invoices have been paid. Thank you!"
+            />
           )}
         </TabsContent>
 
         <TabsContent value="paid" className="mt-4">
-          {isLoading ? (
-            <div className="grid md:grid-cols-2 gap-4">
-              {[1, 2].map((i) => (
-                <Skeleton key={i} className="h-48" />
-              ))}
-            </div>
-          ) : paidInvoices.length > 0 ? (
+          {paidInvoices.length > 0 ? (
             <div className="grid md:grid-cols-2 gap-4">
               {paidInvoices.map((invoice) => (
                 <InvoiceCard key={invoice.id} invoice={invoice} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No payment history</p>
-            </div>
+            <EmptyState
+              icon={Receipt}
+              title="No payment history"
+              description="Paid invoices will appear here once payments are processed."
+            />
           )}
         </TabsContent>
       </Tabs>
