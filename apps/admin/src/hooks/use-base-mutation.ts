@@ -77,15 +77,20 @@ export function useBaseMutation<TData, TError = Error, TVariables = void, TConte
       onSuccess?.(data, variables, context)
     },
     onError: (error, variables, context) => {
-      // Show error toast
+      // Log error with context (dev mode only)
+      if (import.meta.env.DEV) {
+        console.group(`[Mutation Error] ${new Date().toISOString()}`)
+        console.error('Error:', (error as Error).message)
+        console.log('Variables:', variables)
+        console.groupEnd()
+      }
+
+      // Show user-friendly toast
       toast({
         title: 'Error',
         description: errorMessage || (error as Error).message || 'An error occurred',
         variant: 'destructive',
       })
-
-      // Log error for debugging
-      console.error('[Mutation Error]', { error, variables })
 
       // Call custom onError
       onError?.(error, variables, context)
@@ -150,20 +155,26 @@ export function useOptimisticMutation<TData, TError = Error, TVariables = void, 
 
     // Step 2: Rollback on error (SYNC-06.2)
     onError: (error, variables, context) => {
+      // Log error with context (dev mode only)
+      if (import.meta.env.DEV) {
+        console.group(`[Mutation Error - Rolling back] ${new Date().toISOString()}`)
+        console.error('Error:', (error as Error).message)
+        console.log('Variables:', variables)
+        console.log('Rolling back to previous state')
+        console.groupEnd()
+      }
+
       // Rollback to previous state
       if (context?.previousData !== undefined) {
         queryClient.setQueryData(queryKey, context.previousData)
       }
 
-      // Show error toast
+      // Show user-friendly toast
       toast({
         title: 'Error',
         description: errorMessage || (error as Error).message || 'An error occurred',
         variant: 'destructive',
       })
-
-      // Log error
-      console.error('[Optimistic Mutation Error]', { error, variables })
 
       // Call custom onError
       onError?.(error, variables, context)
