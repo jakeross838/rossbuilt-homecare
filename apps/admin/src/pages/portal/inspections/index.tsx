@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
-import { Calendar, FileText, ChevronRight } from 'lucide-react'
+import { ClipboardCheck, FileText, ChevronRight } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { LoadingState, ErrorState, EmptyState } from '@/components/shared'
 import { usePortalInspections } from '@/hooks/use-portal-inspections'
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'success' | 'warning' | 'destructive' }> = {
@@ -20,10 +21,22 @@ const conditionColors: Record<string, string> = {
 }
 
 export default function PortalInspectionsPage() {
-  const { data: inspections, isLoading } = usePortalInspections({ limit: 50 })
+  const { data: inspections, isLoading, error, refetch } = usePortalInspections({ limit: 50 })
 
+  // Loading state
   if (isLoading) {
-    return <div className="p-4 text-center">Loading inspections...</div>
+    return <LoadingState message="Loading inspections..." />
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <ErrorState
+        title="Failed to load inspections"
+        error={error}
+        onRetry={() => refetch()}
+      />
+    )
   }
 
   return (
@@ -36,15 +49,11 @@ export default function PortalInspectionsPage() {
       </div>
 
       {!inspections?.length ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No inspections yet</h3>
-            <p className="text-muted-foreground">
-              Inspections will appear here once scheduled
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={ClipboardCheck}
+          title="No inspections yet"
+          description="Inspections will appear here once scheduled for your properties."
+        />
       ) : (
         <div className="space-y-4">
           {inspections.map((inspection) => {
