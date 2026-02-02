@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Inspections + Reports must work flawlessly — beautiful PDF reports that make clients feel their $500K+ home is being cared for by experts.
-**Current focus:** Phase 4 — Pattern Templates (v1.4)
+**Current focus:** v1.4 COMPLETE — Sync Infrastructure Overhaul
 
 ## Current Position
 
-Phase: 4 of 5 (Pattern Templates) - **v1.4 PHASE 4 COMPLETE**
-Plan: 3 of 3 complete
-Status: Phase complete - Ready for Phase 5
-Last activity: 2026-02-02 - Completed 04-03-PLAN.md (Page Pattern Standardization)
+Phase: 5 of 5 (Error Handling & Testing) - **v1.4 MILESTONE COMPLETE**
+Plan: 1 of 1 complete
+Status: Milestone complete - v1.4 Sync Infrastructure Overhaul finished
+Last activity: 2026-02-02 - Completed 05-01-PLAN.md (Error Handling & Testing)
 
-Progress: ████████░░ 80% (v1.4 Phases 1-4 complete, Phase 5 pending)
+Progress: ██████████ 100% (v1.4 ALL PHASES COMPLETE)
 
 ### Milestone v1.4: Sync Infrastructure Overhaul
 
@@ -24,7 +24,7 @@ Progress: ████████░░ 80% (v1.4 Phases 1-4 complete, Phase 5 
 | 2     | ✅ Complete | Query Key Unification |
 | 3     | ✅ Complete | Portal Optimization |
 | 4     | ✅ Complete | Pattern Templates |
-| 5     | ⏳ Pending | Error Handling & Testing |
+| 5     | ✅ Complete | Error Handling & Testing |
 
 ### Phase 1 Plans (Query Configuration) ✅
 
@@ -74,6 +74,14 @@ Progress: ████████░░ 80% (v1.4 Phases 1-4 complete, Phase 5 
 - Wave 2: 04-03 (depends on 04-01, 04-02) - Complete
 
 **Verification:** PASSED - All 5 portal pages standardized (see 04-03-SUMMARY.md)
+
+### Phase 5 Plans (Error Handling & Testing) ✅
+
+| Plan | Name | Wave | Status |
+|------|------|------|--------|
+| 05-01 | Error Handling & Testing | 1 | **Complete** |
+
+**Verification:** PASSED - ErrorBoundary wraps QueryClientProvider, error logging enhanced, two-tab sync verified (see 05-01-SUMMARY.md)
 
 ---
 
@@ -640,10 +648,37 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 04-03-PLAN.md (Page Pattern Standardization)
+Stopped at: Completed 05-01-PLAN.md (Error Handling & Testing) - v1.4 MILESTONE COMPLETE
 Resume file: None
 
 ### Recent Activity (2026-02-02)
+
+**v1.4 Phase 5 Plan 05-01: Error Handling & Testing Completed:**
+- Moved ErrorBoundary to wrap QueryClientProvider (SYNC-10.1)
+- Added global query error handler with dev-mode logging
+- Enhanced mutation error logging with console.group context
+- Fixed React Query type imports for MutationOptions
+- Human verified: console clean, ErrorBoundary catches errors, logging works
+
+**Commits:**
+- 8861556: fix(05-01): move ErrorBoundary to wrap QueryClientProvider (SYNC-10.1)
+- c03efdb: feat(05-01): add global query error handler to config
+- e7cded8: feat(05-01): enhance mutation error logging with context
+- 191f91c: fix(05-01): fix React Query type imports for MutationOptions
+
+**Build Status:**
+- TypeScript: Compiles with no errors
+- Human verification: PASSED (ErrorBoundary, logging, console cleanliness)
+
+**v1.4 MILESTONE COMPLETE:**
+All 5 phases of the Sync Infrastructure Overhaul milestone are now complete:
+- Phase 1: Query Configuration
+- Phase 2: Query Key Unification
+- Phase 3: Portal Optimization
+- Phase 4: Pattern Templates
+- Phase 5: Error Handling & Testing
+
+**Previous Session:**
 
 **v1.4 Phase 4 Plan 04-03: Page Pattern Standardization Completed:**
 - Updated portal properties page with LoadingState, ErrorState, EmptyState
