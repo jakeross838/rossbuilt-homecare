@@ -1,9 +1,26 @@
+import { Home } from 'lucide-react'
 import { PropertyCard } from '@/components/portal/property-card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { LoadingState, ErrorState, EmptyState } from '@/components/shared'
 import { usePortalProperties } from '@/hooks/use-portal-dashboard'
 
 export default function PortalPropertiesPage() {
-  const { data: properties, isLoading } = usePortalProperties()
+  const { data: properties, isLoading, error, refetch } = usePortalProperties()
+
+  // Loading state
+  if (isLoading) {
+    return <LoadingState message="Loading your properties..." />
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <ErrorState
+        title="Failed to load properties"
+        error={error}
+        onRetry={() => refetch()}
+      />
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -14,21 +31,18 @@ export default function PortalPropertiesPage() {
         </p>
       </div>
 
-      {isLoading ? (
-        <div className="grid md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-64" />
-          ))}
-        </div>
-      ) : properties?.length ? (
+      {/* Empty state */}
+      {!properties?.length ? (
+        <EmptyState
+          icon={Home}
+          title="No properties found"
+          description="No properties have been assigned to your account yet. Contact your property manager to get started."
+        />
+      ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {properties.map((property) => (
             <PropertyCard key={property.id} property={property} />
           ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No properties found</p>
         </div>
       )}
     </div>
