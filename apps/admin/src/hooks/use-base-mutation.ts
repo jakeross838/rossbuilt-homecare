@@ -16,11 +16,14 @@
  *   })
  */
 
-import { useMutation, useQueryClient, QueryKey, MutationOptions } from '@tanstack/react-query'
+import { useMutation, useQueryClient, type UseMutationOptions } from '@tanstack/react-query'
+
+// QueryKey type - array of unknown values
+type QueryKey = readonly unknown[]
 import { useToast } from '@/hooks/use-toast'
 
 interface BaseMutationOptions<TData, TError, TVariables, TContext>
-  extends Omit<MutationOptions<TData, TError, TVariables, TContext>, 'onSuccess' | 'onError'> {
+  extends Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'onSuccess' | 'onError'> {
   /** Message to show in toast on success */
   successMessage?: string
   /** Message to show in toast on error (falls back to error message) */
