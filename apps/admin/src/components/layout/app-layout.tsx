@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react'
 import { Sidebar } from './sidebar'
 import { Header } from './header'
 import { Toaster } from '@/components/ui/toaster'
+import { PageErrorBoundary } from '@/components/shared/error-boundary'
 import { useAuthStore } from '@/stores/auth-store'
 import { useGlobalRealtimeSync } from '@/hooks/use-realtime-sync'
 import { usePermissions } from '@/hooks/use-permissions'
@@ -77,7 +78,9 @@ export function AppLayout() {
           role="main"
           aria-label="Main content"
         >
-          <Outlet />
+          <PageErrorBoundary>
+            <Outlet />
+          </PageErrorBoundary>
         </main>
       </div>
 

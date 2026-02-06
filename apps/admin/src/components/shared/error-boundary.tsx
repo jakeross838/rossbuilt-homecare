@@ -138,7 +138,7 @@ export class PageErrorBoundary extends Component<
           <p className="text-muted-foreground mb-6 max-w-md">
             This page encountered an error and could not be displayed.
           </p>
-          {import.meta.env.DEV && this.state.error && (
+          {this.state.error && (
             <div className="p-4 bg-muted rounded-md mb-6 max-w-lg">
               <p className="text-sm font-mono text-destructive break-all">
                 {this.state.error.message}
