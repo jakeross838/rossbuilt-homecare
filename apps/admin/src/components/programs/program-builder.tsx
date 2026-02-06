@@ -402,7 +402,12 @@ export function ProgramBuilder({
                     'flex items-start gap-3 rounded-md border p-4 cursor-pointer hover:bg-muted/50 transition-colors',
                     isChecked && 'border-primary bg-primary/5'
                   )}
-                  onClick={() => setValue(fieldName, !isChecked as never)}
+                  onClick={(e) => {
+                    // Only toggle if click was NOT from Radix's internal BubbleInput
+                    // (which dispatches synthetic click events that bubble up and cause infinite loops)
+                    if (e.target instanceof HTMLInputElement) return
+                    setValue(fieldName, !isChecked as never)
+                  }}
                 >
                   <Checkbox
                     id={addon.value}
@@ -413,10 +418,7 @@ export function ProgramBuilder({
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <Label
-                        htmlFor={addon.value}
-                        className="font-medium cursor-pointer"
-                      >
+                      <Label className="font-medium cursor-pointer">
                         {addon.label}
                       </Label>
                       <Badge variant="outline">+${price}/mo</Badge>
