@@ -9,50 +9,72 @@ import { PermissionProvider } from '@/components/providers/permission-provider'
 import { ErrorBoundary, PageErrorBoundary } from '@/components/shared/error-boundary'
 import { AppLayout } from '@/components/layout/app-layout'
 
+// Retry wrapper for lazy imports - handles chunk load failures after deployments
+function lazyRetry(importFn: () => Promise<{ default: React.ComponentType }>) {
+  return lazy(() =>
+    importFn().catch(() => {
+      // Chunk failed to load (likely a new deployment with new chunk hashes)
+      // Reload once to get fresh assets
+      const hasReloaded = sessionStorage.getItem('chunk-reload')
+      if (!hasReloaded) {
+        sessionStorage.setItem('chunk-reload', '1')
+        window.location.reload()
+        return new Promise(() => {}) // never resolves, page is reloading
+      }
+      sessionStorage.removeItem('chunk-reload')
+      // If reload didn't help, show error
+      return importFn()
+    })
+  )
+}
+
+// Clear the reload flag on successful page load
+sessionStorage.removeItem('chunk-reload')
+
 // Eagerly loaded pages (critical path)
 import LoginPage from '@/pages/auth/login'
 import DashboardPage from '@/pages/dashboard'
 
-// Lazy-loaded pages (code splitting)
-const ClientsPage = lazy(() => import('@/pages/clients'))
-const NewClientPage = lazy(() => import('@/pages/clients/new'))
-const ClientDetailPage = lazy(() => import('@/pages/clients/[id]'))
-const EditClientPage = lazy(() => import('@/pages/clients/[id]/edit'))
-const PropertiesPage = lazy(() => import('@/pages/properties'))
-const PropertiesOverviewPage = lazy(() => import('@/pages/properties/overview'))
-const NewPropertyPage = lazy(() => import('@/pages/properties/new'))
-const PropertyDetailPage = lazy(() => import('@/pages/properties/[id]'))
-const EditPropertyPage = lazy(() => import('@/pages/properties/[id]/edit'))
-const SettingsPage = lazy(() => import('@/pages/settings'))
-const OrganizationSettingsPage = lazy(() => import('@/pages/settings/organization'))
-const ProfileSettingsPage = lazy(() => import('@/pages/settings/profile'))
-const PricingSettingsPage = lazy(() => import('@/pages/settings/pricing'))
-const TemplatesPage = lazy(() => import('@/pages/settings/templates'))
-const UsersSettingsPage = lazy(() => import('@/pages/settings/users'))
-const NewUserPage = lazy(() => import('@/pages/settings/users/new'))
-const UserDetailPage = lazy(() => import('@/pages/settings/users/[id]'))
-const EditUserPage = lazy(() => import('@/pages/settings/users/[id]/edit'))
-const PermissionsPage = lazy(() => import('@/pages/settings/permissions'))
-const CalendarPage = lazy(() => import('@/pages/calendar'))
-const InspectionsPage = lazy(() => import('@/pages/inspections'))
-const InspectionReportPage = lazy(() => import('@/pages/inspections/report'))
+// Lazy-loaded pages (code splitting) - wrapped with retry for deployment resilience
+const ClientsPage = lazyRetry(() => import('@/pages/clients'))
+const NewClientPage = lazyRetry(() => import('@/pages/clients/new'))
+const ClientDetailPage = lazyRetry(() => import('@/pages/clients/[id]'))
+const EditClientPage = lazyRetry(() => import('@/pages/clients/[id]/edit'))
+const PropertiesPage = lazyRetry(() => import('@/pages/properties'))
+const PropertiesOverviewPage = lazyRetry(() => import('@/pages/properties/overview'))
+const NewPropertyPage = lazyRetry(() => import('@/pages/properties/new'))
+const PropertyDetailPage = lazyRetry(() => import('@/pages/properties/[id]'))
+const EditPropertyPage = lazyRetry(() => import('@/pages/properties/[id]/edit'))
+const SettingsPage = lazyRetry(() => import('@/pages/settings'))
+const OrganizationSettingsPage = lazyRetry(() => import('@/pages/settings/organization'))
+const ProfileSettingsPage = lazyRetry(() => import('@/pages/settings/profile'))
+const PricingSettingsPage = lazyRetry(() => import('@/pages/settings/pricing'))
+const TemplatesPage = lazyRetry(() => import('@/pages/settings/templates'))
+const UsersSettingsPage = lazyRetry(() => import('@/pages/settings/users'))
+const NewUserPage = lazyRetry(() => import('@/pages/settings/users/new'))
+const UserDetailPage = lazyRetry(() => import('@/pages/settings/users/[id]'))
+const EditUserPage = lazyRetry(() => import('@/pages/settings/users/[id]/edit'))
+const PermissionsPage = lazyRetry(() => import('@/pages/settings/permissions'))
+const CalendarPage = lazyRetry(() => import('@/pages/calendar'))
+const InspectionsPage = lazyRetry(() => import('@/pages/inspections'))
+const InspectionReportPage = lazyRetry(() => import('@/pages/inspections/report'))
 // Inspector pages - now integrated into admin view
-const InspectionExecutionPage = lazy(() => import('@/pages/inspector/inspection'))
-const WorkOrdersPage = lazy(() => import('@/pages/work-orders'))
-const NewWorkOrderPage = lazy(() => import('@/pages/work-orders/new'))
-const WorkOrderDetailPage = lazy(() => import('@/pages/work-orders/[id]'))
-const ServiceRequestsPage = lazy(() => import('@/pages/service-requests'))
-const ServiceRequestDetailPage = lazy(() => import('@/pages/service-requests/[id]'))
-const VendorsPage = lazy(() => import('@/pages/vendors'))
-const NewVendorPage = lazy(() => import('@/pages/vendors/new'))
-const VendorDetailPage = lazy(() => import('@/pages/vendors/[id]'))
-const BillingDashboard = lazy(() => import('@/pages/billing/index'))
-const InvoicesPage = lazy(() => import('@/pages/billing/invoices/index'))
-const InvoiceDetailPage = lazy(() => import('@/pages/billing/invoices/[id]'))
-const ReportsPage = lazy(() => import('@/pages/dashboard/reports'))
-const NotificationsPage = lazy(() => import('@/pages/notifications'))
-const NotificationSettingsPage = lazy(() => import('@/pages/settings/notifications'))
-const ActivityPage = lazy(() => import('@/pages/activity'))
+const InspectionExecutionPage = lazyRetry(() => import('@/pages/inspector/inspection'))
+const WorkOrdersPage = lazyRetry(() => import('@/pages/work-orders'))
+const NewWorkOrderPage = lazyRetry(() => import('@/pages/work-orders/new'))
+const WorkOrderDetailPage = lazyRetry(() => import('@/pages/work-orders/[id]'))
+const ServiceRequestsPage = lazyRetry(() => import('@/pages/service-requests'))
+const ServiceRequestDetailPage = lazyRetry(() => import('@/pages/service-requests/[id]'))
+const VendorsPage = lazyRetry(() => import('@/pages/vendors'))
+const NewVendorPage = lazyRetry(() => import('@/pages/vendors/new'))
+const VendorDetailPage = lazyRetry(() => import('@/pages/vendors/[id]'))
+const BillingDashboard = lazyRetry(() => import('@/pages/billing/index'))
+const InvoicesPage = lazyRetry(() => import('@/pages/billing/invoices/index'))
+const InvoiceDetailPage = lazyRetry(() => import('@/pages/billing/invoices/[id]'))
+const ReportsPage = lazyRetry(() => import('@/pages/dashboard/reports'))
+const NotificationsPage = lazyRetry(() => import('@/pages/notifications'))
+const NotificationSettingsPage = lazyRetry(() => import('@/pages/settings/notifications'))
+const ActivityPage = lazyRetry(() => import('@/pages/activity'))
 
 // Loading fallback component
 function PageLoader() {
@@ -66,16 +88,16 @@ function PageLoader() {
 // Client Portal imports (lazy-loaded)
 import { PortalLayout } from '@/components/portal/portal-layout'
 import { PortalAuthGuard } from '@/components/portal/portal-auth-guard'
-const PortalDashboardPage = lazy(() => import('@/pages/portal'))
-const PortalPropertiesPage = lazy(() => import('@/pages/portal/properties'))
-const PortalPropertyDetailPage = lazy(() => import('@/pages/portal/properties/[id]'))
-const PortalRequestsPage = lazy(() => import('@/pages/portal/requests'))
-const PortalRequestDetailPage = lazy(() => import('@/pages/portal/requests/[id]'))
-const PortalInvoicesPage = lazy(() => import('@/pages/portal/invoices'))
-const PortalInspectionsPage = lazy(() => import('@/pages/portal/inspections'))
-const PortalInspectionDetailPage = lazy(() => import('@/pages/portal/inspections/[id]'))
-const PortalCalendarPage = lazy(() => import('@/pages/portal/calendar'))
-const PortalPlansPage = lazy(() => import('@/pages/portal/plans'))
+const PortalDashboardPage = lazyRetry(() => import('@/pages/portal'))
+const PortalPropertiesPage = lazyRetry(() => import('@/pages/portal/properties'))
+const PortalPropertyDetailPage = lazyRetry(() => import('@/pages/portal/properties/[id]'))
+const PortalRequestsPage = lazyRetry(() => import('@/pages/portal/requests'))
+const PortalRequestDetailPage = lazyRetry(() => import('@/pages/portal/requests/[id]'))
+const PortalInvoicesPage = lazyRetry(() => import('@/pages/portal/invoices'))
+const PortalInspectionsPage = lazyRetry(() => import('@/pages/portal/inspections'))
+const PortalInspectionDetailPage = lazyRetry(() => import('@/pages/portal/inspections/[id]'))
+const PortalCalendarPage = lazyRetry(() => import('@/pages/portal/calendar'))
+const PortalPlansPage = lazyRetry(() => import('@/pages/portal/plans'))
 
 // Create a query client instance
 const queryClient = new QueryClient({

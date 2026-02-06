@@ -29,11 +29,10 @@ interface PricingInput {
   frequency: string
   tier: string
   addons: {
-    hvac_maintenance?: boolean
-    pool_spa?: boolean
-    landscape?: boolean
-    security_system?: boolean
-    smart_home?: boolean
+    digital_manual?: boolean
+    warranty_tracking?: boolean
+    emergency_response?: boolean
+    hurricane_monitoring?: boolean
   }
 }
 

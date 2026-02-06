@@ -116,34 +116,28 @@ export const INSPECTION_TIERS = [
  */
 export const PROGRAM_ADDONS = [
   {
-    value: 'hvac_maintenance',
-    label: 'HVAC Maintenance',
-    description: 'Quarterly HVAC filter changes and system check',
-    price: 75,
+    value: 'digital_manual',
+    label: 'Digital Home Manual',
+    description: 'Comprehensive digital manual for your property systems',
+    price: 25,
   },
   {
-    value: 'pool_spa',
-    label: 'Pool & Spa',
-    description: 'Pool and spa equipment inspection and water quality check',
-    price: 100,
+    value: 'warranty_tracking',
+    label: 'Warranty Tracking',
+    description: 'Track and manage all warranties for appliances and systems',
+    price: 15,
   },
   {
-    value: 'landscape',
-    label: 'Landscape',
-    description: 'Irrigation system check and landscape health assessment',
+    value: 'emergency_response',
+    label: 'Emergency Response',
+    description: '24/7 emergency response coordination for urgent issues',
     price: 50,
   },
   {
-    value: 'security_system',
-    label: 'Security System',
-    description: 'Security system testing and battery replacement',
-    price: 45,
-  },
-  {
-    value: 'smart_home',
-    label: 'Smart Home',
-    description: 'Smart home device check and connectivity verification',
-    price: 60,
+    value: 'hurricane_monitoring',
+    label: 'Hurricane Monitoring',
+    description: 'Storm tracking, pre-storm prep, and post-storm inspections',
+    price: 25,
   },
 ] as const
 
