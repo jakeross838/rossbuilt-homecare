@@ -47,42 +47,46 @@ export const useAuthStore = create<AuthStore>()(
           set({ isLoading: true })
 
           // Get current session
-          const { data: { session }, error } = await supabase.auth.getSession()
-
-          if (error) {
-            console.error('Error getting session:', error)
-            set({
-              user: null,
-              session: null,
-              profile: null,
-              isLoading: false,
-              isInitialized: true
-            })
-            return
+          let session = null
+          try {
+            const { data, error } = await supabase.auth.getSession()
+            if (error) {
+              console.error('Error getting session:', error)
+            } else {
+              session = data.session
+            }
+          } catch (sessionError) {
+            // AbortError or network errors during getSession - clear stale state
+            console.warn('Session fetch failed, clearing auth state:', sessionError)
+            await supabase.auth.signOut().catch(() => {})
           }
 
           if (session?.user) {
             set({ user: session.user, session })
             // Fetch user profile from users table
             await get().fetchProfile(session.user.id)
+          } else {
+            // No valid session - clear any stale persisted state
+            set({ user: null, session: null, profile: null })
           }
 
           set({ isLoading: false, isInitialized: true })
 
           // Set up auth state listener
-          supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN' && session?.user) {
-              set({ user: session.user, session })
-              await get().fetchProfile(session.user.id)
+          supabase.auth.onAuthStateChange(async (event, newSession) => {
+            if (event === 'SIGNED_IN' && newSession?.user) {
+              set({ user: newSession.user, session: newSession })
+              await get().fetchProfile(newSession.user.id)
             } else if (event === 'SIGNED_OUT') {
               set({ user: null, session: null, profile: null })
-            } else if (event === 'TOKEN_REFRESHED' && session) {
-              set({ session })
+            } else if (event === 'TOKEN_REFRESHED' && newSession) {
+              set({ session: newSession })
             }
           })
         } catch (error) {
           console.error('Error initializing auth:', error)
-          set({ isLoading: false, isInitialized: true })
+          // Ensure we always finish initialization even on error
+          set({ user: null, session: null, profile: null, isLoading: false, isInitialized: true })
         }
       },
 
