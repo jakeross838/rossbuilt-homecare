@@ -6,30 +6,17 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/((?!api|assets|sw\\.js|workbox-).*)",
+      "source": "/((?!api|assets).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
     {
-      "source": "/index.html",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "no-cache, no-store, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/sw.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        },
-        {
-          "key": "Service-Worker-Allowed",
-          "value": "/"
         }
       ]
     },

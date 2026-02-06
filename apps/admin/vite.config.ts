@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+// import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 // https://vite.dev/config/
@@ -13,35 +13,9 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'icons/*.png'],
-      manifest: false, // Use our own manifest.json
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
-        skipWaiting: true,
-        clientsClaim: true,
-        navigateFallback: 'index.html',
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'supabase-api',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60, // 1 hour
-              },
-              networkTimeoutSeconds: 10,
-            },
-          },
-        ],
-      },
-      devOptions: {
-        enabled: true, // Enable PWA in dev mode for testing
-      },
-    }),
+    // PWA disabled - service worker was causing white pages by serving stale cached content
+    // Re-enable later once deployment pipeline is stable
+    // VitePWA({ ... }),
   ],
   resolve: {
     alias: {
