@@ -28,10 +28,9 @@ export function usePropertyProgram(propertyId: string) {
         .in('status', ['active', 'pending', 'paused'])
         .order('created_at', { ascending: false })
         .limit(1)
-        .single()
+        .maybeSingle()
 
-      // PGRST116 = no rows found - this is expected when property has no program
-      if (error && error.code !== 'PGRST116') throw error
+      if (error) throw error
       return data as Program | null
     },
     enabled: !!propertyId,
