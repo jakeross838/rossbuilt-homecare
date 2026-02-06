@@ -5,24 +5,32 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ross Built Home Care</title>
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#2D5A27" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Ross Built" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
   </head>
   <body>
     <div id="root"></div>
     <script>
-      // Nuke any stale service workers and caches
+      // Nuclear service worker kill - unregister, clear caches, force reload once
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-          registrations.forEach(function(reg) { reg.unregister(); });
-        });
-        caches.keys().then(function(names) {
-          names.forEach(function(name) { caches.delete(name); });
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          if (regs.length > 0 && !sessionStorage.getItem('sw_nuked')) {
+            // There are active service workers - kill them and force reload
+            sessionStorage.setItem('sw_nuked', '1');
+            Promise.all(regs.map(function(r) { return r.unregister(); }))
+              .then(function() { return caches.keys(); })
+              .then(function(names) {
+                return Promise.all(names.map(function(n) { return caches.delete(n); }));
+              })
+              .then(function() {
+                // Force reload bypassing cache to get a clean page without SW control
+                location.reload();
+              });
+          } else if (regs.length === 0) {
+            // SW already gone, clean up caches just in case
+            caches.keys().then(function(names) {
+              names.forEach(function(name) { caches.delete(name); });
+            });
+          }
         });
       }
     </script>
