@@ -34,16 +34,23 @@ export function useOrganization() {
   return useQuery({
     queryKey: organizationKeys.current(),
     queryFn: async () => {
-      if (!profile?.organization_id) throw new Error('No organization found')
+      if (!profile?.organization_id) {
+        console.warn('No organization_id in profile')
+        return null
+      }
 
       const { data, error } = await supabase
         .from('organizations')
         .select('*')
         .eq('id', profile.organization_id)
-        .single()
+        .maybeSingle()
 
-      if (error) throw error
-      return data as Organization
+      if (error) {
+        console.warn('Could not fetch organization:', error.message)
+        return null
+      }
+
+      return data as Organization | null
     },
     enabled: !!profile?.organization_id,
   })
@@ -95,12 +102,12 @@ export function useUpdateOrganizationSettings() {
         .from('organizations')
         .select('settings')
         .eq('id', profile.organization_id)
-        .single()
+        .maybeSingle()
 
       if (fetchError) throw fetchError
 
-      // Merge with new settings
-      const currentSettings = (org.settings || {}) as OrganizationSettings
+      // Merge with new settings (handle case where org doesn't exist yet)
+      const currentSettings = (org?.settings || {}) as OrganizationSettings
       const mergedSettings = {
         ...currentSettings,
         ...settings,

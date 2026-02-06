@@ -21,7 +21,7 @@ interface SettingsLink {
 const settingsLinks: SettingsLink[] = [
   {
     title: 'Organization',
-    description: 'Company name, logo, contact info, and business hours',
+    description: 'Company name, contact info, and address',
     href: '/settings/organization',
     icon: Building2,
   },

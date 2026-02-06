@@ -51,10 +51,14 @@ export function useNotificationPreferences() {
         .from('users')
         .select('settings')
         .eq('id', profile.id)
-        .single()
+        .maybeSingle()
 
-      if (error) throw error
-      return parsePreferences(data?.settings)
+      // If no row found or error, return defaults
+      if (error || !data) {
+        console.warn('Could not fetch user settings, using defaults:', error?.message)
+        return DEFAULT_NOTIFICATION_PREFERENCES
+      }
+      return parsePreferences(data.settings)
     },
     enabled: !!profile?.id,
     staleTime: STALE_STANDARD,
@@ -77,7 +81,7 @@ export function useUpdateNotificationPreferences() {
         .from('users')
         .select('settings')
         .eq('id', profile.id)
-        .single()
+        .maybeSingle()
 
       const currentSettings = (currentData?.settings as Record<string, unknown>) ?? {}
       const currentNotifications = (currentSettings.notifications as Record<string, unknown>) ?? {}

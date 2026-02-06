@@ -21,18 +21,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Switch } from '@/components/ui/switch'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { useToast } from '@/hooks/use-toast'
 import { useAuthStore } from '@/stores/auth-store'
 import {
   useUpdateProfile,
   useChangePassword,
   useUploadAvatar,
-  useUpdatePreferences,
 } from '@/hooks/use-profile'
 import { User, Upload, Loader2, Eye, EyeOff } from 'lucide-react'
 
@@ -61,7 +58,6 @@ export default function ProfileSettingsPage() {
   const updateProfile = useUpdateProfile()
   const changePassword = useChangePassword()
   const uploadAvatar = useUploadAvatar()
-  const updatePreferences = useUpdatePreferences()
   const { toast } = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showPassword, setShowPassword] = useState(false)
@@ -148,18 +144,6 @@ export default function ProfileSettingsPage() {
     }
   }
 
-  const handlePreferenceChange = async (key: string, value: boolean) => {
-    try {
-      await updatePreferences.mutateAsync({ [key]: value })
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Failed to update preference.',
-        variant: 'destructive',
-      })
-    }
-  }
-
   if (!profile) {
     return (
       <div className="container py-6">
@@ -172,13 +156,11 @@ export default function ProfileSettingsPage() {
     )
   }
 
-  const userSettings = (profile.settings || {}) as Record<string, unknown>
-
   return (
     <div className="container py-6">
       <PageHeader
         title="Profile Settings"
-        description="Manage your account settings and preferences"
+        description="Manage your account settings"
       />
 
       <div className="space-y-6 mt-6">
@@ -387,62 +369,6 @@ export default function ProfileSettingsPage() {
                 </Button>
               </form>
             </Form>
-          </CardContent>
-        </Card>
-
-        {/* Preferences */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Preferences</CardTitle>
-            <CardDescription>
-              Customize your experience
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="text-sm font-medium">Email Notifications</div>
-                <div className="text-sm text-muted-foreground">
-                  Receive email notifications for important updates
-                </div>
-              </div>
-              <Switch
-                checked={userSettings.email_notifications !== false}
-                onCheckedChange={(checked) =>
-                  handlePreferenceChange('email_notifications', checked)
-                }
-              />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="text-sm font-medium">Desktop Notifications</div>
-                <div className="text-sm text-muted-foreground">
-                  Show browser notifications for real-time alerts
-                </div>
-              </div>
-              <Switch
-                checked={userSettings.desktop_notifications === true}
-                onCheckedChange={(checked) =>
-                  handlePreferenceChange('desktop_notifications', checked)
-                }
-              />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="text-sm font-medium">Compact Mode</div>
-                <div className="text-sm text-muted-foreground">
-                  Use a more compact layout for lists and tables
-                </div>
-              </div>
-              <Switch
-                checked={userSettings.compact_mode === true}
-                onCheckedChange={(checked) =>
-                  handlePreferenceChange('compact_mode', checked)
-                }
-              />
-            </div>
           </CardContent>
         </Card>
       </div>
