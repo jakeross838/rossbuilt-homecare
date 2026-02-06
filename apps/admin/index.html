@@ -16,7 +16,7 @@
   <body>
     <div id="root"></div>
     <script>
-      // Nuke any stale service workers and caches to fix white page issues
+      // Nuke any stale service workers and caches
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
           registrations.forEach(function(reg) { reg.unregister(); });
@@ -25,6 +25,19 @@
           names.forEach(function(name) { caches.delete(name); });
         });
       }
+      // Visible error overlay - shows JS errors on screen
+      window.onerror = function(msg, src, line, col, err) {
+        var d = document.createElement('div');
+        d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:red;color:white;padding:20px;font-size:16px;font-family:monospace;white-space:pre-wrap;';
+        d.textContent = 'JS ERROR: ' + msg + '\nFile: ' + src + ':' + line + ':' + col + '\n' + (err && err.stack ? err.stack : '');
+        document.body.appendChild(d);
+      };
+      window.addEventListener('unhandledrejection', function(e) {
+        var d = document.createElement('div');
+        d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:orange;color:black;padding:20px;font-size:16px;font-family:monospace;white-space:pre-wrap;';
+        d.textContent = 'PROMISE ERROR: ' + (e.reason ? (e.reason.message || e.reason) : 'unknown') + '\n' + (e.reason && e.reason.stack ? e.reason.stack : '');
+        document.body.appendChild(d);
+      });
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
