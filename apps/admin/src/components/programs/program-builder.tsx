@@ -219,39 +219,50 @@ export function ProgramBuilder({
             }
             className="grid grid-cols-5 gap-4"
           >
-            {INSPECTION_FREQUENCIES.map((freq) => (
-              <Label
-                key={freq.value}
-                htmlFor={freq.value}
-                className={cn(
-                  'flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer hover:bg-muted/50 transition-colors',
-                  inspectionFrequency === freq.value
-                    ? 'border-primary bg-primary/5'
-                    : 'border-muted'
-                )}
-              >
-                <RadioGroupItem
-                  value={freq.value}
-                  id={freq.value}
-                  className="sr-only"
-                />
-                <span className="font-semibold">{freq.label}</span>
-                <span className="text-xs text-muted-foreground text-center">
-                  {freq.description}
-                </span>
-                {pricingConfig && (
-                  <span className="mt-2 text-sm font-medium">
-                    $
-                    {
-                      pricingConfig.frequency_pricing[
-                        freq.value as keyof typeof pricingConfig.frequency_pricing
-                      ]
-                    }
-                    /mo
+            {INSPECTION_FREQUENCIES.map((freq) => {
+              const isSelected = inspectionFrequency === freq.value
+              return (
+                <div
+                  key={freq.value}
+                  className={cn(
+                    'relative flex flex-col items-center justify-center rounded-md border-2 p-4 cursor-pointer transition-all',
+                    isSelected
+                      ? 'border-green-500 bg-green-50 shadow-sm'
+                      : 'border-muted hover:bg-muted/50'
+                  )}
+                  onClick={(e) => {
+                    if (e.target instanceof HTMLInputElement) return
+                    setValue('inspection_frequency', freq.value as ProgramFormData['inspection_frequency'])
+                  }}
+                >
+                  <RadioGroupItem
+                    value={freq.value}
+                    id={freq.value}
+                    className="sr-only"
+                  />
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-green-500 flex items-center justify-center">
+                      <Check className="h-3 w-3 text-white" />
+                    </div>
+                  )}
+                  <span className={cn('font-semibold', isSelected && 'text-green-700')}>{freq.label}</span>
+                  <span className="text-xs text-muted-foreground text-center">
+                    {freq.description}
                   </span>
-                )}
-              </Label>
-            ))}
+                  {pricingConfig && (
+                    <span className={cn('mt-2 text-sm font-medium', isSelected && 'text-green-700')}>
+                      $
+                      {
+                        pricingConfig.frequency_pricing[
+                          freq.value as keyof typeof pricingConfig.frequency_pricing
+                        ]
+                      }
+                      /mo
+                    </span>
+                  )}
+                </div>
+              )
+            })}
           </RadioGroup>
         </CardContent>
       </Card>
@@ -277,24 +288,34 @@ export function ProgramBuilder({
             }
             className="grid grid-cols-2 gap-4"
           >
-            {INSPECTION_TIERS.map((tier) => (
-              <Label
+            {INSPECTION_TIERS.map((tier) => {
+              const isSelected = inspectionTier === tier.value
+              return (
+              <div
                 key={tier.value}
-                htmlFor={`tier-${tier.value}`}
                 className={cn(
-                  'flex flex-col rounded-md border-2 p-4 cursor-pointer hover:bg-muted/50 transition-colors',
-                  inspectionTier === tier.value
-                    ? 'border-primary bg-primary/5'
-                    : 'border-muted'
+                  'relative flex flex-col rounded-md border-2 p-4 cursor-pointer transition-all',
+                  isSelected
+                    ? 'border-green-500 bg-green-50 shadow-sm'
+                    : 'border-muted hover:bg-muted/50'
                 )}
+                onClick={(e) => {
+                  if (e.target instanceof HTMLInputElement) return
+                  setValue('inspection_tier', tier.value as ProgramFormData['inspection_tier'])
+                }}
               >
                 <RadioGroupItem
                   value={tier.value}
                   id={`tier-${tier.value}`}
                   className="sr-only"
                 />
+                {isSelected && (
+                  <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-green-500 flex items-center justify-center">
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold">{tier.label}</span>
+                  <span className={cn('font-semibold', isSelected && 'text-green-700')}>{tier.label}</span>
                   {pricingConfig && (
                     <Badge variant="secondary">
                       +$
@@ -323,8 +344,9 @@ export function ProgramBuilder({
                     </li>
                   )}
                 </ul>
-              </Label>
-            ))}
+              </div>
+              )
+            })}
           </RadioGroup>
 
           {/* Selected tier expanded details */}
@@ -399,8 +421,10 @@ export function ProgramBuilder({
                 <div
                   key={addon.value}
                   className={cn(
-                    'flex items-start gap-3 rounded-md border p-4 cursor-pointer hover:bg-muted/50 transition-colors',
-                    isChecked && 'border-primary bg-primary/5'
+                    'flex items-start gap-3 rounded-md border-2 p-4 cursor-pointer transition-all',
+                    isChecked
+                      ? 'border-green-500 bg-green-50 shadow-sm'
+                      : 'border-muted hover:bg-muted/50'
                   )}
                   onClick={(e) => {
                     // Only toggle if click was NOT from Radix's internal BubbleInput
